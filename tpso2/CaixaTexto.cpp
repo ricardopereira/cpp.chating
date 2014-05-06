@@ -6,6 +6,7 @@ CaixaTexto::CaixaTexto(HINSTANCE hInstance, long px, long py, long comprimento, 
 :Controlo(hInstance, px, py, comprimento, largura)
 {
 	this->ControloId = CaixaTextoIdAcum++;
+	hfont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 }
 
 CaixaTexto::~CaixaTexto()
@@ -26,6 +27,7 @@ void CaixaTexto::Mostra(HWND hWnd){
 		hInstance,
 		NULL
 		);
+	SendMessage(this->hWnd, WM_SETFONT, (WPARAM)hfont, MAKELPARAM(TRUE, 0));
 }
 
 std::basic_string<TCHAR> CaixaTexto::getTexto(){

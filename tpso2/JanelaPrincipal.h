@@ -12,8 +12,9 @@ private:
 	HWND				BotaoX;
 	Botao*				BotaoDislike;
 	Botao*				BotaoEnviar;
+	Botao*				BotaoCima;
+	Botao*				BotaoBaixo;
 	int					BotaoEnviarId;
-	ListBox*			AreaMensagens;
 	ListBox*			ListaUtilizadores;
 	std::vector<Layout*> layoutVertical;
 	std::vector<Layout*> layoutHorizontal;
