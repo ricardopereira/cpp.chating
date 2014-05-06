@@ -7,8 +7,8 @@ typedef std::basic_ostringstream<TCHAR> oTcharStream_t;
 
 class Comunicacao{
 private:
-	bool autenticado = false;
-	bool privilegiosAdmin = false;
+	bool autenticado;
+	bool privilegiosAdmin;
 	UTILIZADOR utilizadores[NUMUTILIZADORES];
 	UTILIZADOR utilizadoresOnline[NUMUTILIZADORES];
 	int totalUtilizadores;
