@@ -14,14 +14,16 @@ private:
 	HWND				BotaoX;
 	Botao*				BotaoDislike;
 	Botao*				BotaoEnviar;
+	Botao*				BotaoCima;
+	Botao*				BotaoBaixo;
 	int					BotaoEnviarId;
 	ChatBox*			AreaMensagens;
+
 	ListBox*			ListaUtilizadores;
 	std::vector<Layout*> layoutVertical;
 	std::vector<Layout*> layoutHorizontal;
 	Comunicacao				messenger;
 	ThreadCaixaDialogoLogin threadLogin;
-	
 	
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;

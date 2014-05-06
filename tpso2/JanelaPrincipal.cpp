@@ -5,8 +5,6 @@
 #include <sstream>
 #include <string>
 
-
-
 JanelaPrincipal::JanelaPrincipal() : threadLogin(messenger){
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
@@ -37,7 +35,8 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 	layoutVertical.push_back(new Layout(0.15f));
 
 	layoutHorizontal.push_back(new Layout(0.80f));
-	layoutHorizontal.push_back(new Layout(0.20f));
+	layoutHorizontal.push_back(new Layout(0.025f));
+	layoutHorizontal.push_back(new Layout(0.175f));
 
 
 	for (unsigned int i = 0; i < layoutVertical.size(); i++){
@@ -59,9 +58,9 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 
 	this->ListaUtilizadores = new ListBox(
 		this->hInst,
-		layoutHorizontal[1]->getPosicao(),
+		layoutHorizontal[2]->getPosicao(),
 		layoutVertical[1]->getPosicao(),
-		layoutHorizontal[1]->getLargura(),
+		layoutHorizontal[2]->getLargura(),
 		layoutVertical[1]->getAltura() + layoutVertical[2]->getAltura() + layoutVertical[3]->getAltura()
 		);
 	this->ListaUtilizadores->Mostra(hWnd);
@@ -70,7 +69,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		this->hInst,
 		layoutHorizontal[0]->getPosicao(),
 		layoutVertical[3]->getPosicao(),
-		layoutHorizontal[0]->getLargura(),
+		layoutHorizontal[0]->getLargura() + layoutHorizontal[1]->getAltura(),
 		layoutVertical[3]->getAltura()
 		);
 	this->txtEnviar->setHwndPai(hWnd);
@@ -83,7 +82,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		50,
 		layoutVertical[2]->getAltura() //larg
 		);
-
+	this->BotaoLike->setTextoBotao(TEXT("Like"));
 	this->BotaoLike->Mostra(hWnd);
 
 	this->BotaoDislike = new Botao(
@@ -93,7 +92,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		50, //comp
 		layoutVertical[2]->getAltura() //larg
 		);
-
+	this->BotaoDislike->setTextoBotao(TEXT("Dislike"));
 	this->BotaoDislike->Mostra(hWnd);
 
 	this->BotaoEnviar = new Botao(
@@ -103,10 +102,30 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		50, //comp
 		layoutVertical[2]->getAltura() //larg
 		);
-
+	this->BotaoEnviar->setTextoBotao(TEXT("Enviar"));
 	this->BotaoEnviar->Mostra(hWnd);
 
+	this->BotaoCima = new Botao(
+		this->hInst,
+		layoutHorizontal[1]->getPosicao(),
+		layoutVertical[1]->getPosicao(),
+		layoutHorizontal[1]->getLargura(),
+		50
+		);
+	this->BotaoCima->setTextoBotao(TEXT("/\\"));
+	this->BotaoCima->Mostra(hWnd);
+
+	this->BotaoBaixo = new Botao(
+		this->hInst,
+		layoutHorizontal[1]->getPosicao(),
+		layoutVertical[2]->getPosicao() - 10,
+		layoutHorizontal[1]->getLargura(),
+		50
+		);
+	this->BotaoBaixo->setTextoBotao(TEXT("\\/"));
+	this->BotaoBaixo->Mostra(hWnd);
 }
+
 LRESULT JanelaPrincipal::myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam){
 	HDC hdc;
 	PAINTSTRUCT PtStc;				// Ponteiro para estrutura de WM_PAINT
@@ -221,21 +240,11 @@ void JanelaPrincipal::Redimensionar(HWND hWnd){
 	}
 
 	SetWindowPos(
-		this->AreaMensagens->getHwnd(),
-		0,
-		layoutHorizontal[0]->getPosicao(),
-		layoutVertical[1]->getPosicao(),
-		layoutHorizontal[0]->getLargura(),
-		layoutVertical[1]->getAltura(),
-		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
-		);
-
-	SetWindowPos(
 		this->ListaUtilizadores->getHwnd(),
 		0,
-		layoutHorizontal[1]->getPosicao(),
+		layoutHorizontal[2]->getPosicao(),
 		layoutVertical[1]->getPosicao(),
-		layoutHorizontal[1]->getLargura(),
+		layoutHorizontal[2]->getLargura(),
 		layoutVertical[1]->getAltura() + layoutVertical[2]->getAltura() + layoutVertical[3]->getAltura(),
 		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
 		);
@@ -277,6 +286,26 @@ void JanelaPrincipal::Redimensionar(HWND hWnd){
 		layoutVertical[2]->getPosicao(), //y
 		50, //comp
 		layoutVertical[2]->getAltura(), //larg
+		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
+		);
+
+	SetWindowPos(
+		this->BotaoCima->getHwnd(),
+		0,
+		layoutHorizontal[1]->getPosicao(), //x
+		layoutVertical[1]->getPosicao(), //y
+		layoutHorizontal[1]->getLargura(), //comp
+		50, //larg
+		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
+		);
+
+	SetWindowPos(
+		this->BotaoBaixo->getHwnd(),
+		0,
+		layoutHorizontal[1]->getPosicao(),
+		layoutVertical[2]->getPosicao() - 20,
+		layoutHorizontal[1]->getLargura(),
+		50,
 		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
 		);
 	//BringWindowToTop(txtEnviar->getHwnd());
