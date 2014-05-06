@@ -29,7 +29,8 @@ void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class
 
 
 }
-void JanelaPrincipal::MostrarElementos(HWND hWnd){
+void JanelaPrincipal::MostrarElementos(HWND hWnd) {
+
 	layoutVertical.push_back(new Layout(0.10f));
 	layoutVertical.push_back(new Layout(0.70f));
 	layoutVertical.push_back(new Layout(0.05f));
@@ -47,7 +48,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd){
 		layoutHorizontal.at(i)->calcularPosicoesX(hWnd);
 	}
 
-	this->AreaMensagens = new ListBox(
+	this->AreaMensagens = new ChatBox(
 		this->hInst,
 		layoutHorizontal[0]->getPosicao(),
 		layoutVertical[1]->getPosicao(),
@@ -110,6 +111,7 @@ LRESULT JanelaPrincipal::myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM 
 	HDC hdc;
 	PAINTSTRUCT PtStc;				// Ponteiro para estrutura de WM_PAINT
 	oTcharStream_t xpto;
+	short zDelta;
 
 	switch (messg) {
 	case WM_CREATE:
@@ -140,13 +142,29 @@ LRESULT JanelaPrincipal::myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM 
 			this->Redimensionar(hWnd);
 		}
 		break;
+
 	case WM_MOVE:						// Detectar que a janela se moveu
 		InvalidateRect(hWnd, NULL, 1);	// Gerar WM_PAINT para actualizar 
 		// as coordenadas visíveis na janela
 		break;
+
+	case WM_MOUSEWHEEL:
+		zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+		if (zDelta > 0) {
+			this->AreaMensagens->scrollUp();
+		} else {
+			this->AreaMensagens->scrollDown();
+		}
+		InvalidateRect(hWnd, NULL, 1);
+		break;
+
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &PtStc);
 		BitBlt(hdc, 0, 0, this->maxX, this->maxY, this->memdc, 0, 0, SRCCOPY);
+
+		// Teste
+		AreaMensagens->doPaint(hdc,hWnd);
+
 		EndPaint(hWnd, &PtStc);
 		break;
 
@@ -169,10 +187,16 @@ LRESULT JanelaPrincipal::myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM 
 			break;
 
 		default:
-			if (wParam == this->BotaoEnviar->getId()){
-
-
+			if (wParam == this->BotaoEnviar->getId()) {
 				MessageBox(0, this->txtEnviar->getTexto().c_str(), TEXT("YO"), MB_OK);
+			}
+			else if (wParam == this->BotaoLike->getId()) {
+				this->AreaMensagens->scrollUp();
+				InvalidateRect(hWnd, NULL, 1);
+			}
+			else if (wParam == this->BotaoDislike->getId()) {
+				this->AreaMensagens->scrollDown();
+				InvalidateRect(hWnd, NULL, 1);
 			}
 		}
 	default:

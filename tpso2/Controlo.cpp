@@ -21,7 +21,22 @@ int Controlo::getId(){
 	return this->ControloId;
 }
 
+long Controlo::getX()
+{
+	return pos_x;
+}
 
+long Controlo::getY()
+{
+	return pos_y;
+}
 
+long Controlo::getWidth()
+{
+	return comprimento;
+}
 
-
+long Controlo::getHeight()
+{
+	return largura;
+}

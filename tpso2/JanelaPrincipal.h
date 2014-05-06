@@ -5,6 +5,8 @@
 #include "Botao.h"
 #include "ListBox.h"
 #include "CaixaTexto.h"
+#include "ChatBox.h"
+
 class JanelaPrincipal : public JanelaGenerica{
 private:
 	CaixaTexto*			txtEnviar;
@@ -13,7 +15,7 @@ private:
 	Botao*				BotaoDislike;
 	Botao*				BotaoEnviar;
 	int					BotaoEnviarId;
-	ListBox*			AreaMensagens;
+	ChatBox*			AreaMensagens;
 	ListBox*			ListaUtilizadores;
 	std::vector<Layout*> layoutVertical;
 	std::vector<Layout*> layoutHorizontal;
@@ -23,8 +25,6 @@ private:
 	
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;
-	
-
 public:
 	virtual LRESULT myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
 	virtual void MostrarElementos(HWND hWnd);
