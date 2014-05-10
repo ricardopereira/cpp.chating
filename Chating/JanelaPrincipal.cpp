@@ -134,7 +134,7 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {
-			MessageBox(0, this->txtEnviar->getTexto().c_str(), TEXT("YO"), MB_OK);
+			AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),this->txtEnviar->getTexto());
 		}
 		else if (wParam == this->BotaoCima->getId()) {
 			this->AreaMensagens->scrollUp();

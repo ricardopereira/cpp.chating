@@ -57,6 +57,8 @@ int ChatBox::getScrollY()
 
 void ChatBox::scrollUp()
 {
+	if (this->scrollY == 0) 
+		return;
 	this->scrollY -= 10;
 	refresh();
 }
@@ -78,11 +80,13 @@ void ChatBox::addMessageOnRight(sTchar_t username, sTchar_t message)
 	//GetSystemTime(&hour);
 
 	messages.push_back(new ChatBoxItem(username,message,_T(""),1));
+	refresh();
 }
 
 void ChatBox::addMessageOnLeft(sTchar_t username, sTchar_t message)
 {
 	messages.push_back(new ChatBoxItem(username,message,_T(""),0));
+	refresh();
 }
 
 void ChatBox::doPaint(HDC hdc, HWND hWnd)
