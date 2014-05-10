@@ -26,4 +26,6 @@ public:
 	void cLerMensagensPrivadas();
 	int cSair();
 	int cDesligar();
+
+	bool getIsAutenticado();
 };

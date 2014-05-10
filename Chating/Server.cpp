@@ -6,6 +6,11 @@ Server::Server()
 	this->privilegiosAdmin = false;
 }
 
+bool Server::getIsAutenticado()
+{
+	return autenticado;
+}
+
 int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 {
 	DWORD res = Autenticar(login, pass);

@@ -14,7 +14,7 @@ ThreadCaixaDialogoLogin::~ThreadCaixaDialogoLogin()
 {
 }
 
-DWORD WINAPI ThreadCaixaDialogoLogin::funcaoThread(LPVOID param) 
+DWORD WINAPI ThreadCaixaDialogoLogin::funcaoThread(LPVOID param)
 {
 	DWORD valRetorno = DialogBox(this->hInstance, (LPCWSTR) IDD_LOGIN, this->hWndPai,
 		(DLGPROC)ThreadCaixaDialogoLogin::DialogoLogin);

@@ -36,6 +36,16 @@ public:
 	void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,
 		LPCTSTR MenuName = NULL, UINT style = CS_VREDRAW | CS_HREDRAW);
 
-	virtual LRESULT performWMessage(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
 	virtual void MostrarElementos(HWND hWnd);
+
+	// Eventos
+	virtual void onCreate(HWND hWnd, HDC &hdc);
+	virtual void onShow(HWND hWnd);
+	virtual void onActivate(HWND hWnd);
+	virtual void onResize(HWND hWnd);
+	virtual void onMove(HWND hWnd);
+	virtual void onMouseWheelUp(HWND hWnd);
+	virtual void onMouseWheelDown(HWND hWnd);
+	virtual void onPaint(HWND hWnd, HDC &hdc, RECT &rect);
+	virtual void onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
 };

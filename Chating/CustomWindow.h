@@ -25,6 +25,20 @@ public:
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
 
+	void refresh(HWND hWnd);
+
 	// WndProc para cada especializacao
-	virtual LRESULT performWMessage(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) = 0;
+	virtual LRESULT performWMessage(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
+	// Eventos
+	virtual void onCreate(HWND hWnd, HDC &hdc);
+	virtual void onDestroy(HWND hWnd);
+	virtual void onShow(HWND hWnd);
+	virtual bool onClose(HWND hWnd);
+	virtual void onActivate(HWND hWnd);
+	virtual void onResize(HWND hWnd);
+	virtual void onMove(HWND hWnd);
+	virtual void onMouseWheelUp(HWND hWnd);
+	virtual void onMouseWheelDown(HWND hWnd);
+	virtual void onPaint(HWND hWnd, HDC &hdc, RECT &rect);
+	virtual void onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
 };

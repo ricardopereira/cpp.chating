@@ -3,14 +3,83 @@
 #include <crtdbg.h>
 
 // Função não membro (auxiliar)
-LRESULT CALLBACK internalWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
+LRESULT CALLBACK internalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	HDC hdc;
+	RECT rect;
+	short zDelta;
+	// onPaint: Ponteiro para estrutura de WM_PAINT
+	PAINTSTRUCT ps;
+
 	// Get a window pointer associated with this window
 	CustomWindow *ptr = (CustomWindow*)GetWindowLong(hWnd, GWL_USERDATA);
 	// It should be valid, assert so
 	_ASSERT(ptr);
-	// Redirect messages to the window procedure of the associated window
-	return ptr->performWMessage(hWnd, msg, wp, lp);
+	
+	// Eventos de cada mensagem
+	switch (message) {
+	case WM_CREATE:
+		ptr->onCreate(hWnd,hdc);
+		break;
+
+	case WM_DESTROY:
+		ptr->onDestroy(hWnd);
+		PostQuitMessage(0);
+		break;
+
+	case WM_CLOSE:
+		if (ptr->onClose(hWnd))
+			DestroyWindow(hWnd);
+		break;
+
+	case WM_ACTIVATE:
+		ptr->onActivate(hWnd);
+		break;
+
+	case WM_SHOWWINDOW:
+		//wParam is TRUE, the window is being shown
+		if ((int)wParam == 1)
+			ptr->onShow(hWnd);
+		break;
+
+	case WM_SIZE:
+		ptr->onResize(hWnd);
+		break;
+
+	case WM_MOVE:
+		ptr->onMove(hWnd);
+		break;
+
+	case WM_MOUSEWHEEL:
+		zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+		if (zDelta > 0) {
+			ptr->onMouseWheelUp(hWnd);
+		} else {
+			ptr->onMouseWheelDown(hWnd);
+		}
+		ptr->refresh(hWnd);
+		break;
+
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+		GetClientRect(hWnd, &rect);
+
+		ptr->onPaint(hWnd,hdc,rect);
+
+		EndPaint(hWnd, &ps);
+		break;
+
+	case WM_COMMAND:
+		ptr->onCommand(hWnd,wParam,lParam);
+		break;
+
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+		break;
+	}
+
+	// Personalizado - redirect messages to the window procedure of the associated window
+	return ptr->performWMessage(hWnd, message, wParam, lParam);
 }
 
 // MainWnd
@@ -51,7 +120,8 @@ BOOL CustomWindow::Mostrar(int dCmdShow)
 	return TRUE;
 }
 
-LRESULT CALLBACK CustomWindow::WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam){
+LRESULT CALLBACK CustomWindow::WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
+{
 	LPCREATESTRUCT cs;
 	switch (messg) {
 	case WM_NCCREATE:
@@ -71,4 +141,73 @@ LRESULT CALLBACK CustomWindow::WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPA
 		break;
 	}
 	return(0);
+}
+
+void CustomWindow::refresh(HWND hWnd)
+{
+	InvalidateRect(hWnd, NULL, 1);
+}
+
+// WndProc para cada especializacao
+
+LRESULT CustomWindow::performWMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	return(0);
+}
+
+// Eventos
+
+void CustomWindow::onCreate(HWND hWnd, HDC &hdc)
+{
+
+}
+
+void CustomWindow::onDestroy(HWND hWnd)
+{
+
+}
+
+void CustomWindow::onShow(HWND hWnd)
+{
+
+}
+
+bool CustomWindow::onClose(HWND hWnd)
+{
+	return true;
+}
+
+void CustomWindow::onActivate(HWND hWnd)
+{
+
+}
+
+void CustomWindow::onResize(HWND hWnd)
+{
+
+}
+
+void CustomWindow::onMove(HWND hWnd)
+{
+
+}
+
+void CustomWindow::onMouseWheelUp(HWND hWnd)
+{
+
+}
+
+void CustomWindow::onMouseWheelDown(HWND hWnd)
+{
+
+}
+
+void CustomWindow::onPaint(HWND hWnd, HDC &hdc, RECT &rect)
+{
+
+}
+
+void CustomWindow::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+
 }

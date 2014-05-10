@@ -29,115 +29,94 @@ void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class
 	_WndClsEx.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
 }
 
-LRESULT JanelaPrincipal::performWMessage(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
-{
-	HDC hdc;
-	PAINTSTRUCT PtStc; // Ponteiro para estrutura de WM_PAINT
-	oTcharStream_t xpto;
-	short zDelta;
 
+// Eventos
+
+void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
+{
+	this->MostrarElementos(hWnd);
+	this->maxX = GetSystemMetrics(SM_CXSCREEN);
+	this->maxY = GetSystemMetrics(SM_CYSCREEN);
+	hdc = GetDC(hWnd);
+	this->memdc = CreateCompatibleDC(hdc);
+}
+
+void JanelaPrincipal::onShow(HWND hWnd)
+{
+	//DialogBox(hInst, (LPCWSTR) IDD_LOGIN, hWnd, (DLGPROC) ThreadCaixaDialogoLogin::DialogoLogin);
+}
+
+void JanelaPrincipal::onActivate(HWND hWnd)
+{
+	podeRedimensionar = true;
+}
+
+void JanelaPrincipal::onResize(HWND hWnd)
+{
+	if (podeRedimensionar) {
+		this->Redimensionar(hWnd);
+	}
+}
+
+void JanelaPrincipal::onMove(HWND hWnd)
+{
+	refresh(hWnd);
+}
+
+void JanelaPrincipal::onMouseWheelUp(HWND hWnd)
+{
+	this->AreaMensagens->scrollUp();
+}
+
+void JanelaPrincipal::onMouseWheelDown(HWND hWnd)
+{
+	this->AreaMensagens->scrollDown();
+}
+
+void JanelaPrincipal::onPaint(HWND hWnd, HDC &hdc, RECT &rect)
+{
+	BitBlt(hdc, 0, 0, this->maxX, this->maxY, this->memdc, 0, 0, SRCCOPY);
 	// Teste
+	AreaMensagens->doPaint(hdc,hWnd);
+}
+
+void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+	oTcharStream_t xpto;
 	ThreadCaixaDialogoLogin *thLogin;
 
-	switch (messg) {
-	case WM_CREATE:
-		this->MostrarElementos(hWnd);
-		this->maxX = GetSystemMetrics(SM_CXSCREEN);
-		this->maxY = GetSystemMetrics(SM_CYSCREEN);
-		hdc = GetDC(hWnd);
-		this->memdc = CreateCompatibleDC(hdc);
-
-		//messenger.cLerInformacaoInicial();
-		//messenger.cLerMensagensPublicas(); //ok
-		//messenger.cLerMensagensPrivadas(); //ok
-
-		break;
-	case WM_ACTIVATE:
-		podeRedimensionar = true;
+	// Um comando
+	switch (LOWORD(wParam)) {
+	case ID_CHAT_SAIR:
+		this->MostrarElementos(this->_hWnd);
+		DestroyWindow(hWnd);
 		break;
 
-	case WM_DESTROY:	// Destruir a janela e terminar o programa
-		// "PostQuitMessage(Exit Status)"
-		PostQuitMessage(0);
-
-		break;
-	case WM_SIZE:
-		if (podeRedimensionar){
-			this->Redimensionar(hWnd);
-		}
+	case ID_CHAT_LOGIN:
+		thLogin = new ThreadCaixaDialogoLogin(this->servidor);
+		thLogin->setHwndPai(hWnd);
+		thLogin->sethInstance(this->hInst);
+		thLogin->LancarThread();
 		break;
 
-	case WM_MOVE:						// Detectar que a janela se moveu
-		InvalidateRect(hWnd, NULL, 1);	// Gerar WM_PAINT para actualizar 
-		// as coordenadas visíveis na janela
+	case ID_CHAT_LOGOUT:
+		xpto << this->servidor.cSair();
+		MessageBox(0, xpto.str().c_str(), TEXT("YO"), MB_OK);
 		break;
 
-	case WM_MOUSEWHEEL:
-		zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		if (zDelta > 0) {
-			this->AreaMensagens->scrollUp();
-		} else {
-			this->AreaMensagens->scrollDown();
-		}
-		InvalidateRect(hWnd, NULL, 1);
-		break;
-
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &PtStc);
-		BitBlt(hdc, 0, 0, this->maxX, this->maxY, this->memdc, 0, 0, SRCCOPY);
-
-		// Teste
-		AreaMensagens->doPaint(hdc,hWnd);
-
-		EndPaint(hWnd, &PtStc);
-		break;
-
-	case WM_COMMAND:
-		// Um comando
-		switch (LOWORD(wParam)){
-		case ID_CHAT_SAIR:
-			this->MostrarElementos(this->_hWnd);
-			DestroyWindow(hWnd);
-			break;
-
-		case ID_CHAT_LOGIN:
-
-			thLogin = new ThreadCaixaDialogoLogin(this->servidor);
-			thLogin->setHwndPai(hWnd);
-			thLogin->sethInstance(this->hInst);
-			thLogin->LancarThread();
-
-			//if (Autenticar(_T("admin"),_T("admin")))
-			//	DialogBox(hInst, (LPCWSTR) IDD_LOGIN, hWnd, (DLGPROC) ThreadCaixaDialogoLogin::DialogoLogin);
-
-			break;
-
-		case ID_CHAT_LOGOUT:
-			xpto << this->servidor.cSair();
-			MessageBox(0, xpto.str().c_str(), TEXT("YO"), MB_OK);
-			break;
-
-		default:
-			if (wParam == this->BotaoEnviar->getId()) {
-				MessageBox(0, this->txtEnviar->getTexto().c_str(), TEXT("YO"), MB_OK);
-			}
-			else if (wParam == this->BotaoLike->getId()) {
-				this->AreaMensagens->scrollUp();
-				InvalidateRect(hWnd, NULL, 1);
-			}
-			else if (wParam == this->BotaoDislike->getId()) {
-				this->AreaMensagens->scrollDown();
-				InvalidateRect(hWnd, NULL, 1);
-			}
-		}
 	default:
-		// Neste exemplo, para qualquer outra mensagem (p.e. "minimizar", "maximizar",
-		// "restaurar") não é efectuado nenhum processamento, apenas se segue 
-		// o "default" do Windows DefWindowProc()
-		return(DefWindowProc(hWnd, messg, wParam, lParam));
-		break;
+		if (wParam == this->BotaoEnviar->getId()) {
+			MessageBox(0, this->txtEnviar->getTexto().c_str(), TEXT("YO"), MB_OK);
+		}
+		else if (wParam == this->BotaoLike->getId()) {
+			this->AreaMensagens->scrollUp();
+			InvalidateRect(hWnd, NULL, 1);
+		}
+		else if (wParam == this->BotaoDislike->getId()) {
+			this->AreaMensagens->scrollDown();
+			InvalidateRect(hWnd, NULL, 1);
+		}
 	}
-	return(0);
 }
 
 void JanelaPrincipal::MostrarElementos(HWND hWnd) {
