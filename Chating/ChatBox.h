@@ -5,6 +5,8 @@
 class ChatBox : public Control
 {
 private:
+	RECT rect;
+	HBRUSH backgroundColor;
 	int scrollX;
 	int scrollY;
 public:
@@ -21,4 +23,6 @@ public:
 
 	void scrollUp();
 	void scrollDown();
+
+	void setBackgroundColorRGB(int r, int g, int b);
 };

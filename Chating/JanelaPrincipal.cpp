@@ -108,13 +108,11 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		if (wParam == this->BotaoEnviar->getId()) {
 			MessageBox(0, this->txtEnviar->getTexto().c_str(), TEXT("YO"), MB_OK);
 		}
-		else if (wParam == this->BotaoLike->getId()) {
+		else if (wParam == this->BotaoCima->getId()) {
 			this->AreaMensagens->scrollUp();
-			InvalidateRect(hWnd, NULL, 1);
 		}
-		else if (wParam == this->BotaoDislike->getId()) {
+		else if (wParam == this->BotaoBaixo->getId()) {
 			this->AreaMensagens->scrollDown();
-			InvalidateRect(hWnd, NULL, 1);
 		}
 	}
 }

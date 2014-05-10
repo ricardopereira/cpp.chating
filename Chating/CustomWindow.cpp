@@ -57,7 +57,6 @@ LRESULT CALLBACK internalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		} else {
 			ptr->onMouseWheelDown(hWnd);
 		}
-		ptr->refresh(hWnd);
 		break;
 
 	case WM_PAINT:

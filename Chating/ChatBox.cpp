@@ -6,8 +6,14 @@
 ChatBox::ChatBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura) : Control(hInstance, px, py, comprimento, largura)
 {
 	this->ControloId = 0; //Unico por janela
+	this->rect.left = this->pos_x; //posição inicial x
+	this->rect.top = this->pos_y; //posição inicial y
+	this->rect.right = this->comprimento; //posição final x
+	this->rect.bottom = this->largura; //posição final y
 	this->scrollX = 0;
 	this->scrollY = 0;
+	// Default
+	setBackgroundColorRGB(232,233,232);
 }
 
 ChatBox::~ChatBox()
@@ -33,29 +39,35 @@ void ChatBox::Mostra(HWND hWnd)
 		);
 }
 
+void ChatBox::setBackgroundColorRGB(int r, int g, int b)
+{
+	this->backgroundColor = CreateSolidBrush(RGB(r,g,b));
+}
+
 int ChatBox::getScrollX()
 {
-	return scrollX;
+	return this->scrollX;
 }
 
 int ChatBox::getScrollY()
 {
-	return scrollY;
+	return this->scrollY;
 }
 
 void ChatBox::scrollUp()
 {
-	scrollY -= 10;
+	this->scrollY -= 10;
+	InvalidateRect(hWnd,&rect,1);
 }
 
 void ChatBox::scrollDown()
 {
-	scrollY += 10;
+	this->scrollY += 10;
+	InvalidateRect(hWnd,&rect,1);
 }
 
 void ChatBox::doPaint(HDC hdc, HWND hWnd)
 {
-	RECT rc;
 	ChatBoxItem item1(_T("Ricardo Pereira"),_T("Isto é para dar duro"),_T("05-05-2014 05:08"),1);
 	ChatBoxItem item2(_T("Ricardo Pereira"),_T("Pode ser?"),_T("05-05-2014 05:12"),1);
 	ChatBoxItem item3(_T("Mário Leite"),_T("Vamos a isso"),_T("05-05-2014 05:12"),0);
@@ -63,15 +75,10 @@ void ChatBox::doPaint(HDC hdc, HWND hWnd)
 	ChatBoxItem item5(_T("Mário Leite"),_T("Vou fazer commit"),_T("05-05-2014 05:12"),0);
 	ChatBoxItem item6(_T("Mário Leite"),_T("Já está"),_T("05-05-2014 05:12"),0);
 
-	rc.left = this->pos_x; //posição inicial x
-	rc.top = this->pos_y; //posição inicial y
-	rc.right = this->comprimento; //posição final x
-	rc.bottom = this->largura; //posição final y
-
 	SelectObject(hdc, GetStockObject(DEFAULT_GUI_FONT));
 	SetBkMode(hdc, TRANSPARENT);
 	
-	FillRect(hdc, &rc, CreateSolidBrush(RGB(232,233,232)));
+	FillRect(hdc, &rect, backgroundColor);
 	//Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
 
 	// Teste
