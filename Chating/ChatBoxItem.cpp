@@ -1,5 +1,5 @@
-#include "ChatBoxItem.h"
 #include "resource.h"
+#include "ChatBoxItem.h"
 
 ChatBoxItem::ChatBoxItem(sTchar_t username, sTchar_t message, sTchar_t info, int isOwner)
 {
@@ -34,7 +34,7 @@ int ChatBoxItem::getIsOwner()
 	return isOwner;
 }
 
-void ChatBoxItem::doPaint(HDC hdc, HWND hWnd, ChatBox& chat, int index)
+void ChatBoxItem::doPaint(HDC hdc, HWND hWnd, ChatBox &chat, int index)
 {
 	RECT rc;
 	int cellHeight = 60;

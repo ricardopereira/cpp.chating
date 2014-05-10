@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ChatBox.h"
 #include "Common.h"
+#include "ChatBox.h"
 
 class ChatBoxItem
 {
@@ -14,7 +14,7 @@ public:
 	ChatBoxItem(sTchar_t username, sTchar_t message, sTchar_t info, int isOwner);
 	~ChatBoxItem();
 
-	virtual void doPaint(HDC hdc, HWND hWnd, ChatBox& chat, int index);
+	virtual void doPaint(HDC hdc, HWND hWnd, ChatBox &chat, int index);
 
 	sTchar_t getUsername();
 	sTchar_t getMessage();

@@ -3,12 +3,15 @@
 #include <vector>
 
 #include "CustomWindow.h"
+#include "Common.h"
 #include "Layout.h"
 #include "Button.h"
 #include "ListBox.h"
 #include "EditBox.h"
 #include "ChatBox.h"
 #include "Server.h"
+
+using namespace std;
 
 class JanelaPrincipal : public CustomWindow
 {
@@ -24,14 +27,15 @@ private:
 	ChatBox*			AreaMensagens;
 
 	ListBox* ListaUtilizadores;
-	std::vector<Layout*> layoutVertical;
-	std::vector<Layout*> layoutHorizontal;
+	vector<Layout*> layoutVertical;
+	vector<Layout*> layoutHorizontal;
 	Server servidor;
 	
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;
 public:
 	JanelaPrincipal();
+	~JanelaPrincipal();
 
 	void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,
 		LPCTSTR MenuName = NULL, UINT style = CS_VREDRAW | CS_HREDRAW);

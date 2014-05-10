@@ -7,10 +7,30 @@
 #include "resource.h"
 #include "ThreadCaixaDialogoLogin.h"
 
-JanelaPrincipal::JanelaPrincipal() {
+JanelaPrincipal::JanelaPrincipal()
+{
 	// Init
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
+}
+
+JanelaPrincipal::~JanelaPrincipal()
+{
+	// Libertar elementos layoutVertical: De uma forma
+	for (unsigned int i = 0; i < layoutVertical.size(); i++)
+		delete layoutVertical.at(i);
+	// Libertar elementos layoutHorizontal: De outra forma
+	for (vector<Layout*>::iterator it = layoutHorizontal.begin(); it != layoutHorizontal.end(); ++it)
+		delete *it;
+
+	delete txtEnviar;
+	delete BotaoLike;
+	delete BotaoDislike;
+	delete BotaoEnviar;
+	delete BotaoCima;
+	delete BotaoBaixo;
+	delete AreaMensagens;
+	delete ListaUtilizadores;
 }
 
 void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size, LPCTSTR MenuName, UINT style)
@@ -39,6 +59,14 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 	this->maxY = GetSystemMetrics(SM_CYSCREEN);
 	hdc = GetDC(hWnd);
 	this->memdc = CreateCompatibleDC(hdc);
+
+	//Teste
+	AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Isto é para dar duro"));
+	AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Pode ser?"));
+	AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Vamos a isso"));
+	AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Yeah"));
+	AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Vou fazer commit"));
+	AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Já está"));
 }
 
 void JanelaPrincipal::onShow(HWND hWnd)
@@ -129,11 +157,11 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 	layoutHorizontal.push_back(new Layout(0.175f));
 
 
-	for (unsigned int i = 0; i < layoutVertical.size(); i++){
+	for (unsigned int i = 0; i < layoutVertical.size(); i++) {
 		layoutVertical.at(i)->calcularPosicoesY(hWnd);
-
 	}
-	for (unsigned int i = 0; i < layoutHorizontal.size(); i++){
+
+	for (unsigned int i = 0; i < layoutHorizontal.size(); i++) {
 		layoutHorizontal.at(i)->calcularPosicoesX(hWnd);
 	}
 

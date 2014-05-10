@@ -14,6 +14,8 @@ protected:
 	HDC memdc;
 	CustomWindow() {};
 public:
+	virtual ~CustomWindow() {};
+
 	virtual void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,
 		LPCTSTR MenuName = NULL, UINT style = CS_VREDRAW | CS_HREDRAW) = 0;
 
