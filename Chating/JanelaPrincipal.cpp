@@ -134,7 +134,14 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {
-			AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),this->txtEnviar->getTexto());
+			// Verificar se tem mensagem para enviar
+			// ToDo: funcao Trim
+			if (_tcscmp(this->txtEnviar->getTexto().c_str(), TEXT("")))
+			{
+				// Coloca no ChatBox
+				AreaMensagens->addMessageOnRight(servidor.getLoginAutenticado(),this->txtEnviar->getTexto());
+				this->txtEnviar->clear();
+			}
 		}
 		else if (wParam == this->BotaoCima->getId()) {
 			this->AreaMensagens->scrollUp();

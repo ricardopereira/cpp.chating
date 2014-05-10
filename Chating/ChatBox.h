@@ -32,8 +32,7 @@ public:
 	void scrollUp();
 	void scrollDown();
 
-	// ToDo: Colocar referências para não fazer cópia
-	void addMessageOnRight(sTchar_t username, sTchar_t message);
-	void addMessageOnLeft(sTchar_t username, sTchar_t message);
+	void addMessageOnRight(const sTchar_t&  username, sTchar_t message);
+	void addMessageOnLeft(const sTchar_t&  username, sTchar_t message);
 	void refresh();
 };

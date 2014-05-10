@@ -35,10 +35,19 @@ void EditBox::Mostra(HWND hWnd)
 std::basic_string<TCHAR> EditBox::getTexto()
 {
 	TCHAR tmp[500];
-	GetWindowText(GetDlgItem(this->hWndPai, this->ControloId), tmp, 500);
+	//GetWindowText(GetDlgItem(this->hWndPai, this->ControloId), tmp, 500);
+	GetDlgItemText(this->hWndPai, this->ControloId, tmp, 500);
 	this->texto = std::basic_string<TCHAR>(tmp);
 	return this->texto;
 }
 
+void EditBox::setTexto(LPCWSTR texto)
+{
+	SetDlgItemText(this->hWndPai, this->ControloId, texto);
+}
 
+void EditBox::clear()
+{
+	SetDlgItemText(this->hWndPai, this->ControloId, TEXT(""));
+}
 

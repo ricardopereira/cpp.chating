@@ -74,7 +74,7 @@ void ChatBox::refresh()
 	InvalidateRect(hWnd,&rect,1);
 }
 
-void ChatBox::addMessageOnRight(sTchar_t username, sTchar_t message)
+void ChatBox::addMessageOnRight(const sTchar_t& username, sTchar_t message)
 {
 	//SYSTEMTIME hour;
 	//GetSystemTime(&hour);
@@ -83,7 +83,7 @@ void ChatBox::addMessageOnRight(sTchar_t username, sTchar_t message)
 	refresh();
 }
 
-void ChatBox::addMessageOnLeft(sTchar_t username, sTchar_t message)
+void ChatBox::addMessageOnLeft(const sTchar_t& username, sTchar_t message)
 {
 	messages.push_back(new ChatBoxItem(username,message,_T(""),0));
 	refresh();

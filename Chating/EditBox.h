@@ -15,4 +15,6 @@ public:
 
 	void Mostra(HWND hWnd);
 	std::basic_string<TCHAR> getTexto();
+	void setTexto(LPCWSTR texto);
+	void clear();
 };

@@ -8,6 +8,7 @@ class Server
 private:
 	bool autenticado;
 	bool privilegiosAdmin;
+	sTchar_t loginAutenticado;
 	UTILIZADOR utilizadores[NUMUTILIZADORES];
 	UTILIZADOR utilizadoresOnline[NUMUTILIZADORES];
 	int totalUtilizadores;
@@ -28,4 +29,5 @@ public:
 	int cDesligar();
 
 	bool getIsAutenticado();
+	const sTchar_t& getLoginAutenticado();
 };

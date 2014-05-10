@@ -4,11 +4,18 @@ Server::Server()
 {
 	this->autenticado = false;
 	this->privilegiosAdmin = false;
+	// Default
+	this->loginAutenticado = _T("Default");
 }
 
 bool Server::getIsAutenticado()
 {
-	return autenticado;
+	return this->autenticado;
+}
+
+const sTchar_t& Server::getLoginAutenticado()
+{
+	return this->loginAutenticado;
 }
 
 int Server::cAutenticar(TCHAR* login, TCHAR *pass)
