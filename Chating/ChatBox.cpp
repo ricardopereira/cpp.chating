@@ -1,9 +1,9 @@
+#include "resource.h"
 #include "ChatBox.h"
 #include "ChatBoxItem.h"
-#include "resource.h"
-#include "comunicacao.h"
+#include "Common.h"
 
-ChatBox::ChatBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura) : Controlo(hInstance, px, py, comprimento, largura)
+ChatBox::ChatBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura) : Control(hInstance, px, py, comprimento, largura)
 {
 	this->ControloId = 0; //Unico por janela
 	this->scrollX = 0;

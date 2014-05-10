@@ -1,16 +1,18 @@
 #pragma once
 
 #include "Thread.h"
-#include "Comunicacao.h"
+#include "Server.h"
 
 class ThreadCaixaDialogoLogin : public Thread
 {
 private:
 	HINSTANCE hInstance;
 	HWND hWndPai;
-	Comunicacao& messenger;
+	Server* servidor;
+
+	ThreadCaixaDialogoLogin() { servidor = new Server; /* Memory leak mas é privado :) */ };
 public:
-	ThreadCaixaDialogoLogin(Comunicacao& messenger);
+	ThreadCaixaDialogoLogin(Server& servidor);
 	~ThreadCaixaDialogoLogin();
 
 	virtual DWORD WINAPI funcaoThread(LPVOID param);

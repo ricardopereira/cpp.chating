@@ -1,17 +1,18 @@
 #pragma once
-#include "Controlo.h"
+
+#include "Control.h"
 #include <string>
 
-class CaixaTexto : public Controlo
+class EditBox : public Control
 {
 private:
 	int static CaixaTextoIdAcum;
 	std::basic_string<TCHAR> texto;
 	HFONT hfont;
 public:
-	CaixaTexto(HINSTANCE hInstance, long px, long py, long comprimento, long largura);
+	EditBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura);
+	~EditBox();
+
 	void Mostra(HWND hWnd);
-	~CaixaTexto();
 	std::basic_string<TCHAR> getTexto();
 };
-

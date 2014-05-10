@@ -1,44 +1,41 @@
 #pragma once
 
-#include "JanelaGenerica.h"
 #include <vector>
-#include "Layout.h"
-#include "Botao.h"
-#include "ListBox.h"
-#include "CaixaTexto.h"
-#include "ChatBox.h"
 
-class JanelaPrincipal : public JanelaGenerica 
+#include "CustomWindow.h"
+#include "Layout.h"
+#include "Button.h"
+#include "ListBox.h"
+#include "EditBox.h"
+#include "ChatBox.h"
+#include "Server.h"
+
+class JanelaPrincipal : public CustomWindow
 {
 private:
-	CaixaTexto*			txtEnviar;
-	Botao*				BotaoLike;
+	EditBox*			txtEnviar;
 	HWND				BotaoX;
-	Botao*				BotaoDislike;
-	Botao*				BotaoEnviar;
-	Botao*				BotaoCima;
-	Botao*				BotaoBaixo;
+	Button*				BotaoLike;
+	Button*				BotaoDislike;
+	Button*				BotaoEnviar;
+	Button*				BotaoCima;
+	Button*				BotaoBaixo;
 	int					BotaoEnviarId;
 	ChatBox*			AreaMensagens;
 
 	ListBox* ListaUtilizadores;
 	std::vector<Layout*> layoutVertical;
 	std::vector<Layout*> layoutHorizontal;
-	Comunicacao	messenger;
+	Server servidor;
 	
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;
 public:
 	JanelaPrincipal();
 
-	virtual LRESULT myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
-	virtual void MostrarElementos(HWND hWnd);
+	void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,
+		LPCTSTR MenuName = NULL, UINT style = CS_VREDRAW | CS_HREDRAW);
 
-	void Inicializar(
-		HINSTANCE hInst,
-		LPCTSTR ClassName,
-		UINT class_size,
-		LPCTSTR MenuName = NULL,
-		UINT style = CS_VREDRAW | CS_HREDRAW
-		);
+	virtual LRESULT performWMessage(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
+	virtual void MostrarElementos(HWND hWnd);
 };

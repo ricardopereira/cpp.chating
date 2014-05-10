@@ -1,24 +1,24 @@
-#include "Botao.h"
+#include "Button.h"
 #include "resource.h"
 
-int Botao::botaoIdAcum = RESERVADO_BOTOES_400_500;
+int Button::botaoIdAcum = RESERVADO_BOTOES_400_500;
 
-Botao::Botao(HINSTANCE hInstance, long px, long py, long comprimento, long largura) : Controlo(hInstance, px, py, comprimento, largura)
+Button::Button(HINSTANCE hInstance, long px, long py, long comprimento, long largura) : Control(hInstance, px, py, comprimento, largura)
 {
 	this->ControloId = botaoIdAcum++;
 	hfont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 }
 
-Botao::~Botao()
+Button::~Button()
 {
 }
 
-void Botao::setTextoBotao(const sTchar_t texto)
+void Button::setTextoBotao(const sTchar_t texto)
 {
 	this->texto = texto;
 }
 
-void Botao::Mostra(HWND hWnd)
+void Button::Mostra(HWND hWnd)
 {
 	this->hWnd = CreateWindowEx(
 		0,

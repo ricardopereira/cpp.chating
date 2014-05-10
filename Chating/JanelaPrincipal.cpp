@@ -1,9 +1,11 @@
-#include "JanelaPrincipal.h"
 #include <Windows.h>
-#include "resource.h"
 #include <tchar.h>
 #include <sstream>
 #include <string>
+
+#include "JanelaPrincipal.h"
+#include "resource.h"
+#include "ThreadCaixaDialogoLogin.h"
 
 JanelaPrincipal::JanelaPrincipal() {
 	// Init
@@ -11,11 +13,11 @@ JanelaPrincipal::JanelaPrincipal() {
 	this->BotaoEnviarId = -10;
 }
 
-void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size, LPCTSTR MenuName, UINT style) {
-
+void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size, LPCTSTR MenuName, UINT style)
+{
 	_WndClsEx.cbSize = sizeof(WNDCLASSEX);
 	_WndClsEx.style = style;
-	_WndClsEx.lpfnWndProc = JanelaGenerica::WndProc; //Apontar para a função de tratamento de callback que se encontra na própria classe.
+	_WndClsEx.lpfnWndProc = CustomWindow::WndProc; //Apontar para a função de tratamento de callback que se encontra na própria classe.
 	_WndClsEx.cbClsExtra = 0;
 	_WndClsEx.cbWndExtra = sizeof(JanelaPrincipal*);
 	_WndClsEx.hInstance = hInst;
@@ -25,10 +27,10 @@ void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class
 	_WndClsEx.lpszMenuName = MenuName;
 	_WndClsEx.lpszClassName = ClassName;
 	_WndClsEx.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
-
 }
 
-LRESULT JanelaPrincipal::myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam){
+LRESULT JanelaPrincipal::performWMessage(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
+{
 	HDC hdc;
 	PAINTSTRUCT PtStc; // Ponteiro para estrutura de WM_PAINT
 	oTcharStream_t xpto;
@@ -100,7 +102,7 @@ LRESULT JanelaPrincipal::myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM 
 
 		case ID_CHAT_LOGIN:
 
-			thLogin = new ThreadCaixaDialogoLogin(this->messenger);
+			thLogin = new ThreadCaixaDialogoLogin(this->servidor);
 			thLogin->setHwndPai(hWnd);
 			thLogin->sethInstance(this->hInst);
 			thLogin->LancarThread();
@@ -111,7 +113,7 @@ LRESULT JanelaPrincipal::myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM 
 			break;
 
 		case ID_CHAT_LOGOUT:
-			xpto << this->messenger.cSair();
+			xpto << this->servidor.cSair();
 			MessageBox(0, xpto.str().c_str(), TEXT("YO"), MB_OK);
 			break;
 
@@ -133,7 +135,6 @@ LRESULT JanelaPrincipal::myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM 
 		// "restaurar") não é efectuado nenhum processamento, apenas se segue 
 		// o "default" do Windows DefWindowProc()
 		return(DefWindowProc(hWnd, messg, wParam, lParam));
-
 		break;
 	}
 	return(0);
@@ -177,7 +178,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		);
 	this->ListaUtilizadores->Mostra(hWnd);
 
-	this->txtEnviar = new CaixaTexto(
+	this->txtEnviar = new EditBox(
 		this->hInst,
 		layoutHorizontal[0]->getPosicao(),
 		layoutVertical[3]->getPosicao(),
@@ -187,7 +188,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 	this->txtEnviar->setHwndPai(hWnd);
 	this->txtEnviar->Mostra(hWnd);
 
-	this->BotaoLike = new Botao(
+	this->BotaoLike = new Button(
 		this->hInst,
 		layoutHorizontal[1]->getPosicao() - 150, //x
 		layoutVertical[2]->getPosicao(), //y
@@ -197,7 +198,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 	this->BotaoLike->setTextoBotao(TEXT("Like"));
 	this->BotaoLike->Mostra(hWnd);
 
-	this->BotaoDislike = new Botao(
+	this->BotaoDislike = new Button(
 		this->hInst,
 		layoutHorizontal[1]->getPosicao() - 100, //x
 		layoutVertical[2]->getPosicao(), //y
@@ -207,7 +208,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 	this->BotaoDislike->setTextoBotao(TEXT("Dislike"));
 	this->BotaoDislike->Mostra(hWnd);
 
-	this->BotaoEnviar = new Botao(
+	this->BotaoEnviar = new Button(
 		this->hInst,
 		layoutHorizontal[1]->getPosicao() - 50, //x
 		layoutVertical[2]->getPosicao(), //y
@@ -217,7 +218,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 	this->BotaoEnviar->setTextoBotao(TEXT("Enviar"));
 	this->BotaoEnviar->Mostra(hWnd);
 
-	this->BotaoCima = new Botao(
+	this->BotaoCima = new Button(
 		this->hInst,
 		layoutHorizontal[1]->getPosicao(),
 		layoutVertical[1]->getPosicao(),
@@ -227,7 +228,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 	this->BotaoCima->setTextoBotao(TEXT("/\\"));
 	this->BotaoCima->Mostra(hWnd);
 
-	this->BotaoBaixo = new Botao(
+	this->BotaoBaixo = new Button(
 		this->hInst,
 		layoutHorizontal[1]->getPosicao(),
 		layoutVertical[2]->getPosicao() - 10,

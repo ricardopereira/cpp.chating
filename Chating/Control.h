@@ -1,7 +1,9 @@
 #pragma once
+
 #include <Windows.h>
 
-class Controlo {
+class Control
+{
 protected:
 	long pos_x;
 	long pos_y;
@@ -12,10 +14,9 @@ protected:
 	int ControloId;
 	HINSTANCE hInstance;
 
-	Controlo(){};
-	Controlo(HINSTANCE hInstance, long px, long py, long comprimento, long largura);
+	Control() {};
+	Control(HINSTANCE hInstance, long px, long py, long comprimento, long largura);
 public:
-
 	virtual void Mostra(HWND hWnd)=0;
 	HWND getHwnd();
 	void setHwndPai(HWND hWnd);

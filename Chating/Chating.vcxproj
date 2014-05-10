@@ -77,13 +77,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Botao.cpp" />
-    <ClCompile Include="CaixaTexto.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="EditBox.cpp" />
     <ClCompile Include="ChatBox.cpp" />
     <ClCompile Include="ChatBoxItem.cpp" />
-    <ClCompile Include="Comunicacao.cpp" />
-    <ClCompile Include="Controlo.cpp" />
-    <ClCompile Include="JanelaGenerica.cpp" />
+    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Control.cpp" />
+    <ClCompile Include="CustomWindow.cpp" />
     <ClCompile Include="JanelaPrincipal.cpp" />
     <ClCompile Include="JanelaPrivada.cpp" />
     <ClCompile Include="Layout.cpp" />
@@ -92,14 +92,15 @@
     <ClCompile Include="ThreadCaixaDialogoLogin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Botao.h" />
-    <ClInclude Include="CaixaTexto.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="EditBox.h" />
     <ClInclude Include="ChatBox.h" />
     <ClInclude Include="ChatBoxItem.h" />
-    <ClInclude Include="Comunicacao.h" />
-    <ClInclude Include="Controlo.h" />
+    <ClInclude Include="Server.h" />
+    <ClInclude Include="Control.h" />
     <ClInclude Include="DLL\DLLTP.h" />
-    <ClInclude Include="JanelaGenerica.h" />
+    <ClInclude Include="CustomWindow.h" />
     <ClInclude Include="JanelaPrincipal.h" />
     <ClInclude Include="JanelaPrivada.h" />
     <ClInclude Include="Layout.h" />

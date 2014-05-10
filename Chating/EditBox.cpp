@@ -1,19 +1,19 @@
-#include "CaixaTexto.h"
+#include "EditBox.h"
 #include "resource.h"
 
-int CaixaTexto::CaixaTextoIdAcum = RESERVADO_CAIXATEXTO_601_700;
+int EditBox::CaixaTextoIdAcum = RESERVADO_CAIXATEXTO_601_700;
 
-CaixaTexto::CaixaTexto(HINSTANCE hInstance, long px, long py, long comprimento, long largura) : Controlo(hInstance, px, py, comprimento, largura)
+EditBox::EditBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura) : Control(hInstance, px, py, comprimento, largura)
 {
 	this->ControloId = CaixaTextoIdAcum++;
 	hfont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 }
 
-CaixaTexto::~CaixaTexto()
+EditBox::~EditBox()
 {
 }
 
-void CaixaTexto::Mostra(HWND hWnd)
+void EditBox::Mostra(HWND hWnd)
 {
 	this->hWnd = CreateWindowEx(
 		WS_EX_CLIENTEDGE,
@@ -32,7 +32,7 @@ void CaixaTexto::Mostra(HWND hWnd)
 	SendMessage(this->hWnd, WM_SETFONT, (WPARAM)hfont, MAKELPARAM(TRUE, 0));
 }
 
-std::basic_string<TCHAR> CaixaTexto::getTexto()
+std::basic_string<TCHAR> EditBox::getTexto()
 {
 	TCHAR tmp[500];
 	GetWindowText(GetDlgItem(this->hWndPai, this->ControloId), tmp, 500);

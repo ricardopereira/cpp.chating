@@ -1,25 +1,25 @@
-#include "JanelaPrivada.h"
 #include <Windows.h>
 #include "resource.h"
 
-LRESULT JanelaPrivada::myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
-{
-	switch (messg) {
-	case WM_CREATE:
-		MessageBox(NULL, TEXT("Privado"), TEXT("texto"), MB_OK);
-		break;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	case WM_COMMAND:
+#include "JanelaPrivada.h"
 
-		break;
-	default:
-		// Neste exemplo, para qualquer outra mensagem (p.e. "minimizar", "maximizar",
-		// "restaurar") não é efectuado nenhum processamento, apenas se segue 
-		// o "default" do Windows DefWindowProc()
-		return(DefWindowProc(hWnd, messg, wParam, lParam));
-		break;
-	}
-	return(0);
-};
+void JanelaPrivada::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size, LPCTSTR MenuName, UINT style)
+{
+	_WndClsEx.cbSize = sizeof(WNDCLASSEX);
+	_WndClsEx.style = style;
+	_WndClsEx.lpfnWndProc = CustomWindow::WndProc; //Apontar para a função de tratamento de callback que se encontra na própria classe.
+	_WndClsEx.cbClsExtra = 0;
+	_WndClsEx.cbWndExtra = sizeof(JanelaPrivada*);
+	_WndClsEx.hInstance = hInst;
+	_WndClsEx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	_WndClsEx.hCursor = LoadCursor(NULL, IDC_ARROW);
+	_WndClsEx.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
+	_WndClsEx.lpszMenuName = MenuName;
+	_WndClsEx.lpszClassName = ClassName;
+	_WndClsEx.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
+}
+
+LRESULT JanelaPrivada::performWMessage(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
+{
+	return 0;
+}

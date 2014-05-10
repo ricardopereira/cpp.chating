@@ -8,14 +8,17 @@ Layout::Layout()
 {
 }
 
-
 Layout::~Layout()
 {
 }
-Layout::Layout(float percentagem){
+
+Layout::Layout(float percentagem)
+{
 	this->percentagem = percentagem;
 }
-void Layout::calcularPosicoesY(HWND hWnd){
+
+void Layout::calcularPosicoesY(HWND hWnd)
+{
 	RECT dimensoes;
 	GetClientRect(hWnd, &dimensoes);
 	this->altura = static_cast<long>((dimensoes.bottom - 2) * this->percentagem);
@@ -29,7 +32,8 @@ void Layout::calcularPosicoesY(HWND hWnd){
 	//MessageBox(hWnd, text, TEXT("YO"), MB_OK);
 }
 
-void Layout::calcularPosicoesX(HWND hWnd){
+void Layout::calcularPosicoesX(HWND hWnd)
+{
 	RECT dimensoes;
 	GetClientRect(hWnd, &dimensoes);
 	this->largura = static_cast<long>((dimensoes.right - 3) * this->percentagem);
@@ -40,18 +44,24 @@ void Layout::calcularPosicoesX(HWND hWnd){
 	//_stprintf_s(text, 50,_T("Comprimento: %ld, Largura: %ld"), dimensoes.left, dimensoes.bottom);
 	//MessageBox(hWnd, text, TEXT("YO"), MB_OK);
 }
-long Layout::getPosicao(){
+
+long Layout::getPosicao()
+{
 	return this->pos;
 }
 
-long Layout::getAltura(){
+long Layout::getAltura()
+{
 	return this->altura;
 }
-long Layout::getLargura(){
+
+long Layout::getLargura()
+{
 	return this->largura;
 }
 
-void Layout::ReiniciarValoresAcumulados(){
+void Layout::ReiniciarValoresAcumulados()
+{
 	Layout::posXAcum = 10;
 	Layout::posYAcum = 10;
 }

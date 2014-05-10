@@ -1,42 +1,44 @@
-#include "Botao.h"
+#include "Control.h"
 #include "resource.h"
 
-
-Controlo::Controlo(HINSTANCE hInstance, long px, long py, long comprimento, long largura){
+Control::Control(HINSTANCE hInstance, long px, long py, long comprimento, long largura)
+{
 	this->pos_x = px;
 	this->pos_y = py;
 	this->comprimento = comprimento;
 	this->largura = largura;
 	this->hInstance = hInstance;
 }
-HWND Controlo::getHwnd(){
+
+HWND Control::getHwnd(){
 	return this->hWnd;
 }
 
-void Controlo::setHwndPai(HWND hWnd){
+void Control::setHwndPai(HWND hWnd)
+{
 	this->hWndPai = hWnd;
 }
 
-int Controlo::getId(){
+int Control::getId(){
 	return this->ControloId;
 }
 
-long Controlo::getX()
+long Control::getX()
 {
 	return pos_x;
 }
 
-long Controlo::getY()
+long Control::getY()
 {
 	return pos_y;
 }
 
-long Controlo::getWidth()
+long Control::getWidth()
 {
 	return comprimento;
 }
 
-long Controlo::getHeight()
+long Control::getHeight()
 {
 	return largura;
 }

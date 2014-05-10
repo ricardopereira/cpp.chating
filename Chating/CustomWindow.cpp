@@ -1,20 +1,20 @@
-#include "JanelaGenerica.h"
+#include "CustomWindow.h"
 #include "resource.h"
 #include <crtdbg.h>
 
 // Função não membro (auxiliar)
-LRESULT CALLBACK WndProc2(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
+LRESULT CALLBACK internalWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	// Get a window pointer associated with this window
-	JanelaGenerica *ptr = (JanelaGenerica *)GetWindowLong(hWnd, GWL_USERDATA);
+	CustomWindow *ptr = (CustomWindow*)GetWindowLong(hWnd, GWL_USERDATA);
 	// It should be valid, assert so
 	_ASSERT(ptr);
 	// Redirect messages to the window procedure of the associated window
-	return ptr->myWndProc(hWnd, msg, wp, lp);
+	return ptr->performWMessage(hWnd, msg, wp, lp);
 }
 
 // MainWnd
-HWND JanelaGenerica::Criar(HINSTANCE hInst, LPCTSTR wndName)
+HWND CustomWindow::Criar(HINSTANCE hInst, LPCTSTR wndName)
 {
 	this->_hWnd = CreateWindowEx(0L, _WndClsEx.lpszClassName, wndName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 		CW_USEDEFAULT, (HWND)HWND_DESKTOP, NULL, hInst, this);
@@ -29,33 +29,17 @@ HWND JanelaGenerica::Criar(HINSTANCE hInst, LPCTSTR wndName)
 }
 
 // WinApp
-void JanelaGenerica::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size, LPCTSTR MenuName, UINT style)
-{
-	_WndClsEx.cbSize = sizeof(WNDCLASSEX);
-	_WndClsEx.style = style;
-	_WndClsEx.lpfnWndProc = JanelaGenerica::WndProc; //Apontar para a função de tratamento de callback que se encontra na própria classe.
-	_WndClsEx.cbClsExtra = 0;
-	_WndClsEx.cbWndExtra = sizeof(JanelaGenerica*);
-	_WndClsEx.hInstance = hInst;
-	_WndClsEx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	_WndClsEx.hCursor = LoadCursor(NULL, IDC_ARROW);
-	_WndClsEx.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-	_WndClsEx.lpszMenuName = MenuName;
-	_WndClsEx.lpszClassName = ClassName;
-	_WndClsEx.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
-}
+//void CustomWindow::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size, LPCTSTR MenuName, UINT style)
 
-void JanelaGenerica::Registar()
+void CustomWindow::Registar()
 {
 	//Registar a classe "_WndClsEx" no Windows
 	RegisterClassEx(&_WndClsEx);
 }
 
-BOOL JanelaGenerica::Mostrar(int dCmdShow)
+BOOL CustomWindow::Mostrar(int dCmdShow)
 {
-	// ============================================================================
 	// Mostrar a janela
-	// ============================================================================
 	if (!ShowWindow(_hWnd, dCmdShow))	// "hWnd"= handler da janela, devolvido 
 		return FALSE;					// por "CreateWindow"; "dCmdShow"= modo de
 	// exibição (p.e. normal, modal); é passado
@@ -67,7 +51,7 @@ BOOL JanelaGenerica::Mostrar(int dCmdShow)
 	return TRUE;
 }
 
-LRESULT CALLBACK JanelaGenerica::WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam){
+LRESULT CALLBACK CustomWindow::WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam){
 	LPCREATESTRUCT cs;
 	switch (messg) {
 	case WM_NCCREATE:
@@ -75,9 +59,9 @@ LRESULT CALLBACK JanelaGenerica::WndProc(HWND hWnd, UINT messg, WPARAM wParam, L
 		// Associar o ponteiro
 		SetWindowLongPtr(hWnd, GWL_USERDATA, (long)cs->lpCreateParams);
 		// Alterar função de tratamento de eventos 
-		SetWindowLongPtr(hWnd, GWL_WNDPROC, (long)WndProc2);
+		SetWindowLongPtr(hWnd, GWL_WNDPROC, (long)internalWndProc);
 		// Encaminhar WM_NCCREATE para a função membro de  tratamento de eventos
-		return WndProc2(hWnd, messg, wParam, lParam);
+		return internalWndProc(hWnd, messg, wParam, lParam);
 		break;
 	default:
 		// Neste exemplo, para qualquer outra mensagem (p.e. "minimizar", "maximizar",

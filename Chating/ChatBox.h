@@ -1,7 +1,8 @@
 #pragma once
-#include "Controlo.h"
 
-class ChatBox : public Controlo
+#include "Control.h"
+
+class ChatBox : public Control
 {
 private:
 	int scrollX;

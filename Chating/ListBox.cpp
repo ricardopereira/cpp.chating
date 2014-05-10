@@ -3,7 +3,7 @@
 
 int ListBox::ListBoxIdAcum = RESERVADO_LISTBOXES_501_600;
 
-ListBox::ListBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura) : Controlo(hInstance, px, py, comprimento, largura)
+ListBox::ListBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura) : Control(hInstance, px, py, comprimento, largura)
 {
 	this->ControloId = ListBoxIdAcum++;
 }

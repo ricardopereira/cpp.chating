@@ -1,12 +1,12 @@
-#include "Comunicacao.h"
+#include "Server.h"
 
-Comunicacao::Comunicacao()
+Server::Server()
 {
 	this->autenticado = false;
 	this->privilegiosAdmin = false;
 }
 
-int Comunicacao::cAutenticar(TCHAR* login, TCHAR *pass)
+int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 {
 	DWORD res = Autenticar(login, pass);
 
@@ -21,51 +21,64 @@ int Comunicacao::cAutenticar(TCHAR* login, TCHAR *pass)
 	return res;
 }
 
-int Comunicacao::cLerListaUtilizadores()
+int Server::cLerListaUtilizadores()
 {
 	this->totalUtilizadores = LerListaUtilizadores(this->utilizadoresOnline);
 	int x = 0;
 	return 1; 
 }
 
-int Comunicacao::cLerListaUtilizadoresRegistados()
+int Server::cLerListaUtilizadoresRegistados()
 {
 	this->totalUtilizadoresOnline = LerListaUtilizadoresRegistados(this->utilizadores);
 	int x = 0;
 	return 1; 
 }
 
-int Comunicacao::cIniciarConversa(TCHAR *utilizador) { return 1; }
+int Server::cIniciarConversa(TCHAR *utilizador)
+{ 
+	return 1;
+}
 
-int Comunicacao::cDesligarConversa() { return 1; }
+int Server::cDesligarConversa()
+{ 
+	return 1;
+}
 
-int Comunicacao::cEnviarMensagemPrivada(TCHAR *msg) { return 1; }
+int Server::cEnviarMensagemPrivada(TCHAR *msg)
+{ 
+	return 1;
+}
 
-void Comunicacao::cEnviarMensagemPública(TCHAR *msg)
+void Server::cEnviarMensagemPública(TCHAR *msg)
 {
 	return;
 }
 
-void Comunicacao::cLerInformacaoInicial()
+void Server::cLerInformacaoInicial()
 {
 	LerInformacaoInicial();
 	return;
 }
 
-void Comunicacao::cLerMensagensPublicas()
+void Server::cLerMensagensPublicas()
 {
 	MENSAGEM temp = LerMensagensPublicas();
 	int x = 0;
 }
 
-void Comunicacao::cLerMensagensPrivadas(){
+void Server::cLerMensagensPrivadas()
+{
 	MENSAGEM temp = LerMensagensPrivadas();
 	int x = 0;
 }
 
-int Comunicacao::cSair()
+int Server::cSair()
 { 
 	return Sair();
 }
 
-int Comunicacao::cDesligar(){ return 1; }
+int Server::cDesligar()
+{ 
+	return 1;
+}

@@ -1,9 +1,13 @@
 #pragma once
-#include "JanelaGenerica.h"
 
-class JanelaPrivada : public JanelaGenerica{
+#include "CustomWindow.h"
+
+class JanelaPrivada : public CustomWindow
+{
 private:
-
 public:
-	virtual LRESULT myWndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) ;
+	void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,
+		LPCTSTR MenuName = NULL, UINT style = CS_VREDRAW | CS_HREDRAW);
+
+	virtual LRESULT performWMessage(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
 };

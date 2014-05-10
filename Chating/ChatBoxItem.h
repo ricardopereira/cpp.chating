@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ChatBox.h"
-#include "comunicacao.h"
+#include "Common.h"
 
 class ChatBoxItem
 {

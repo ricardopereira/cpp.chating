@@ -1,12 +1,9 @@
 #pragma once
 #include "DLL/DLLTP.h"
-#include <string>
+#include "Common.h"
 #include <sstream>
 
-typedef std::basic_string<TCHAR> sTchar_t;
-typedef std::basic_ostringstream<TCHAR> oTcharStream_t;
-
-class Comunicacao
+class Server
 {
 private:
 	bool autenticado;
@@ -16,7 +13,7 @@ private:
 	int totalUtilizadores;
 	int totalUtilizadoresOnline;
 public:
-	Comunicacao();
+	Server();
 	int cAutenticar(TCHAR* login, TCHAR* pass);
 	int cLerListaUtilizadores();
 	int cLerListaUtilizadoresRegistados();

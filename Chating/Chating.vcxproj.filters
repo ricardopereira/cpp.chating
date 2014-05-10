@@ -30,9 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Comunicacao.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="JanelaPrincipal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,23 +42,11 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Botao.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="CaixaTexto.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
     <ClCompile Include="ChatBox.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
     <ClCompile Include="ChatBoxItem.cpp">
       <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="Controlo.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="JanelaGenerica.cpp">
-      <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Layout.cpp">
       <Filter>Source Files\Core</Filter>
@@ -72,11 +57,23 @@
     <ClCompile Include="Thread.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="EditBox.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Control.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomWindow.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Comunicacao.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="JanelaPrincipal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -86,26 +83,11 @@
     <ClInclude Include="ThreadCaixaDialogoLogin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DLL\DLLTP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Botao.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="CaixaTexto.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="ChatBox.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="ChatBoxItem.h">
       <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Controlo.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="JanelaGenerica.h">
-      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Layout.h">
       <Filter>Header Files\Core</Filter>
@@ -117,6 +99,27 @@
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditBox.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Control.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomWindow.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="DLL\DLLTP.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

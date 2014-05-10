@@ -5,7 +5,7 @@
 TCHAR login[50];
 TCHAR pass[50];
 
-ThreadCaixaDialogoLogin::ThreadCaixaDialogoLogin(Comunicacao& messenger) : messenger(messenger)
+ThreadCaixaDialogoLogin::ThreadCaixaDialogoLogin(Server& servidor) : servidor(&servidor)
 {
 	ptrClasse = this;
 }
@@ -16,13 +16,11 @@ ThreadCaixaDialogoLogin::~ThreadCaixaDialogoLogin()
 
 DWORD WINAPI ThreadCaixaDialogoLogin::funcaoThread(LPVOID param) 
 {
-	//DialogBox(this->hInstance, (LPCWSTR) IDD_LOGIN, this->hWndPai, (DLGPROC) ThreadCaixaDialogoLogin::DialogoLogin); 
-
-	DWORD valRetorno = DialogBox(this->hInstance, reinterpret_cast<LPCTSTR>(IDD_LOGIN), this->hWndPai,
+	DWORD valRetorno = DialogBox(this->hInstance, (LPCWSTR) IDD_LOGIN, this->hWndPai,
 		(DLGPROC)ThreadCaixaDialogoLogin::DialogoLogin);
 
 	if (valRetorno == 1) {
-		DWORD res = this->messenger.cAutenticar(login, pass);
+		DWORD res = this->servidor->cAutenticar(login, pass);
 
 		if (res == 2){
 			MessageBox(this->hWndPai, TEXT("Login: Administrador"), TEXT("Login"), MB_OK | MB_ICONINFORMATION);
@@ -38,9 +36,7 @@ DWORD WINAPI ThreadCaixaDialogoLogin::funcaoThread(LPVOID param)
 			MessageBox(this->hWndPai, text.c_str(), TEXT("Login"), MB_OK | MB_ICONINFORMATION);
 		}
 	}
-	UTILIZADOR *p = nullptr;
-	messenger.cLerListaUtilizadores();
-	messenger.cLerListaUtilizadoresRegistados();
+
 	return 1;
 }
 
@@ -63,10 +59,12 @@ BOOL CALLBACK ThreadCaixaDialogoLogin::DialogoLogin(HWND hWnd, UINT messg, WPARA
 	return 0;
 }
 
-void ThreadCaixaDialogoLogin::setHwndPai(HWND hWnd){
+void ThreadCaixaDialogoLogin::setHwndPai(HWND hWnd)
+{
 	this->hWndPai = hWnd;
 }
 
-void ThreadCaixaDialogoLogin::sethInstance(HINSTANCE hInstance){
+void ThreadCaixaDialogoLogin::sethInstance(HINSTANCE hInstance)
+{
 	this->hInstance = hInstance;
 }
