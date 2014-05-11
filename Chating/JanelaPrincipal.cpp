@@ -100,6 +100,35 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+BOOL CALLBACK DialogUtilizadores(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message) {
+	case WM_CLOSE:
+		EndDialog(hWnd, 0);
+		return 1;
+
+	case WM_INITDIALOG:
+		// Verificar se tem ponteiro da instância do Server
+		_ASSERT(ptrServidor);
+
+		for (int i = 0; i < ptrServidor->getTotalUtilizadores(); i++) {
+			SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_ADDSTRING, 0, (LPARAM)ptrServidor->getUtilizador(i).login);
+		}
+		return 1;
+	}
+	return 0;
+}
+
+void JanelaPrincipal::showUtilizadores(HWND hWnd)
+{
+	DialogBox(hInst, (LPCWSTR)IDD_UTILIZADORES, hWnd, (DLGPROC)DialogUtilizadores);
+}
+
+void JanelaPrincipal::showPrivateChat(HWND hWnd)
+{
+
+}
+
 void JanelaPrincipal::login(HWND hWnd)
 {
 	DWORD result = DialogBox(hInst, (LPCWSTR)IDD_LOGIN, hWnd, (DLGPROC)DialogLogin);
@@ -124,7 +153,7 @@ void JanelaPrincipal::logout(HWND hWnd)
 	if (opt == IDYES) {
 		res << this->servidor.cSair(); //Teste: res.str().c_str()
 		reset(hWnd);
-		MessageBox(0, TEXT("Logout com sucesso"), TEXT("Logout"), MB_OK | MB_ICONINFORMATION);
+		//MessageBox(0, TEXT("Logout com sucesso"), TEXT("Logout"), MB_OK | MB_ICONINFORMATION);
 	}
 }
 
@@ -181,9 +210,10 @@ void JanelaPrincipal::refresh(HWND hWnd)
 
 		if (this->servidor.getIsAdministrador())
 		{
-			// ToDo: Menu - Administrador
-			//this->servidor.
+			EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_ENABLED);
 		}
+		else
+			EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_DISABLED);
 	}
 	else {
 		// Sem login
@@ -259,6 +289,15 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 	case ID_CHAT_LOGOUT:
 		logout(hWnd);
+		login(hWnd);
+		break;
+
+	case ID_ADMINISTRADOR_UTILIZADORES:
+		showUtilizadores(hWnd);
+		break;
+
+	case ID_CONVERSA_PRIVADA:
+		showPrivateChat(hWnd);
 		break;
 
 	default:
