@@ -15,9 +15,9 @@ private:
 	int totalUtilizadoresOnline;
 public:
 	Server();
+
 	int cAutenticar(TCHAR* login, TCHAR* pass);
-	int cLerListaUtilizadores();
-	int cLerListaUtilizadoresRegistados();
+
 	int cIniciarConversa(TCHAR *utilizador);
 	int cDesligarConversa();
 	int cEnviarMensagemPrivada(TCHAR *msg);

@@ -7,11 +7,16 @@
 #include "resource.h"
 #include "ThreadCaixaDialogoLogin.h"
 
+// ToDo: Verificar com a professora se é possível passar uma instância para uam DialogBox
+Server *ptrServidor;
+
 JanelaPrincipal::JanelaPrincipal()
 {
 	// Init
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
+
+	ptrServidor = &this->servidor;
 }
 
 JanelaPrincipal::~JanelaPrincipal()
@@ -49,6 +54,52 @@ void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class
 	_WndClsEx.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
 }
 
+BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	TCHAR login[TAMLOGIN], password[TAMPASS];
+	int res = 0;
+
+	switch (message) {
+	case WM_INITDIALOG:
+		SetDlgItemText(hWnd, IDC_USERNAME, TEXT(""));
+		SetDlgItemText(hWnd, IDC_PASSWORD, TEXT(""));
+		// Verificar se tem ponteiro da instância do Server
+		_ASSERT(ptrServidor);
+		return 1;
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case IDOK:
+			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
+			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
+
+			if (ptrServidor)
+				res = ptrServidor->cAutenticar(login, password);
+
+			if (res == 2) {
+				MessageBox(hWnd, TEXT("Login com sucesso: Administrador"), TEXT("Login"), MB_OK | MB_ICONWARNING);
+				EndDialog(hWnd,IDOK);
+			}
+			else if (res == 1) {
+				TCHAR text[TAMTEXTO];
+				_stprintf_s(text, TAMTEXTO, _T("Login com sucesso: %s"), login);
+				MessageBox(hWnd, text, TEXT("Login"), MB_OK | MB_ICONINFORMATION);
+				EndDialog(hWnd,IDOK);
+			}
+			else {
+				sTchar_t text;
+				text = TEXT("Login inválido ou servidor desligado.");
+				MessageBox(hWnd, text.c_str(), TEXT("Login"), MB_OK | MB_ICONERROR);
+			}
+			break;
+		case IDCANCEL:
+			EndDialog(hWnd,IDCANCEL);
+			break;
+		}
+		break;
+	}
+	return 0;
+}
+
 
 // Eventos
 
@@ -57,21 +108,49 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 	this->MostrarElementos(hWnd);
 	this->maxX = GetSystemMetrics(SM_CXSCREEN);
 	this->maxY = GetSystemMetrics(SM_CYSCREEN);
+	// ToDo: Validar isto
 	hdc = GetDC(hWnd);
 	this->memdc = CreateCompatibleDC(hdc);
-
-	//Teste
-	AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Isto é para dar duro"));
-	AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Pode ser?"));
-	AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Vamos a isso"));
-	AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Yeah"));
-	AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Vou fazer commit"));
-	AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Já está"));
 }
 
 void JanelaPrincipal::onShow(HWND hWnd)
 {
-	//DialogBox(hInst, (LPCWSTR) IDD_LOGIN, hWnd, (DLGPROC) ThreadCaixaDialogoLogin::DialogoLogin);
+	DWORD result = DialogBox(hInst, (LPCWSTR)IDD_LOGIN, hWnd, (DLGPROC)DialogLogin);
+
+	if (result == IDOK && this->servidor.getIsAutenticado())
+	{
+		// Login com sucesso
+		HMENU menu = GetMenu(hWnd);
+		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_DISABLED);
+		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_ENABLED);
+
+		CHAT chatInit = LerInformacaoInicial();
+
+		int linha = 0;
+		//TAMTEXTO, NUMMSGSPUBLICAS
+		for (; _tcscmp(chatInit.publicas[linha].texto, TEXT("")); linha++) {
+
+			//_stprintf_s(str, 2 * TAMTEXTO, TEXT("(%02d/%02d/%d-%02d:%02d:%02d) %s"), chatInit.publicas[linha].instante.dia,
+			//	mychat.publicas[linha].instante.mes, mychat.publicas[linha].instante.ano, mychat.publicas[linha].instante.hora,
+			//	mychat.publicas[linha].instante.minuto, mychat.publicas[linha].instante.segundo, );
+		
+			AreaMensagens->addMessageOnLeft(_T("Global"),chatInit.publicas[linha].texto);
+		}
+	}
+	else {
+		// Sem login
+		HMENU menu = GetMenu(hWnd);
+		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
+		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
+
+		// Teste
+		AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Isto é para dar duro"));
+		AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Pode ser?"));
+		AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Vamos a isso"));
+		AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Yeah"));
+		AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Vou fazer commit"));
+		AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Já está"));
+	}
 }
 
 void JanelaPrincipal::onActivate(HWND hWnd)

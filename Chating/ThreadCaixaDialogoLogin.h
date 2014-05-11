@@ -17,8 +17,6 @@ public:
 
 	virtual DWORD WINAPI funcaoThread(LPVOID param);
 
-	static BOOL CALLBACK DialogoLogin(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
-
 	void setHwndPai(HWND hWnd);
 	void sethInstance(HINSTANCE hInstance);
 };

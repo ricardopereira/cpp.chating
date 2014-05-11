@@ -20,31 +20,24 @@ const sTchar_t& Server::getLoginAutenticado()
 
 int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 {
-	DWORD res = Autenticar(login, pass);
+	int res = Autenticar(login, pass);
 
 	if (res == 1) {
 		this->autenticado = true;
+		this->privilegiosAdmin = false;
+
+		this->totalUtilizadoresOnline = LerListaUtilizadores(this->utilizadoresOnline);
+		this->totalUtilizadores = LerListaUtilizadoresRegistados(this->utilizadores);
 	}
 	else if (res == 2) {
 		this->autenticado = true;
 		this->privilegiosAdmin = true;
 	}
-	
+	else {
+		this->autenticado = false;
+		this->privilegiosAdmin = false;
+	}
 	return res;
-}
-
-int Server::cLerListaUtilizadores()
-{
-	this->totalUtilizadores = LerListaUtilizadores(this->utilizadoresOnline);
-	int x = 0;
-	return 1; 
-}
-
-int Server::cLerListaUtilizadoresRegistados()
-{
-	this->totalUtilizadoresOnline = LerListaUtilizadoresRegistados(this->utilizadores);
-	int x = 0;
-	return 1; 
 }
 
 int Server::cIniciarConversa(TCHAR *utilizador)
@@ -69,7 +62,7 @@ void Server::cEnviarMensagemPública(TCHAR *msg)
 
 void Server::cLerInformacaoInicial()
 {
-	LerInformacaoInicial();
+	CHAT info = LerInformacaoInicial();
 	return;
 }
 
