@@ -125,17 +125,7 @@ void JanelaPrincipal::onShow(HWND hWnd)
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_ENABLED);
 
 		CHAT chatInit = LerInformacaoInicial();
-
-		int linha = 0;
-		//TAMTEXTO, NUMMSGSPUBLICAS
-		for (; _tcscmp(chatInit.publicas[linha].texto, TEXT("")); linha++) {
-
-			//_stprintf_s(str, 2 * TAMTEXTO, TEXT("(%02d/%02d/%d-%02d:%02d:%02d) %s"), chatInit.publicas[linha].instante.dia,
-			//	mychat.publicas[linha].instante.mes, mychat.publicas[linha].instante.ano, mychat.publicas[linha].instante.hora,
-			//	mychat.publicas[linha].instante.minuto, mychat.publicas[linha].instante.segundo, );
-		
-			AreaMensagens->addMessageOnLeft(_T("Global"),chatInit.publicas[linha].texto);
-		}
+		AreaMensagens->addChat(chatInit);
 	}
 	else {
 		// Sem login
@@ -143,13 +133,8 @@ void JanelaPrincipal::onShow(HWND hWnd)
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
 
-		// Teste
-		AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Isto é para dar duro"));
-		AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Pode ser?"));
-		AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Vamos a isso"));
-		AreaMensagens->addMessageOnRight(_T("Ricardo Pereira"),_T("Yeah"));
-		AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Vou fazer commit"));
-		AreaMensagens->addMessageOnLeft(_T("Mário Leite"),_T("Já está"));
+		// ToDo: limpar chat
+		//AreaMensagens->clear();
 	}
 }
 
@@ -190,7 +175,7 @@ void JanelaPrincipal::onPaint(HWND hWnd, HDC &hdc, RECT &rect)
 void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
 	oTcharStream_t xpto;
-	ThreadCaixaDialogoLogin *thLogin;
+	//ThreadCaixaDialogoLogin *thLogin;
 
 	// Um comando
 	switch (LOWORD(wParam)) {
@@ -200,10 +185,10 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case ID_CHAT_LOGIN:
-		thLogin = new ThreadCaixaDialogoLogin(this->servidor);
-		thLogin->setHwndPai(hWnd);
-		thLogin->sethInstance(this->hInst);
-		thLogin->LancarThread();
+		//thLogin = new ThreadCaixaDialogoLogin(this->servidor);
+		//thLogin->setHwndPai(hWnd);
+		//thLogin->sethInstance(this->hInst);
+		//thLogin->LancarThread();
 		break;
 
 	case ID_CHAT_LOGOUT:
@@ -218,7 +203,8 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 			if (_tcscmp(this->txtEnviar->getTexto().c_str(), TEXT("")))
 			{
 				// Coloca no ChatBox
-				AreaMensagens->addMessageOnRight(servidor.getLoginAutenticado(),this->txtEnviar->getTexto());
+				//AreaMensagens->addMessageOnRight(servidor.getLoginAutenticado(),this->txtEnviar->getTexto());
+
 				this->txtEnviar->clear();
 			}
 		}

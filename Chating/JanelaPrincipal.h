@@ -9,7 +9,6 @@
 #include "ListBox.h"
 #include "EditBox.h"
 #include "ChatBox.h"
-#include "Server.h"
 
 using namespace std;
 

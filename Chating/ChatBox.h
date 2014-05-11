@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Control.h"
+#include "Server.h"
 
 class ChatBoxItem;
 
@@ -16,6 +17,9 @@ private:
 	int scrollY;
 
 	vector<ChatBoxItem*> messages;
+protected:
+	void addMessageOnRight(const sTchar_t&  username, sTchar_t message);
+	void addMessageOnLeft(const sTchar_t&  username, sTchar_t message);
 public:
 	ChatBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura);
 	~ChatBox();
@@ -32,7 +36,8 @@ public:
 	void scrollUp();
 	void scrollDown();
 
-	void addMessageOnRight(const sTchar_t&  username, sTchar_t message);
-	void addMessageOnLeft(const sTchar_t&  username, sTchar_t message);
+	void addChat(CHAT chat);
+	void addMessage(MENSAGEM msg);
+
 	void refresh();
 };

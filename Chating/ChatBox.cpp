@@ -74,11 +74,49 @@ void ChatBox::refresh()
 	InvalidateRect(hWnd,&rect,1);
 }
 
+void ChatBox::addChat(CHAT chat)
+{
+	// ToDo: diferenciar de publico e privado
+	int linha = 0;
+	// Mensagens
+	for (; _tcscmp(chat.publicas[linha].texto, TEXT("")) && linha <= NUMMSGSPUBLICAS; linha++) {
+		// Adicionar mensagem
+		addMessage(chat.publicas[linha]);
+	}
+}
+
+void ChatBox::addMessage(MENSAGEM msg)
+{
+	TCHAR delimiter = ':';
+	bool userIsReady = false;
+	sTchar_t user;
+	sTchar_t message;
+
+	for (unsigned int i=0; i <= (unsigned int)_tcslen(msg.texto); i++)
+	{
+		if (msg.texto[i] == delimiter) {
+			userIsReady = true;
+			continue;
+		}
+		if (message.size() == 0 && msg.texto[i-1] == delimiter)
+			continue;
+
+		if (userIsReady)
+			message.push_back(msg.texto[i]);
+		else
+			user.push_back(msg.texto[i]);
+	}
+
+	addMessageOnLeft(user,message);
+
+	// ToDo: instante
+	//_stprintf_s(str, 2 * TAMTEXTO, TEXT("(%02d/%02d/%d-%02d:%02d:%02d) %s"), chatInit.publicas[linha].instante.dia,
+	//	mychat.publicas[linha].instante.mes, mychat.publicas[linha].instante.ano, mychat.publicas[linha].instante.hora,
+	//	mychat.publicas[linha].instante.minuto, mychat.publicas[linha].instante.segundo, );
+}
+
 void ChatBox::addMessageOnRight(const sTchar_t& username, sTchar_t message)
 {
-	//SYSTEMTIME hour;
-	//GetSystemTime(&hour);
-
 	messages.push_back(new ChatBoxItem(username,message,_T(""),1));
 	refresh();
 }
