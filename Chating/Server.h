@@ -23,13 +23,11 @@ public:
 	void cLerInformacaoInicial();
 
 	void cEnviarMensagemPublica(const TCHAR *texto);
-	void cLerMensagensPublicas();
 
 	// Privado
 	int cIniciarConversa(TCHAR *utilizador);
 	int cDesligarConversa();
 	int cEnviarMensagemPrivada(const TCHAR *texto);
-	void cLerMensagensPrivadas();
 
 	int cSair();
 	int cDesligar();

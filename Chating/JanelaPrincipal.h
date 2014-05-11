@@ -42,8 +42,10 @@ public:
 	virtual void MostrarElementos(HWND hWnd);
 	void login(HWND hWnd);
 	void logout(HWND hWnd);
+	void sendMessage(HWND hWnd, const TCHAR* msg);
 	void sendCurrentMessage(HWND hWnd);
-	void reset();
+	void reset(HWND hWnd);
+	void refresh(HWND hWnd);
 
 	// Eventos
 	virtual void onCreate(HWND hWnd, HDC &hdc);

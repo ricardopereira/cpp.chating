@@ -140,21 +140,13 @@ void Server::cLerInformacaoInicial()
 	return;
 }
 
-void Server::cLerMensagensPublicas()
-{
-	MENSAGEM temp = LerMensagensPublicas();
-	int x = 0;
-}
-
-void Server::cLerMensagensPrivadas()
-{
-	MENSAGEM temp = LerMensagensPrivadas();
-	int x = 0;
-}
-
 int Server::cSair()
 { 
-	return Sair();
+	int res = Sair();
+	
+	//if (res) ?
+	reset();
+	return res;
 }
 
 int Server::cDesligar()

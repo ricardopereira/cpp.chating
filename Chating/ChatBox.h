@@ -20,6 +20,7 @@ private:
 protected:
 	void addMessageOnRight(const sTchar_t&  username, sTchar_t message);
 	void addMessageOnLeft(const sTchar_t&  username, sTchar_t message);
+	void destroyMessages();
 public:
 	ChatBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura);
 	~ChatBox();
@@ -40,4 +41,5 @@ public:
 	void addMessage(const sTchar_t& userOwner, MENSAGEM msg);
 
 	void refresh();
+	void clear();
 };

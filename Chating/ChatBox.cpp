@@ -18,8 +18,14 @@ ChatBox::ChatBox(HINSTANCE hInstance, long px, long py, long comprimento, long l
 
 ChatBox::~ChatBox()
 {
+	destroyMessages();
+}
+
+void ChatBox::destroyMessages()
+{
 	for (unsigned int i = 0; i < messages.size(); i++)
 		delete messages.at(i);
+	messages.clear();
 }
 
 void ChatBox::Mostra(HWND hWnd)
@@ -74,6 +80,12 @@ void ChatBox::refresh()
 	InvalidateRect(hWnd,&rect,1);
 }
 
+void ChatBox::clear()
+{
+	destroyMessages();
+	refresh();
+}
+
 void ChatBox::addChat(const sTchar_t& userOwner, CHAT chat)
 {
 	// ToDo: diferenciar de publico e privado
@@ -96,11 +108,13 @@ void ChatBox::addMessage(const sTchar_t& userOwner, MENSAGEM msg)
 	//Retirar o nome do utilizador e a mensagem
 	for (unsigned int i=0; i <= (unsigned int)_tcslen(msg.texto); i++)
 	{
-		if (msg.texto[i] == delimiter) {
+		if (!userIsReady && msg.texto[i] == delimiter) {
 			userIsReady = true;
 			continue;
 		}
-		if (message.size() == 0 && msg.texto[i-1] == delimiter)
+		if (userIsReady && message.size() == 0 && msg.texto[i-1] == delimiter)
+			continue;
+		if (msg.texto[i] == '\0')
 			continue;
 
 		if (userIsReady)

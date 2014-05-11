@@ -106,14 +106,6 @@ void JanelaPrincipal::login(HWND hWnd)
 
 	if (result == IDOK && this->servidor.getIsAutenticado())
 	{
-		// Login com sucesso
-		HMENU menu = GetMenu(hWnd);
-		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_DISABLED);
-		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_ENABLED);		
-
-		// ToDo: Menu - Administrador
-		//this->servidor.
-
 		// ToDo: ler da instancia do Server
 		CHAT chatInit = LerInformacaoInicial();
 		AreaMensagens->addChat(this->servidor.getLoginAutenticado(),chatInit);
@@ -122,27 +114,25 @@ void JanelaPrincipal::login(HWND hWnd)
 		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
 			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i).login);
 	}
-	else {
-		// Sem login
-		HMENU menu = GetMenu(hWnd);
-		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
-		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
-	}
+	refresh(hWnd);
 }
 
 void JanelaPrincipal::logout(HWND hWnd)
 {
 	oTcharStream_t res;
-
-	res << this->servidor.cSair();
-	MessageBox(0, res.str().c_str(), TEXT("Logout"), MB_OK);
+	LRESULT opt = MessageBox(hWnd, TEXT("Deseja fazer logout?"), TEXT("Logout"), MB_YESNO | MB_ICONQUESTION);
+	if (opt == IDYES) {
+		res << this->servidor.cSair(); //Teste: res.str().c_str()
+		reset(hWnd);
+		MessageBox(0, TEXT("Logout com sucesso"), TEXT("Logout"), MB_OK | MB_ICONINFORMATION);
+	}
 }
 
-void JanelaPrincipal::sendCurrentMessage(HWND hWnd)
+void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 {
 	// Verificar se tem mensagem para enviar
 	// ToDo: funcao Trim
-	if (_tcscmp(this->txtEnviar->getTexto().c_str(), TEXT("")))
+	if (_tcscmp(msg, TEXT("")))
 	{
 		if (!this->servidor.getIsAutenticado()) {
 			// ToDo: criar método
@@ -153,24 +143,54 @@ void JanelaPrincipal::sendCurrentMessage(HWND hWnd)
 		}
 
 		// Envia mensagem
-		this->servidor.cEnviarMensagemPublica(this->txtEnviar->getTexto().c_str());
+		this->servidor.cEnviarMensagemPublica(msg);
 				
 		// Coloca no ChatBox
 		MENSAGEM ultima = LerMensagensPublicas();
 		AreaMensagens->addMessage(this->servidor.getLoginAutenticado(),ultima);
+	}
+}
 
+void JanelaPrincipal::sendCurrentMessage(HWND hWnd)
+{
+	if (_tcscmp(this->txtEnviar->getTexto().c_str(), TEXT("")))
+	{
+		sendMessage(hWnd,this->txtEnviar->getTexto().c_str());
 		this->txtEnviar->clear();
 	}
 }
 
-void JanelaPrincipal::reset()
+void JanelaPrincipal::reset(HWND hWnd)
 {
 	this->servidor.reset();
 	this->ListaUtilizadores->clear();
 	this->txtEnviar->clear();
+	this->AreaMensagens->clear();
+	refresh(hWnd);
+}
 
-	// ToDo
-	//this->AreaMensagens->clear();
+void JanelaPrincipal::refresh(HWND hWnd)
+{
+	HMENU menu = GetMenu(hWnd);
+
+	if (this->servidor.getIsAutenticado())
+	{
+		// Login com sucesso
+		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_DISABLED);
+		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_ENABLED);
+
+		if (this->servidor.getIsAdministrador())
+		{
+			// ToDo: Menu - Administrador
+			//this->servidor.
+		}
+	}
+	else {
+		// Sem login
+		HMENU menu = GetMenu(hWnd);
+		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
+		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
+	}
 }
 
 
@@ -244,6 +264,12 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {
 			sendCurrentMessage(hWnd);
+		}
+		else if (wParam == this->BotaoLike->getId()) {
+			sendMessage(hWnd,TEXT(":D "));
+		}
+		else if (wParam == this->BotaoDislike->getId()) {
+			sendMessage(hWnd,TEXT(":(  "));
 		}
 		else if (wParam == this->BotaoCima->getId()) {
 			this->AreaMensagens->scrollUp();
