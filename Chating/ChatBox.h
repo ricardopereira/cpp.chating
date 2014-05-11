@@ -36,8 +36,8 @@ public:
 	void scrollUp();
 	void scrollDown();
 
-	void addChat(CHAT chat);
-	void addMessage(MENSAGEM msg);
+	void addChat(const sTchar_t& userOwner, CHAT chat);
+	void addMessage(const sTchar_t& userOwner, MENSAGEM msg);
 
 	void refresh();
 };

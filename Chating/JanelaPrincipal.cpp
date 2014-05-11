@@ -122,10 +122,14 @@ void JanelaPrincipal::onShow(HWND hWnd)
 		// Login com sucesso
 		HMENU menu = GetMenu(hWnd);
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_DISABLED);
-		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_ENABLED);
+		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_ENABLED);		
 
+		// ToDo: Menu - Administrador
+		//this->servidor.
+
+		// ToDo: ler da instancia do Server
 		CHAT chatInit = LerInformacaoInicial();
-		AreaMensagens->addChat(chatInit);
+		AreaMensagens->addChat(this->servidor.getLoginAutenticado(),chatInit);
 	}
 	else {
 		// Sem login
@@ -193,7 +197,7 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 	case ID_CHAT_LOGOUT:
 		xpto << this->servidor.cSair();
-		MessageBox(0, xpto.str().c_str(), TEXT("YO"), MB_OK);
+		MessageBox(0, xpto.str().c_str(), TEXT("Logout"), MB_OK);
 		break;
 
 	default:
@@ -202,8 +206,12 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 			// ToDo: funcao Trim
 			if (_tcscmp(this->txtEnviar->getTexto().c_str(), TEXT("")))
 			{
+				// Envia mensagem
+				this->servidor.cEnviarMensagemPublica(this->txtEnviar->getTexto().c_str());
+				
 				// Coloca no ChatBox
-				//AreaMensagens->addMessageOnRight(servidor.getLoginAutenticado(),this->txtEnviar->getTexto());
+				MENSAGEM ultima = LerMensagensPublicas();
+				AreaMensagens->addMessage(this->servidor.getLoginAutenticado(),ultima);
 
 				this->txtEnviar->clear();
 			}

@@ -2,10 +2,7 @@
 
 Server::Server()
 {
-	this->autenticado = false;
-	this->privilegiosAdmin = false;
-	// Default
-	this->loginAutenticado = _T("Default");
+	reset();
 }
 
 bool Server::getIsAutenticado()
@@ -13,9 +10,21 @@ bool Server::getIsAutenticado()
 	return this->autenticado;
 }
 
+bool Server::getIsAdministrador()
+{
+	return this->privilegiosAdmin;
+}
+
 const sTchar_t& Server::getLoginAutenticado()
 {
 	return this->loginAutenticado;
+}
+
+void Server::reset()
+{
+	this->autenticado = false;
+	this->privilegiosAdmin = false;
+	this->loginAutenticado = TEXT("");
 }
 
 int Server::cAutenticar(TCHAR* login, TCHAR *pass)
@@ -25,6 +34,7 @@ int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 	if (res == 1) {
 		this->autenticado = true;
 		this->privilegiosAdmin = false;
+		this->loginAutenticado = login;
 
 		this->totalUtilizadoresOnline = LerListaUtilizadores(this->utilizadoresOnline);
 		this->totalUtilizadores = LerListaUtilizadoresRegistados(this->utilizadores);
@@ -32,10 +42,12 @@ int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 	else if (res == 2) {
 		this->autenticado = true;
 		this->privilegiosAdmin = true;
+		this->loginAutenticado = login; //Administrador
 	}
 	else {
 		this->autenticado = false;
 		this->privilegiosAdmin = false;
+		this->loginAutenticado = TEXT("");
 	}
 	return res;
 }
@@ -50,13 +62,23 @@ int Server::cDesligarConversa()
 	return 1;
 }
 
-int Server::cEnviarMensagemPrivada(TCHAR *msg)
-{ 
+int Server::cEnviarMensagemPrivada(const TCHAR *texto)
+{
 	return 1;
 }
 
-void Server::cEnviarMensagemPública(TCHAR *msg)
+void Server::cEnviarMensagemPublica(const TCHAR *texto)
 {
+	// ToDo: 2 * TAMTEXTO ?!
+	TCHAR msgWithUser[TAMTEXTO];
+
+	for (unsigned int i=0; i <= (unsigned int)_tcslen(texto)+1; i++) // Mais o terminador,  && i < TAMTEXTO
+	{
+		msgWithUser[i] = texto[i];
+	}
+
+	// ToDo: Está a colocar um espaço a mais?
+	EnviarMensagemPública(msgWithUser);
 	return;
 }
 

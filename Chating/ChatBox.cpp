@@ -74,24 +74,26 @@ void ChatBox::refresh()
 	InvalidateRect(hWnd,&rect,1);
 }
 
-void ChatBox::addChat(CHAT chat)
+void ChatBox::addChat(const sTchar_t& userOwner, CHAT chat)
 {
 	// ToDo: diferenciar de publico e privado
 	int linha = 0;
 	// Mensagens
 	for (; _tcscmp(chat.publicas[linha].texto, TEXT("")) && linha <= NUMMSGSPUBLICAS; linha++) {
 		// Adicionar mensagem
-		addMessage(chat.publicas[linha]);
+		addMessage(userOwner,chat.publicas[linha]);
 	}
 }
 
-void ChatBox::addMessage(MENSAGEM msg)
+void ChatBox::addMessage(const sTchar_t& userOwner, MENSAGEM msg)
 {
 	TCHAR delimiter = ':';
 	bool userIsReady = false;
 	sTchar_t user;
 	sTchar_t message;
 
+	// Interpretar mensagem do servidor
+	//Retirar o nome do utilizador e a mensagem
 	for (unsigned int i=0; i <= (unsigned int)_tcslen(msg.texto); i++)
 	{
 		if (msg.texto[i] == delimiter) {
@@ -102,14 +104,22 @@ void ChatBox::addMessage(MENSAGEM msg)
 			continue;
 
 		if (userIsReady)
+			// Mensagem
 			message.push_back(msg.texto[i]);
 		else
+			// Utilizador
 			user.push_back(msg.texto[i]);
 	}
 
-	addMessageOnLeft(user,message);
+	if (user == userOwner)
+		// Mensagem do próprio
+		addMessageOnRight(user,message);
+	else
+		// Mensagem de outro
+		addMessageOnLeft(user,message);
 
-	// ToDo: instante
+	// ToDo: adicionar o Instante no item da mensagem
+
 	//_stprintf_s(str, 2 * TAMTEXTO, TEXT("(%02d/%02d/%d-%02d:%02d:%02d) %s"), chatInit.publicas[linha].instante.dia,
 	//	mychat.publicas[linha].instante.mes, mychat.publicas[linha].instante.ano, mychat.publicas[linha].instante.hora,
 	//	mychat.publicas[linha].instante.minuto, mychat.publicas[linha].instante.segundo, );

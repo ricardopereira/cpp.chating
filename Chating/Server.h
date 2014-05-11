@@ -18,17 +18,23 @@ public:
 	Server();
 
 	int cAutenticar(TCHAR* login, TCHAR* pass);
+	void cLerInformacaoInicial();
 
+	void cEnviarMensagemPublica(const TCHAR *texto);
+	void cLerMensagensPublicas();
+
+	// Privado
 	int cIniciarConversa(TCHAR *utilizador);
 	int cDesligarConversa();
-	int cEnviarMensagemPrivada(TCHAR *msg);
-	void cEnviarMensagemPública(TCHAR *msg);
-	void cLerInformacaoInicial();
-	void cLerMensagensPublicas();
+	int cEnviarMensagemPrivada(const TCHAR *texto);
 	void cLerMensagensPrivadas();
+
 	int cSair();
 	int cDesligar();
 
+	void reset();
+
 	bool getIsAutenticado();
+	bool getIsAdministrador();
 	const sTchar_t& getLoginAutenticado();
 };
