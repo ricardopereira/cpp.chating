@@ -18,7 +18,7 @@ void ListBox::Mostra(HWND hWnd)
 		WS_EX_CLIENTEDGE,
 		TEXT("LISTBOX"),
 		NULL,
-		WS_VISIBLE | WS_CHILD | ES_AUTOVSCROLL | WS_VSCROLL,
+		WS_VISIBLE | WS_CHILD | ES_AUTOVSCROLL | WS_VSCROLL, //LBS_HASSTRINGS, LBS_SORT
 		this->pos_x,
 		this->pos_y,
 		this->comprimento,
@@ -28,4 +28,20 @@ void ListBox::Mostra(HWND hWnd)
 		hInstance,
 		NULL
 		);
+}
+
+void ListBox::addString(const TCHAR* value)
+{
+	SendDlgItemMessage(this->hWndPai, this->ControloId, LB_ADDSTRING, 0, (LPARAM)value);
+
+	// Teste
+	//LRESULT res;
+	//if (res == LB_ERR || res == LBN_ERRSPACE)
+	//	Sleep(1);
+
+	//HWND hlb = GetDlgItem(this->hWndPai, this->ControloId);
+	//if (IsWindow(hlb)) {
+	//	int index = SendMessage(hlb,LB_ADDSTRING,0,(LPARAM)TEXT("(empty)"));
+	//	SendMessage(hlb,LB_SETITEMDATA,(WPARAM)index,(LPARAM)0);
+	//}
 }

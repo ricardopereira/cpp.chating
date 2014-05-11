@@ -11,5 +11,7 @@ public:
 	~ListBox();
 
 	void Mostra(HWND hWnd);
+
+	void addString(const TCHAR* value);
 };
 

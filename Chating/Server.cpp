@@ -25,6 +25,51 @@ void Server::reset()
 	this->autenticado = false;
 	this->privilegiosAdmin = false;
 	this->loginAutenticado = TEXT("");
+
+	this->totalUtilizadoresOnline = 0;
+	this->totalUtilizadores = 0;
+}
+
+int Server::getTotalUtilizadores()
+{
+	return this->totalUtilizadores;
+}
+
+int Server::getTotalUtilizadoresOnline()
+{
+	return this->totalUtilizadoresOnline;
+}
+
+UTILIZADOR Server::getUtilizador(int index)
+{
+	UTILIZADOR res;
+
+	// Teste
+	_stprintf_s(res.login, TAMLOGIN, TEXT(""));
+	_stprintf_s(res.password, TAMPASS, TEXT(""));
+	res.estado = 0;
+	res.tipo = 0;
+
+	if (index >= 0 && index < this->totalUtilizadores)
+		return utilizadores[index];
+	else
+		return res;
+}
+
+UTILIZADOR Server::getUtilizadorOnline(int index)
+{
+	UTILIZADOR res;
+
+	// Teste
+	_stprintf_s(res.login, TAMLOGIN, TEXT(""));
+	_stprintf_s(res.password, TAMPASS, TEXT(""));
+	res.estado = 0;
+	res.tipo = 0;
+
+	if (index >= 0 && index < this->totalUtilizadoresOnline)
+		return utilizadoresOnline[index];
+	else
+		return res;
 }
 
 int Server::cAutenticar(TCHAR* login, TCHAR *pass)
@@ -36,13 +81,14 @@ int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 		this->privilegiosAdmin = false;
 		this->loginAutenticado = login;
 
-		this->totalUtilizadoresOnline = LerListaUtilizadores(this->utilizadoresOnline);
-		this->totalUtilizadores = LerListaUtilizadoresRegistados(this->utilizadores);
+		loggedIn();
 	}
 	else if (res == 2) {
 		this->autenticado = true;
 		this->privilegiosAdmin = true;
 		this->loginAutenticado = login; //Administrador
+
+		loggedIn();
 	}
 	else {
 		this->autenticado = false;
@@ -50,6 +96,12 @@ int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 		this->loginAutenticado = TEXT("");
 	}
 	return res;
+}
+
+void Server::loggedIn()
+{
+	this->totalUtilizadoresOnline = LerListaUtilizadores(this->utilizadoresOnline);
+	this->totalUtilizadores = LerListaUtilizadoresRegistados(this->utilizadores);
 }
 
 int Server::cIniciarConversa(TCHAR *utilizador)

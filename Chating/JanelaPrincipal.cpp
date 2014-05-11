@@ -130,6 +130,13 @@ void JanelaPrincipal::onShow(HWND hWnd)
 		// ToDo: ler da instancia do Server
 		CHAT chatInit = LerInformacaoInicial();
 		AreaMensagens->addChat(this->servidor.getLoginAutenticado(),chatInit);
+
+		// Lista de utilizadores
+		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
+			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i).login);
+
+		//for (int i = 0; i < this->servidor.getTotalUtilizadores(); i++)
+		//	this->ListaUtilizadores->addString(this->servidor.getUtilizador(i).login);
 	}
 	else {
 		// Sem login
@@ -202,10 +209,19 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {
+
 			// Verificar se tem mensagem para enviar
 			// ToDo: funcao Trim
 			if (_tcscmp(this->txtEnviar->getTexto().c_str(), TEXT("")))
 			{
+				if (!this->servidor.getIsAutenticado()) {
+					// ToDo: criar método
+					sTchar_t text;
+					text = TEXT("Tem que estar ligado.");
+					MessageBox(hWnd, text.c_str(), TEXT("Erro"), MB_OK | MB_ICONERROR);
+					break;
+				}
+
 				// Envia mensagem
 				this->servidor.cEnviarMensagemPublica(this->txtEnviar->getTexto().c_str());
 				
@@ -252,6 +268,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		layoutHorizontal[0]->getLargura(),
 		layoutVertical[1]->getAltura()
 		);
+	this->AreaMensagens->setHwndPai(hWnd);
 	this->AreaMensagens->Mostra(hWnd);
 
 	this->ListaUtilizadores = new ListBox(
@@ -261,6 +278,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		layoutHorizontal[2]->getLargura(),
 		layoutVertical[1]->getAltura() + layoutVertical[2]->getAltura() + layoutVertical[3]->getAltura()
 		);
+	this->ListaUtilizadores->setHwndPai(hWnd);
 	this->ListaUtilizadores->Mostra(hWnd);
 
 	this->txtEnviar = new EditBox(
@@ -281,6 +299,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		layoutVertical[2]->getAltura() //larg
 		);
 	this->BotaoLike->setTextoBotao(TEXT("Like"));
+	this->BotaoLike->setHwndPai(hWnd);
 	this->BotaoLike->Mostra(hWnd);
 
 	this->BotaoDislike = new Button(
@@ -291,6 +310,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		layoutVertical[2]->getAltura() //larg
 		);
 	this->BotaoDislike->setTextoBotao(TEXT("Dislike"));
+	this->BotaoDislike->setHwndPai(hWnd);
 	this->BotaoDislike->Mostra(hWnd);
 
 	this->BotaoEnviar = new Button(
@@ -301,6 +321,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		layoutVertical[2]->getAltura() //larg
 		);
 	this->BotaoEnviar->setTextoBotao(TEXT("Enviar"));
+	this->BotaoEnviar->setHwndPai(hWnd);
 	this->BotaoEnviar->Mostra(hWnd);
 
 	this->BotaoCima = new Button(
@@ -311,6 +332,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		50
 		);
 	this->BotaoCima->setTextoBotao(TEXT("/\\"));
+	this->BotaoCima->setHwndPai(hWnd);
 	this->BotaoCima->Mostra(hWnd);
 
 	this->BotaoBaixo = new Button(
@@ -321,6 +343,7 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 		50
 		);
 	this->BotaoBaixo->setTextoBotao(TEXT("\\/"));
+	this->BotaoBaixo->setHwndPai(hWnd);
 	this->BotaoBaixo->Mostra(hWnd);
 }
 

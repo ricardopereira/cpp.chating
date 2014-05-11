@@ -14,6 +14,8 @@ private:
 	UTILIZADOR utilizadoresOnline[NUMUTILIZADORES];
 	int totalUtilizadores;
 	int totalUtilizadoresOnline;
+
+	void loggedIn();
 public:
 	Server();
 
@@ -33,6 +35,12 @@ public:
 	int cDesligar();
 
 	void reset();
+
+	int getTotalUtilizadores();
+	int getTotalUtilizadoresOnline();
+
+	UTILIZADOR getUtilizador(int index);
+	UTILIZADOR getUtilizadorOnline(int index);
 
 	bool getIsAutenticado();
 	bool getIsAdministrador();
