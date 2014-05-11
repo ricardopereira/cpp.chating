@@ -100,20 +100,7 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-
-// Eventos
-
-void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
-{
-	this->MostrarElementos(hWnd);
-	this->maxX = GetSystemMetrics(SM_CXSCREEN);
-	this->maxY = GetSystemMetrics(SM_CYSCREEN);
-	// ToDo: Validar isto
-	hdc = GetDC(hWnd);
-	this->memdc = CreateCompatibleDC(hdc);
-}
-
-void JanelaPrincipal::onShow(HWND hWnd)
+void JanelaPrincipal::login(HWND hWnd)
 {
 	DWORD result = DialogBox(hInst, (LPCWSTR)IDD_LOGIN, hWnd, (DLGPROC)DialogLogin);
 
@@ -134,19 +121,74 @@ void JanelaPrincipal::onShow(HWND hWnd)
 		// Lista de utilizadores
 		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
 			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i).login);
-
-		//for (int i = 0; i < this->servidor.getTotalUtilizadores(); i++)
-		//	this->ListaUtilizadores->addString(this->servidor.getUtilizador(i).login);
 	}
 	else {
 		// Sem login
 		HMENU menu = GetMenu(hWnd);
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
-
-		// ToDo: limpar chat
-		//AreaMensagens->clear();
 	}
+}
+
+void JanelaPrincipal::logout(HWND hWnd)
+{
+	oTcharStream_t res;
+
+	res << this->servidor.cSair();
+	MessageBox(0, res.str().c_str(), TEXT("Logout"), MB_OK);
+}
+
+void JanelaPrincipal::sendCurrentMessage(HWND hWnd)
+{
+	// Verificar se tem mensagem para enviar
+	// ToDo: funcao Trim
+	if (_tcscmp(this->txtEnviar->getTexto().c_str(), TEXT("")))
+	{
+		if (!this->servidor.getIsAutenticado()) {
+			// ToDo: criar método
+			sTchar_t text;
+			text = TEXT("Tem que estar ligado.");
+			MessageBox(hWnd, text.c_str(), TEXT("Erro"), MB_OK | MB_ICONERROR);
+			return;
+		}
+
+		// Envia mensagem
+		this->servidor.cEnviarMensagemPublica(this->txtEnviar->getTexto().c_str());
+				
+		// Coloca no ChatBox
+		MENSAGEM ultima = LerMensagensPublicas();
+		AreaMensagens->addMessage(this->servidor.getLoginAutenticado(),ultima);
+
+		this->txtEnviar->clear();
+	}
+}
+
+void JanelaPrincipal::reset()
+{
+	this->servidor.reset();
+	this->ListaUtilizadores->clear();
+	this->txtEnviar->clear();
+
+	// ToDo
+	//this->AreaMensagens->clear();
+}
+
+
+// Eventos
+
+void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
+{
+	this->MostrarElementos(hWnd);
+	this->maxX = GetSystemMetrics(SM_CXSCREEN);
+	this->maxY = GetSystemMetrics(SM_CYSCREEN);
+	// ToDo: Validar isto
+	hdc = GetDC(hWnd);
+	this->memdc = CreateCompatibleDC(hdc);
+}
+
+void JanelaPrincipal::onShow(HWND hWnd)
+{
+	login(hWnd);
 }
 
 void JanelaPrincipal::onActivate(HWND hWnd)
@@ -179,58 +221,29 @@ void JanelaPrincipal::onMouseWheelDown(HWND hWnd)
 void JanelaPrincipal::onPaint(HWND hWnd, HDC &hdc, RECT &rect)
 {
 	BitBlt(hdc, 0, 0, this->maxX, this->maxY, this->memdc, 0, 0, SRCCOPY);
-	// Teste
+	// ToDo: Ter em conta o redimensionar
 	AreaMensagens->doPaint(hdc,hWnd);
 }
 
 void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
-	oTcharStream_t xpto;
-	//ThreadCaixaDialogoLogin *thLogin;
-
 	// Um comando
 	switch (LOWORD(wParam)) {
 	case ID_CHAT_SAIR:
-		this->MostrarElementos(this->_hWnd);
 		DestroyWindow(hWnd);
 		break;
 
 	case ID_CHAT_LOGIN:
-		//thLogin = new ThreadCaixaDialogoLogin(this->servidor);
-		//thLogin->setHwndPai(hWnd);
-		//thLogin->sethInstance(this->hInst);
-		//thLogin->LancarThread();
+		login(hWnd);
 		break;
 
 	case ID_CHAT_LOGOUT:
-		xpto << this->servidor.cSair();
-		MessageBox(0, xpto.str().c_str(), TEXT("Logout"), MB_OK);
+		logout(hWnd);
 		break;
 
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {
-
-			// Verificar se tem mensagem para enviar
-			// ToDo: funcao Trim
-			if (_tcscmp(this->txtEnviar->getTexto().c_str(), TEXT("")))
-			{
-				if (!this->servidor.getIsAutenticado()) {
-					// ToDo: criar método
-					sTchar_t text;
-					text = TEXT("Tem que estar ligado.");
-					MessageBox(hWnd, text.c_str(), TEXT("Erro"), MB_OK | MB_ICONERROR);
-					break;
-				}
-
-				// Envia mensagem
-				this->servidor.cEnviarMensagemPublica(this->txtEnviar->getTexto().c_str());
-				
-				// Coloca no ChatBox
-				MENSAGEM ultima = LerMensagensPublicas();
-				AreaMensagens->addMessage(this->servidor.getLoginAutenticado(),ultima);
-
-				this->txtEnviar->clear();
-			}
+			sendCurrentMessage(hWnd);
 		}
 		else if (wParam == this->BotaoCima->getId()) {
 			this->AreaMensagens->scrollUp();

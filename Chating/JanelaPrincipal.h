@@ -40,6 +40,10 @@ public:
 		LPCTSTR MenuName = NULL, UINT style = CS_VREDRAW | CS_HREDRAW);
 
 	virtual void MostrarElementos(HWND hWnd);
+	void login(HWND hWnd);
+	void logout(HWND hWnd);
+	void sendCurrentMessage(HWND hWnd);
+	void reset();
 
 	// Eventos
 	virtual void onCreate(HWND hWnd, HDC &hdc);

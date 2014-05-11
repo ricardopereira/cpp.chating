@@ -37,11 +37,14 @@ void ListBox::addString(const TCHAR* value)
 	// Teste
 	//LRESULT res;
 	//if (res == LB_ERR || res == LBN_ERRSPACE)
-	//	Sleep(1);
+}
 
-	//HWND hlb = GetDlgItem(this->hWndPai, this->ControloId);
-	//if (IsWindow(hlb)) {
-	//	int index = SendMessage(hlb,LB_ADDSTRING,0,(LPARAM)TEXT("(empty)"));
-	//	SendMessage(hlb,LB_SETITEMDATA,(WPARAM)index,(LPARAM)0);
-	//}
+void ListBox::clear()
+{
+	HWND hlb = GetDlgItem(this->hWndPai, this->ControloId);
+	if (IsWindow(hlb)) {
+		int count = SendMessage(hlb,LB_GETCOUNT,0,0);
+		for (int i = 0; i < count; i++)
+			SendMessage(hlb,LB_DELETESTRING,(WPARAM)i,(LPARAM)0);
+	}
 }
