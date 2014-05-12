@@ -8,11 +8,13 @@ class ThreadPrivateChat : public Thread
 private:
 	HINSTANCE hInstance;
 	HWND hWndPai;
-	Server* servidor;
 
-	ThreadPrivateChat() { servidor = new Server; /* Memory leak mas é privado :) */ };
+	Server* servidor;
+	const TCHAR* username;
+
+	ThreadPrivateChat();
 public:
-	ThreadPrivateChat(Server& servidor);
+	ThreadPrivateChat(Server& servidor, const TCHAR* username);
 	~ThreadPrivateChat();
 
 	virtual DWORD WINAPI funcaoThread();

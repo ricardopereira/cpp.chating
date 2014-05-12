@@ -104,22 +104,25 @@ void Server::loggedIn()
 	this->totalUtilizadores = LerListaUtilizadoresRegistados(this->utilizadores);
 }
 
-int Server::cIniciarConversa(TCHAR *utilizador)
+int Server::cIniciarConversa(const TCHAR *utilizador)
 { 
-	return 1;
+	// ToDo: 2 * TAMLOGIN ?!
+	TCHAR userAux[TAMLOGIN];
+
+	for (unsigned int i=0; i <= (unsigned int)_tcslen(utilizador)+1; i++) // Mais o terminador,  && i < TAMLOGIN
+	{
+		userAux[i] = utilizador[i];
+	}
+
+	return IniciarConversa(userAux);
 }
 
 int Server::cDesligarConversa()
 { 
-	return 1;
+	return DesligarConversa();
 }
 
 int Server::cEnviarMensagemPrivada(const TCHAR *texto)
-{
-	return 1;
-}
-
-void Server::cEnviarMensagemPublica(const TCHAR *texto)
 {
 	// ToDo: 2 * TAMTEXTO ?!
 	TCHAR msgWithUser[TAMTEXTO];
@@ -129,7 +132,19 @@ void Server::cEnviarMensagemPublica(const TCHAR *texto)
 		msgWithUser[i] = texto[i];
 	}
 
-	// ToDo: Está a colocar um espaço a mais?
+	return EnviarMensagemPrivada(msgWithUser);
+}
+
+void Server::cEnviarMensagemPublica(const TCHAR *texto)
+{
+	// ToDo: colcoar código duplicado num método - cEnviarMensagemPrivada
+	TCHAR msgWithUser[TAMTEXTO];
+
+	for (unsigned int i=0; i <= (unsigned int)_tcslen(texto)+1; i++) // Mais o terminador,  && i < TAMTEXTO
+	{
+		msgWithUser[i] = texto[i];
+	}
+
 	EnviarMensagemPública(msgWithUser);
 	return;
 }

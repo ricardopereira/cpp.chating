@@ -12,6 +12,7 @@ protected:
 	HINSTANCE hInst;
 	long maxX,maxY;
 	HDC memdc;
+
 	CustomWindow() {};
 public:
 	virtual ~CustomWindow() {};
@@ -28,6 +29,11 @@ public:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
 
 	void refresh(HWND hWnd);
+
+	virtual int windowX() { return CW_USEDEFAULT; };
+	virtual int windowY() { return CW_USEDEFAULT; };
+	virtual int windowWidth() { return CW_USEDEFAULT; };
+	virtual int windowHeight() { return CW_USEDEFAULT; };
 
 	// WndProc para cada especializacao
 	virtual LRESULT performWMessage(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);

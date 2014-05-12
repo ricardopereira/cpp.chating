@@ -84,8 +84,8 @@ LRESULT CALLBACK internalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 // MainWnd
 HWND CustomWindow::Criar(HINSTANCE hInst, LPCTSTR wndName)
 {
-	this->_hWnd = CreateWindowEx(0L, _WndClsEx.lpszClassName, wndName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-		CW_USEDEFAULT, (HWND)HWND_DESKTOP, NULL, hInst, this);
+	this->_hWnd = CreateWindowEx(0L, _WndClsEx.lpszClassName, wndName, WS_OVERLAPPEDWINDOW, windowX(), windowY(), windowWidth(),
+		windowHeight(), (HWND)HWND_DESKTOP, NULL, hInst, this);
 
 	// Se a janela não foi criada
 	if (this->_hWnd != NULL) {

@@ -25,7 +25,7 @@ public:
 	void cEnviarMensagemPublica(const TCHAR *texto);
 
 	// Privado
-	int cIniciarConversa(TCHAR *utilizador);
+	int cIniciarConversa(const TCHAR *utilizador);
 	int cDesligarConversa();
 	int cEnviarMensagemPrivada(const TCHAR *texto);
 

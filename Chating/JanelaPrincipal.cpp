@@ -124,13 +124,13 @@ void JanelaPrincipal::showUtilizadores(HWND hWnd)
 	DialogBox(hInst, (LPCWSTR)IDD_UTILIZADORES, hWnd, (DLGPROC)DialogUtilizadores);
 }
 
-void JanelaPrincipal::showPrivateChat(HWND hWnd)
+void JanelaPrincipal::startPrivateChat(HWND hWnd, const sTchar_t& username)
 {
 	// ToDo: só pode existir uma janela
 	if (privateChat)
 		delete privateChat;
 
-	privateChat = new ThreadPrivateChat(this->servidor);
+	privateChat = new ThreadPrivateChat(this->servidor, username.c_str());
 	privateChat->setHwndPai(hWnd);
 	privateChat->sethInstance(this->hInst);
 	privateChat->LancarThread();
@@ -182,7 +182,7 @@ void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 		this->servidor.cEnviarMensagemPublica(msg);
 				
 		// Coloca no ChatBox
-		MENSAGEM ultima = LerMensagensPublicas();
+		MENSAGEM ultima = LerMensagensPublicas(); //ToDo: DLL
 		AreaMensagens->addMessage(this->servidor.getLoginAutenticado(),ultima);
 	}
 }
@@ -303,10 +303,6 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		showUtilizadores(hWnd);
 		break;
 
-	case ID_CONVERSA_PRIVADA:
-		showPrivateChat(hWnd);
-		break;
-
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {
 			sendCurrentMessage(hWnd);
@@ -323,11 +319,22 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		else if (wParam == this->BotaoBaixo->getId()) {
 			this->AreaMensagens->scrollDown();
 		}
+		else if (LOWORD(wParam) == this->ListaUtilizadores->getId()) {
+			// Verificar duplo-clique
+			if (HIWORD(wParam) == LBN_DBLCLK) {
+				//Preencher caixa de texto com o texto selecionado da listbox
+				int i = SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETCURSEL, 0, 0);
+				TCHAR usernameAux[30];
+				SendDlgItemMessage(hWnd, this->ListaUtilizadores->getId(), LB_GETTEXT, i, (LPARAM)usernameAux);
+				// Abre chat privado
+				startPrivateChat(hWnd,usernameAux);
+			}
+		}
 	}
 }
 
-void JanelaPrincipal::MostrarElementos(HWND hWnd) {
-
+void JanelaPrincipal::MostrarElementos(HWND hWnd)
+{
 	layoutVertical.push_back(new Layout(0.10f));
 	layoutVertical.push_back(new Layout(0.70f));
 	layoutVertical.push_back(new Layout(0.05f));
@@ -336,7 +343,6 @@ void JanelaPrincipal::MostrarElementos(HWND hWnd) {
 	layoutHorizontal.push_back(new Layout(0.80f));
 	layoutHorizontal.push_back(new Layout(0.025f));
 	layoutHorizontal.push_back(new Layout(0.175f));
-
 
 	for (unsigned int i = 0; i < layoutVertical.size(); i++) {
 		layoutVertical.at(i)->calcularPosicoesY(hWnd);

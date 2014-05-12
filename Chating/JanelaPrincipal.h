@@ -50,7 +50,7 @@ public:
 	void reset(HWND hWnd);
 	void refresh(HWND hWnd);
 	void showUtilizadores(HWND hWnd);
-	void showPrivateChat(HWND hWnd);
+	void startPrivateChat(HWND hWnd, const sTchar_t& username);
 
 	// Eventos
 	virtual void onCreate(HWND hWnd, HDC &hdc);
