@@ -39,9 +39,6 @@
     <ClCompile Include="JanelaPrivada.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadCaixaDialogoLogin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,15 +72,15 @@
     <ClCompile Include="Server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ThreadPrivateChat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JanelaPrincipal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="JanelaPrivada.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ThreadCaixaDialogoLogin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ChatBox.h">
@@ -124,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="DLL\DLLTP.h">
       <Filter>Header Files\DLL</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPrivateChat.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

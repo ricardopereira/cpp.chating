@@ -15,7 +15,7 @@ DWORD WINAPI Thread::stub(LPVOID param)
 	if (!pClasse){
 		return -1;
 	}
-	return pClasse->funcaoThread(0);
+	return pClasse->funcaoThread();
 }
 
 void Thread::LancarThread()

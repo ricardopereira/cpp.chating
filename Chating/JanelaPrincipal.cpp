@@ -5,13 +5,13 @@
 
 #include "JanelaPrincipal.h"
 #include "resource.h"
-#include "ThreadCaixaDialogoLogin.h"
 
 // ToDo: Verificar com a professora se é possível passar uma instância para uam DialogBox
 Server *ptrServidor;
 
 JanelaPrincipal::JanelaPrincipal()
 {
+	privateChat = NULL;
 	// Init
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
@@ -126,7 +126,14 @@ void JanelaPrincipal::showUtilizadores(HWND hWnd)
 
 void JanelaPrincipal::showPrivateChat(HWND hWnd)
 {
+	// ToDo: só pode existir uma janela
+	if (privateChat)
+		delete privateChat;
 
+	privateChat = new ThreadPrivateChat(this->servidor);
+	privateChat->setHwndPai(hWnd);
+	privateChat->sethInstance(this->hInst);
+	privateChat->LancarThread();
 }
 
 void JanelaPrincipal::login(HWND hWnd)

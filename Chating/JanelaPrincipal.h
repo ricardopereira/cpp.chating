@@ -9,6 +9,7 @@
 #include "ListBox.h"
 #include "EditBox.h"
 #include "ChatBox.h"
+#include "ThreadPrivateChat.h"
 
 using namespace std;
 
@@ -29,6 +30,8 @@ private:
 	vector<Layout*> layoutVertical;
 	vector<Layout*> layoutHorizontal;
 	Server servidor;
+
+	ThreadPrivateChat* privateChat;
 	
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;

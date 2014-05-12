@@ -18,3 +18,8 @@ void JanelaPrivada::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_s
 	_WndClsEx.lpszClassName = ClassName;
 	_WndClsEx.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
 }
+
+void JanelaPrivada::MostrarElementos(HWND hWnd)
+{
+
+}

@@ -8,4 +8,6 @@ private:
 public:
 	void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,
 		LPCTSTR MenuName = NULL, UINT style = CS_VREDRAW | CS_HREDRAW);
+
+	void MostrarElementos(HWND hWnd);
 };

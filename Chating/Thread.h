@@ -15,7 +15,7 @@ protected:
 public:
 
 	~Thread();
-	virtual DWORD WINAPI funcaoThread(LPVOID param)=0;
+	virtual DWORD WINAPI funcaoThread()=0;
 	virtual void LancarThread();
 };
 

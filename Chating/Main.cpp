@@ -21,10 +21,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	JanelaPrincipal startWindow;
 	startWindow.Inicializar(hInst, szProgName, sizeof(JanelaPrincipal*), MAKEINTRESOURCE(IDR_MENU));
 	startWindow.Registar();
-	startWindow.Criar(hInst, TEXT("Chating v0"));
+	startWindow.Criar(hInst, TEXT("Chat Público"));
 	startWindow.Mostrar();
 
-	while (GetMessage(&lpMsg,NULL,0,0)) {	
+	while (GetMessage(&lpMsg,NULL,0,0)) {
 		TranslateMessage(&lpMsg);			// Pré-processamento da mensagem
 											// p.e. obter código ASCII da tecla
 											// premida

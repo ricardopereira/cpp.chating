@@ -89,7 +89,7 @@
     <ClCompile Include="Layout.cpp" />
     <ClCompile Include="ListBox.cpp" />
     <ClCompile Include="Thread.cpp" />
-    <ClCompile Include="ThreadCaixaDialogoLogin.cpp" />
+    <ClCompile Include="ThreadPrivateChat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
@@ -107,7 +107,7 @@
     <ClInclude Include="ListBox.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Thread.h" />
-    <ClInclude Include="ThreadCaixaDialogoLogin.h" />
+    <ClInclude Include="ThreadPrivateChat.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="DLL\DLLTP.lib" />
