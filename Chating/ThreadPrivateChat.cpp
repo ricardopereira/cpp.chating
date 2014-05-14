@@ -28,7 +28,7 @@ DWORD WINAPI ThreadPrivateChat::funcaoThread()
 	hInstance = GetModuleHandle(NULL);
 	
 	JanelaPrivada prvChat(*this->servidor,this->username);
-	prvChat.Inicializar(hInstance, TEXT("Chating") /*constante*/, sizeof(JanelaPrivada*), NULL);
+	prvChat.Inicializar(hInstance, TEXT("JanelaPrivada"), sizeof(JanelaPrivada*), NULL);
 	prvChat.Registar();
 	prvChat.Criar(hInstance, TEXT("Chat Privado"));
 	prvChat.Mostrar();

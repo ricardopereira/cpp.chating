@@ -8,18 +8,13 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include "JanelaPrincipal.h"
 
-// Nome da classe da janela (para programas de uma só janela, normalmente este 
-// nome é igual ao do próprio programa)
-// "szprogName" é usado mais abaixo na definição das propriedades da classe da janela
-TCHAR *szProgName = TEXT("Chating");
-
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {
 	// MSG é uma estrutura definida no Windows para as mensagens
 	MSG lpMsg;
 
 	JanelaPrincipal startWindow;
-	startWindow.Inicializar(hInst, szProgName, sizeof(JanelaPrincipal*), MAKEINTRESOURCE(IDR_MENU));
+	startWindow.Inicializar(hInst, TEXT("JanelaPrincipal"), sizeof(JanelaPrincipal*), MAKEINTRESOURCE(IDR_MENU));
 	startWindow.Registar();
 	startWindow.Criar(hInst, TEXT("Chat Público"));
 	startWindow.Mostrar();
