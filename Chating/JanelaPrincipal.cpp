@@ -519,6 +519,15 @@ void JanelaPrincipal::Redimensionar(HWND hWnd)
 		50,
 		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
 		);
+	/*SetWindowPos(
+		this->AreaMensagens->getHwnd(),
+		0,
+		layoutHorizontal[0]->getPosicao(),
+		layoutVertical[1]->getPosicao(),
+		layoutHorizontal[0]->getLargura(),
+		layoutVertical[1]->getAltura(),
+		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
+		); */
 
 	//BringWindowToTop(txtEnviar->getHwnd());
 }
