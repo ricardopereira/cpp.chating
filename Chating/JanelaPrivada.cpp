@@ -177,6 +177,7 @@ void JanelaPrivada::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 void JanelaPrivada::MostrarElementos(HWND hWnd)
 {
+	Layout::ReiniciarValoresAcumulados();
 	layoutVertical.push_back(new Layout(0.10f));
 	layoutVertical.push_back(new Layout(0.70f));
 	layoutVertical.push_back(new Layout(0.05f));
@@ -207,7 +208,7 @@ void JanelaPrivada::MostrarElementos(HWND hWnd)
 		this->hInst,
 		layoutHorizontal[0]->getPosicao(),
 		layoutVertical[3]->getPosicao(),
-		layoutHorizontal[0]->getLargura() + layoutHorizontal[1]->getAltura(),
+		layoutHorizontal[0]->getLargura() /*+ layoutHorizontal[1]->getAltura()*/,
 		layoutVertical[3]->getAltura()
 		);
 	this->txtEnviar->setHwndPai(hWnd);
@@ -341,7 +342,7 @@ void JanelaPrivada::Redimensionar(HWND hWnd)
 		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
 		);
 
-	SetWindowPos(
+	/*SetWindowPos(
 		this->AreaMensagens->getHwnd(),
 		0,
 		layoutHorizontal[0]->getPosicao(),
@@ -349,5 +350,5 @@ void JanelaPrivada::Redimensionar(HWND hWnd)
 		layoutHorizontal[0]->getLargura(),
 		layoutVertical[1]->getAltura(),
 		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
-		);
+		);*/
 }
