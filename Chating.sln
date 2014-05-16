@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chating", "Chating\Chating.vcxproj", "{DB04DCC4-0502-4A79-9D30-35968E83B4A4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChatingServer", "ChatingServer\ChatingServer.vcxproj", "{8436E990-44DC-4F20-969F-518D242D191E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChatingDll", "ChatingDll\ChatingDll.vcxproj", "{DBE5AB70-AE3A-4DE3-B50F-EB7D0E52E49A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +17,14 @@ Global
 		{DB04DCC4-0502-4A79-9D30-35968E83B4A4}.Debug|Win32.Build.0 = Debug|Win32
 		{DB04DCC4-0502-4A79-9D30-35968E83B4A4}.Release|Win32.ActiveCfg = Release|Win32
 		{DB04DCC4-0502-4A79-9D30-35968E83B4A4}.Release|Win32.Build.0 = Release|Win32
+		{8436E990-44DC-4F20-969F-518D242D191E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8436E990-44DC-4F20-969F-518D242D191E}.Debug|Win32.Build.0 = Debug|Win32
+		{8436E990-44DC-4F20-969F-518D242D191E}.Release|Win32.ActiveCfg = Release|Win32
+		{8436E990-44DC-4F20-969F-518D242D191E}.Release|Win32.Build.0 = Release|Win32
+		{DBE5AB70-AE3A-4DE3-B50F-EB7D0E52E49A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DBE5AB70-AE3A-4DE3-B50F-EB7D0E52E49A}.Debug|Win32.Build.0 = Debug|Win32
+		{DBE5AB70-AE3A-4DE3-B50F-EB7D0E52E49A}.Release|Win32.ActiveCfg = Release|Win32
+		{DBE5AB70-AE3A-4DE3-B50F-EB7D0E52E49A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

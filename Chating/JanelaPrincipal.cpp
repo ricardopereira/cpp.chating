@@ -6,7 +6,7 @@
 #include "JanelaPrincipal.h"
 #include "resource.h"
 
-// ToDo: Verificar com a professora se é possível passar uma instância para uam DialogBox
+// ToDo: Verificar com a professora se é possível passar uma instância para uma DialogBox
 Server *ptrServidor;
 
 JanelaPrincipal::JanelaPrincipal()

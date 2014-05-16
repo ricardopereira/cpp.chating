@@ -27,8 +27,8 @@ public:
 
 	void Mostra(HWND hWnd);
 
-	// Teste
 	void doPaint(HDC hdc, HWND hWnd);
+	void doResize();
 
 	void setBackgroundColorRGB(int r, int g, int b);
 
@@ -39,6 +39,7 @@ public:
 
 	void addChat(const sTchar_t& userOwner, CHAT chat);
 	void addMessage(const sTchar_t& userOwner, MENSAGEM msg);
+	void addMessagePrivate(const sTchar_t& userOwner, MENSAGEM msg);
 
 	void refresh();
 	void clear();
