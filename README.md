@@ -10,10 +10,11 @@ _ (waiting for client connection)
 ```
 
 **Release server**
-
+```
 Project properties -> Configuration properties -> C/C++ -> General -> Additional Include Directories -> ../Core;../Logic;../TUI
+```
 
-###### ChatingClient
+###### ChatingDll
 
 DLL for client use
 
@@ -33,15 +34,16 @@ int Sair();
 int Desligar();
 ```
 
-**Debug DLL**
-
+**Debugging the ChatingDll.dll**
+```
 Project properties -> Configuration properties -> Debugging -> Command -> Browse... Chating.exe
+```
 
 ###### Chating
 
 Client: use DLL
 
-Testing with server running:
+Testing with server running and dll updated:
 ```
 execute Chating.exe
 ```
