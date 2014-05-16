@@ -342,7 +342,7 @@ void JanelaPrivada::Redimensionar(HWND hWnd)
 		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
 		);
 
-	SetWindowPos(
+	/*SetWindowPos(
 		this->AreaMensagens->getHwnd(),
 		0,
 		layoutHorizontal[0]->getPosicao(),
@@ -350,7 +350,11 @@ void JanelaPrivada::Redimensionar(HWND hWnd)
 		layoutHorizontal[0]->getLargura() + 100,
 		layoutVertical[1]->getAltura() + 100,
 		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
+<<<<<<< HEAD
 		);
 
 	this->AreaMensagens->doResize();
+=======
+		);*/
+>>>>>>> 38d1714f9dd0ac8a50ddb920148253b9444ee17c
 }
