@@ -139,6 +139,12 @@ void ChatBox::addMessage(const sTchar_t& userOwner, MENSAGEM msg)
 	//	mychat.publicas[linha].instante.minuto, mychat.publicas[linha].instante.segundo, );
 }
 
+void ChatBox::addMessagePrivate(const sTchar_t& userOwner, MENSAGEM msg)
+{
+	// Mensagem do próprio
+	addMessageOnRight(userOwner,msg.texto);
+}
+
 void ChatBox::addMessageOnRight(const sTchar_t& username, sTchar_t message)
 {
 	messages.push_back(new ChatBoxItem(username,message,_T(""),1));
@@ -163,4 +169,9 @@ void ChatBox::doPaint(HDC hdc, HWND hWnd)
 	// Pinta cada mensagem
 	for (int idx = 0, i = messages.size()-1; i >= 0; i--, idx++)
 		messages.at(i)->doPaint(hdc,hWnd,*this,idx);
+}
+
+void ChatBox::doResize()
+{
+
 }

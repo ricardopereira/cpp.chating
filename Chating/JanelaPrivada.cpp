@@ -62,7 +62,7 @@ void JanelaPrivada::sendMessage(HWND hWnd, const TCHAR* msg)
 				
 		// Coloca no ChatBox
 		MENSAGEM ultima = LerMensagensPrivadas(); //ToDo: DLL
-		AreaMensagens->addMessage(this->servidor->getLoginAutenticado(),ultima);
+		AreaMensagens->addMessagePrivate(this->servidor->getLoginAutenticado(),ultima);
 	}
 }
 
@@ -85,9 +85,9 @@ void JanelaPrivada::reset(HWND hWnd)
 
 void JanelaPrivada::refresh(HWND hWnd)
 {
-	HMENU menu = GetMenu(hWnd);
 
 }
+
 
 // Eventos
 
@@ -274,11 +274,11 @@ void JanelaPrivada::Redimensionar(HWND hWnd)
 {
 	Layout::ReiniciarValoresAcumulados();
 
-	for (unsigned int i = 0; i < layoutVertical.size(); i++){
+	for (unsigned int i = 0; i < layoutVertical.size(); i++) {
 		layoutVertical.at(i)->calcularPosicoesY(hWnd);
-
 	}
-	for (unsigned int i = 0; i < layoutHorizontal.size(); i++){
+
+	for (unsigned int i = 0; i < layoutHorizontal.size(); i++) {
 		layoutHorizontal.at(i)->calcularPosicoesX(hWnd);
 	}
 
@@ -347,8 +347,14 @@ void JanelaPrivada::Redimensionar(HWND hWnd)
 		0,
 		layoutHorizontal[0]->getPosicao(),
 		layoutVertical[1]->getPosicao(),
-		layoutHorizontal[0]->getLargura(),
-		layoutVertical[1]->getAltura(),
+		layoutHorizontal[0]->getLargura() + 100,
+		layoutVertical[1]->getAltura() + 100,
 		SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER
+<<<<<<< HEAD
+		);
+
+	this->AreaMensagens->doResize();
+=======
 		);*/
+>>>>>>> 38d1714f9dd0ac8a50ddb920148253b9444ee17c
 }

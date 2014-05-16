@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DLL/DLLTP.h"
+#include "DLL/Dll.h"
 #include "Common.h"
 #include <sstream>
 

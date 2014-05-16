@@ -101,7 +101,7 @@ int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 void Server::loggedIn()
 {
 	this->totalUtilizadoresOnline = LerListaUtilizadores(this->utilizadoresOnline);
-	this->totalUtilizadores = LerListaUtilizadoresRegistados(this->utilizadores);
+	//this->totalUtilizadores = LerListaUtilizadoresRegistados(this->utilizadores);
 }
 
 int Server::cIniciarConversa(const TCHAR *utilizador)
@@ -145,7 +145,7 @@ void Server::cEnviarMensagemPublica(const TCHAR *texto)
 		msgWithUser[i] = texto[i];
 	}
 
-	EnviarMensagemPública(msgWithUser);
+	EnviarMensagemPublica(msgWithUser);
 	return;
 }
 

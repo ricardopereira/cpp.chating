@@ -52,6 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../Core</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -76,6 +77,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Core\Thread.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="EditBox.cpp" />
@@ -88,32 +90,31 @@
     <ClCompile Include="JanelaPrivada.cpp" />
     <ClCompile Include="Layout.cpp" />
     <ClCompile Include="ListBox.cpp" />
-    <ClCompile Include="Thread.cpp" />
     <ClCompile Include="ThreadPrivateChat.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Core\Thread.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="DLL\Dll.h" />
     <ClInclude Include="EditBox.h" />
     <ClInclude Include="ChatBox.h" />
     <ClInclude Include="ChatBoxItem.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Control.h" />
-    <ClInclude Include="DLL\DLLTP.h" />
     <ClInclude Include="CustomWindow.h" />
     <ClInclude Include="JanelaPrincipal.h" />
     <ClInclude Include="JanelaPrivada.h" />
     <ClInclude Include="Layout.h" />
     <ClInclude Include="ListBox.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Thread.h" />
     <ClInclude Include="ThreadPrivateChat.h" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="DLL\DLLTP.lib" />
+    <ResourceCompile Include="Chating.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Chating.rc" />
+    <Library Include="DLL\ChatingDll.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
