@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -84,7 +84,9 @@
     <ClCompile Include="..\Logic\ChatRoom.cpp" />
     <ClCompile Include="..\Logic\ChatUser.cpp" />
     <ClCompile Include="..\TUI\CustomShell.cpp" />
+    <ClCompile Include="ClienteDados.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Servidor.cpp" />
     <ClCompile Include="Shell.cpp" />
     <ClCompile Include="ThreadCliente.cpp" />
   </ItemGroup>
@@ -97,6 +99,8 @@
     <ClInclude Include="..\Logic\ChatRoom.h" />
     <ClInclude Include="..\Logic\ChatUser.h" />
     <ClInclude Include="..\TUI\CustomShell.h" />
+    <ClInclude Include="ClienteDados.h" />
+    <ClInclude Include="Servidor.h" />
     <ClInclude Include="Shell.h" />
     <ClInclude Include="ThreadCliente.h" />
   </ItemGroup>

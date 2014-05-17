@@ -18,7 +18,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	bool powerOff = false;
 	BOOL leituraEscritaSucesso = false;
 	DWORD bytesLidos = 0;
-
+	int temp_command; //substituir pelo campo correspondente conforme a estrutura.
 	while (!powerOff) {
 		
 		leituraEscritaSucesso = ReadFile(
@@ -42,6 +42,31 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			}
 			break;
 		}
+
+		switch(temp_command){
+		case ThreadCliente::LOGIN:
+			break;
+		case ThreadCliente::LANCAR_CHAT:
+			break;
+		case ThreadCliente::ENVIAR_MSG_PRIVADA:
+			break;
+		case ThreadCliente::ENVIAR_MSG_PUBLICA:
+			break;
+		case ThreadCliente::FECHAR_CHAT:
+			break;
+		case ThreadCliente::LER_INFO_INICIAL:
+			break;
+		case ThreadCliente::CRIAR_USER:
+			break;
+		case ThreadCliente::LER_MENSAGEM_PUBLICA:
+			break;
+		case ThreadCliente::LER_MENSAGEM_PRIVADA:
+			break;
+		case ThreadCliente::ELIMINAR_UTILIZADOR:
+			break;
+		}
+
+
 	}
 	
 	return 1;
