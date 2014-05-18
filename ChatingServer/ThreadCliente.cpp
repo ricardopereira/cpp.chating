@@ -1,7 +1,8 @@
 #include "Shell.h"
 #include "ThreadCliente.h"
 #include "ChatComunication.h"
-
+#include "Servidor.h"
+#include "Mensagens.h"
 ThreadCliente::ThreadCliente(HANDLE hPipe)
 {
 	this->ptrClasse = this;
