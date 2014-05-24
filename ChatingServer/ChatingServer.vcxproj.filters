@@ -69,6 +69,9 @@
     <ClCompile Include="Servidor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mensagens.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shell.h">
@@ -105,6 +108,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Servidor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mensagens.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

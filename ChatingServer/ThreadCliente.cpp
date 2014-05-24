@@ -3,10 +3,11 @@
 #include "ChatComunication.h"
 #include "Servidor.h"
 #include "Mensagens.h"
-ThreadCliente::ThreadCliente(HANDLE hPipe)
+ThreadCliente::ThreadCliente(HANDLE hPipe, Servidor* server)
 {
 	this->ptrClasse = this;
 	this->hPipe = hPipe;
+	this->server = server;
 }
 
 ThreadCliente::~ThreadCliente()
@@ -20,6 +21,10 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	BOOL leituraEscritaSucesso = false;
 	DWORD bytesLidos = 0;
 	int temp_command; //substituir pelo campo correspondente conforme a estrutura.
+	sTchar_t pass = TEXT(""); //temp
+	sTchar_t usrname = TEXT(""); //temp
+	sTchar_t usrnametoremove = TEXT(""); //temp
+	
 	while (!powerOff) {
 		
 		leituraEscritaSucesso = ReadFile(
@@ -45,25 +50,36 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 		}
 
 		switch(temp_command){
+		//Cada accção deve devolver um código de (in)sucesso
+		case ThreadCliente::REGISTER_NEW_USER:
+			server->RegisterUser(usrname, pass);
+			break;
 		case ThreadCliente::LOGIN:
+			server->Login(usrname, pass, this->currentClient);
 			break;
 		case ThreadCliente::LANCAR_CHAT:
+			server->LancarChat(username, this->currentPartner);
 			break;
 		case ThreadCliente::ENVIAR_MSG_PRIVADA:
+			server->SendPrivateMessage(this->currentPartner);
 			break;
 		case ThreadCliente::ENVIAR_MSG_PUBLICA:
+			server->SendPublicMessage(this->currentPartner);
 			break;
 		case ThreadCliente::FECHAR_CHAT:
+			server->CloseChat();
 			break;
 		case ThreadCliente::LER_INFO_INICIAL:
-			break;
-		case ThreadCliente::CRIAR_USER:
+			server->RetrieveInformation();
 			break;
 		case ThreadCliente::LER_MENSAGEM_PUBLICA:
 			break;
 		case ThreadCliente::LER_MENSAGEM_PRIVADA:
 			break;
 		case ThreadCliente::ELIMINAR_UTILIZADOR:
+			server->RemoveUser(usrnametoremove);
+			break;
+		case ThreadCliente::LOGOUT:
 			break;
 		}
 

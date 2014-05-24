@@ -4,9 +4,17 @@ class ClienteDados
 {
 	sTchar_t username;
 	sTchar_t password;
+	bool online;
+
 
 public:
-	ClienteDados();
+	ClienteDados(sTchar_t username, sTchar_t password);
 	~ClienteDados();
+	void SetOnline();
+	void SetOffline();
+	sTchar_t GetUsername();
+	sTchar_t GetPassword();
+
+
 };
 

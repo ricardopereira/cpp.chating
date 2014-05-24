@@ -5,6 +5,7 @@
 #include "Shell.h"
 #include "ChatComunication.h"
 #include "ThreadCliente.h"
+#include "Servidor.h"
 using namespace std;
 
 void comandStart();
@@ -42,8 +43,8 @@ void comandStart()
 	HANDLE hPipe, lastPipe;
 	BOOL connected = 1;
 	BOOL success = 0;
-	vector<ThreadCliente*> clients;
-
+	vector<ThreadCliente*> clients;	
+	Servidor server;
 	while (1) {
 		hPipe = CreateNamedPipe(pipeName,
 			PIPE_ACCESS_DUPLEX, //OpenMode
@@ -67,7 +68,7 @@ void comandStart()
 		// Verificar conectividade
 		if (connected)
 		{
-			clients.push_back(new ThreadCliente(hPipe));
+			clients.push_back(new ThreadCliente(hPipe, &server));
 			clients.back()->LancarThread();
 			// Cliente conectado
 			tcout << TEXT("O cliente ligou-se") << endl;

@@ -86,6 +86,7 @@
     <ClCompile Include="..\TUI\CustomShell.cpp" />
     <ClCompile Include="ClienteDados.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mensagens.cpp" />
     <ClCompile Include="Servidor.cpp" />
     <ClCompile Include="Shell.cpp" />
     <ClCompile Include="ThreadCliente.cpp" />
@@ -100,6 +101,8 @@
     <ClInclude Include="..\Logic\ChatUser.h" />
     <ClInclude Include="..\TUI\CustomShell.h" />
     <ClInclude Include="ClienteDados.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="Mensagens.h" />
     <ClInclude Include="Servidor.h" />
     <ClInclude Include="Shell.h" />
     <ClInclude Include="ThreadCliente.h" />
