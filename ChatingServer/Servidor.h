@@ -13,11 +13,20 @@ public:
 		USER_NOT_FOUND,
 		INCORRECT_PASSWORD,
 		SUCCESS,
-		NO_PRIVILEDGES
+		NO_PRIVILEDGES,
+		USER_BUSY,
+		PIPE_ERROR
 	};
 	void NovaMensagem(DATA data, int user1, int user2, sTchar_t msg);
 	rMsg Login(sTchar_t username, sTchar_t password, ClienteDados* cliente);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password);
+	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
+	rMsg SendPrivateMessage(ClienteDados &partner);
+	rMsg SendPublicMessage();
+	rMsg CloseChat();
+	rMsg RetrieveInformation();
+	rMsg RemoveUser(sTchar_t username);
+
 	Servidor();
 	~Servidor();
 

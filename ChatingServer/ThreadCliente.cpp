@@ -58,13 +58,13 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->Login(usrname, pass, this->currentClient);
 			break;
 		case ThreadCliente::LANCAR_CHAT:
-			server->LancarChat(username, this->currentPartner);
+			server->LancarChat(usrname, this->currentPartner);
 			break;
 		case ThreadCliente::ENVIAR_MSG_PRIVADA:
-			server->SendPrivateMessage(this->currentPartner);
+			server->SendPrivateMessage(*this->currentPartner);
 			break;
 		case ThreadCliente::ENVIAR_MSG_PUBLICA:
-			server->SendPublicMessage(this->currentPartner);
+			server->SendPublicMessage();
 			break;
 		case ThreadCliente::FECHAR_CHAT:
 			server->CloseChat();
