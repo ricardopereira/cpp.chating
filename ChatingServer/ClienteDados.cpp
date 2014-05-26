@@ -24,9 +24,12 @@ void ClienteDados::SetOffline(){
 }
 
 
-sTchar_t ClienteDados::GetUsername(){
+sTchar_t ClienteDados::GetUsername()const{
 	return this->username;
 }
-sTchar_t ClienteDados::GetPassword(){
+sTchar_t ClienteDados::GetPassword()const{
 	return this->password;
+}
+int ClienteDados::GetTipo()const{
+	return this->tipo;
 }

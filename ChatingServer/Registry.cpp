@@ -49,7 +49,7 @@ Servidor::rMsg Registry::LoadData(
 
 		///jogadores = (JOGADOR *)malloc(sizeof(JOGADOR)); //adicionar o administrador com as credenciais por omissão.
 		//inicializarJogador(TEXT("admin"), TEXT("admin"));
-		clientdata.push_back(new ClienteDados(TEXT("admin"), TEXT("admin")));
+		clientdata.push_back(new ClienteDados(TEXT("admin"), TEXT("admin"), 2));
 		RegSetValueEx(chave, TEXT("Users"), 0, REG_BINARY, (LPBYTE)users, sizeof(UTILIZADOR)*nUsers);
 
 		//MessageBox(hWnd, TEXT("Joga"), TEXT("Registry"), MB_OK );
@@ -123,8 +123,9 @@ Servidor::rMsg Registry::SaveData(
 
 	messages = new MSG_T[msgdata.size()];
 	users = new UTILIZADOR[clientdata.size()];
-
-	for (unsigned int i = 0; i < msgdata.size(); i++)
+	nMessages = msgdata.size();
+	nUsers = clientdata.size();
+	for (unsigned int i = 0; i < nMessages; i++)
 	{
 		sTchar_t message_temp = msgdata.at(i)->GetMensagem();
 		_tcscpy_s(messages[i].mensagem.texto, message_temp.size(), message_temp.c_str());
@@ -133,6 +134,17 @@ Servidor::rMsg Registry::SaveData(
 		messages[i].userSender = msgdata.at(i)->GetSender();
 	}
 
+	for (unsigned int i = 0; i < nUsers; i++)
+	{
+		sTchar_t username_temp = clientdata.at(i)->GetUsername().c_str();
+		sTchar_t password_temp = clientdata.at(i)->GetPassword().c_str();
+		_tcscpy_s(users[i].login, username_temp.size(), username_temp.c_str());
+		_tcscpy_s(users[i].password, password_temp.size(), password_temp.c_str());
+		users[i].tipo = clientdata.at(i)->GetTipo();
+	
+	}
+
+	/////TERMINAR ABAIXO
 	//Criar/abrir uma chave em HKEY_LOCAL_MACHINE\Software\MinhaAplicacao
 	if (RegCreateKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\ForcaServidor"), 0, NULL, REG_OPTION_VOLATILE, ///REG_OPTION_VOLATILE->Sem persistência
 		KEY_ALL_ACCESS, NULL, &chave, &queAconteceu) != ERROR_SUCCESS){
@@ -140,11 +152,14 @@ Servidor::rMsg Registry::SaveData(
 
 		return Servidor::REGEDIT_NOT_OK;
 	}
-	else
-	if (queAconteceu == REG_OPENED_EXISTING_KEY){
+	else if (queAconteceu == REG_OPENED_EXISTING_KEY){
 		//MessageBox(hWnd, TEXT("Chave: HKEY_LOCAL_MACHINE\Software\MinhaAplicacao aberta"), TEXT("Registry"), MB_OK);
-		RegSetValueEx(chave, TEXT("Jogadores"), 0, REG_BINARY, (LPBYTE)jogadores, sizeof(JOGADOR)*nJogadores);
-		RegSetValueEx(chave, TEXT("nJogadores"), 0, REG_DWORD, (LPBYTE)&nJogadores, sizeof(DWORD));
+		
+		RegSetValueEx(chave, TEXT("Messages"), 0, REG_BINARY, (LPBYTE)messages, sizeof(MSG_T)*nMessages);
+		RegSetValueEx(chave, TEXT("nMessages"), 0, REG_DWORD, (LPBYTE)&nMessages, sizeof(DWORD));
+		
+		RegSetValueEx(chave, TEXT("Users"), 0, REG_BINARY, (LPBYTE)users, sizeof(UTILIZADOR)*nUsers);
+		RegSetValueEx(chave, TEXT("nUsers"), 0, REG_DWORD, (LPBYTE)&nUsers, sizeof(DWORD));
 
 		RegCloseKey(chave);
 		return Servidor::REGEDIT_OK;

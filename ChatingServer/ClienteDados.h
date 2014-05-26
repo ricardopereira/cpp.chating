@@ -13,8 +13,9 @@ public:
 	~ClienteDados();
 	void SetOnline();
 	void SetOffline();
-	sTchar_t GetUsername();
-	sTchar_t GetPassword();
+	sTchar_t GetUsername()const;
+	sTchar_t GetPassword()const;
+	int GetTipo()const;
 
 
 };

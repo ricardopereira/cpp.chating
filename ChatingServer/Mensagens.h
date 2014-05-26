@@ -11,8 +11,10 @@ private:
 	int user2;
 public:
 	Mensagens(DATA data, int user1, int user2, sTchar_t msg);
-	sTchar_t GetMensagem();
+	sTchar_t GetMensagem()const;
 	const DATA& GetDataMensagem();
+	int GetReceiver()const;
+	int GetSender()const;
 	~Mensagens();
 };
 

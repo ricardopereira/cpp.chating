@@ -1,4 +1,7 @@
 ﻿#include <windows.h>
+#ifndef TPDLL_H
+#define TPDLL_H
+
 
 #define TAMLOGIN 15
 #define TAMPASS 15
@@ -49,3 +52,5 @@ extern "C"
 	DLL_IMP_API int Sair();
 	DLL_IMP_API int Desligar();
 }
+
+#endif
