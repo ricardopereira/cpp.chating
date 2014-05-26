@@ -15,7 +15,10 @@ public:
 		SUCCESS,
 		NO_PRIVILEDGES,
 		USER_BUSY,
-		PIPE_ERROR
+		PIPE_ERROR,
+		REGEDIT_OK,
+		REGEDIT_FIRST_TIME, 
+		REGEDIT_NOT_OK
 	};
 	void NovaMensagem(DATA data, int user1, int user2, sTchar_t msg);
 	rMsg Login(sTchar_t username, sTchar_t password, ClienteDados* cliente);

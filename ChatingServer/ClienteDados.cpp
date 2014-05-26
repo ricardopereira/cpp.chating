@@ -1,10 +1,11 @@
 #include "ClienteDados.h"
 
 
-ClienteDados::ClienteDados(sTchar_t username, sTchar_t password)
+ClienteDados::ClienteDados(sTchar_t username, sTchar_t password, int tipo)
 {
 	this->username = username;
 	this->password = password;
+	this->tipo = tipo;
 	this->online = false;
 }
 
