@@ -8,8 +8,8 @@
 class Servidor
 {
 private:
-	static Semaforo				sem_ServerData;
-	static Mutex_t				mut_ServerData;
+	Semaforo					sem_ServerData;
+	Mutex_t						mut_ServerData;
 	std::vector<Mensagens*>		msgs;
 	std::vector<ClienteDados*>	clientes;
 public:
@@ -27,7 +27,7 @@ public:
 	};
 	void NovaMensagem(DATA data, int user1, int user2, sTchar_t msg);
 	rMsg Login(sTchar_t username, sTchar_t password, ClienteDados* cliente);
-	rMsg RegisterUser(sTchar_t username, sTchar_t password);
+	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
 	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
 	rMsg SendPrivateMessage(ClienteDados &partner);
 	rMsg SendPublicMessage();

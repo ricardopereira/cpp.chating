@@ -9,5 +9,6 @@ public:
 	Mutex_t();
 	~Mutex_t();
 	void Wait();
+	void Release();
 };
 

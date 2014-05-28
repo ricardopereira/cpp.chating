@@ -15,3 +15,6 @@ Semaforo::~Semaforo()
 void Semaforo::Wait(){
 	WaitForSingleObject(this->handle_s, INFINITE);
 }
+void Semaforo::Release(){
+	ReleaseSemaphore(this->handle_s, 1, NULL);
+}

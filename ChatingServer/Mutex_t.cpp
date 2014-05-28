@@ -16,3 +16,7 @@ void Mutex_t::Wait(){
 	WaitForSingleObject(this->handle_m, INFINITE);
 }
 
+void Mutex_t::Release(){
+	ReleaseMutex(this->handle_m);
+}
+

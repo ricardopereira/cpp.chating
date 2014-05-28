@@ -52,7 +52,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 		switch(temp_command){
 		//Cada accção deve devolver um código de (in)sucesso
 		case ThreadCliente::REGISTER_NEW_USER:
-			server->RegisterUser(usrname, pass);
+			server->RegisterUser(usrname, pass, /*tipo*/1);
 			break;
 		case ThreadCliente::LOGIN:
 			server->Login(usrname, pass, this->currentClient);

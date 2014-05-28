@@ -8,5 +8,6 @@ public:
 	Semaforo();
 	~Semaforo();
 	void Wait();
+	void Release();
 };
 
