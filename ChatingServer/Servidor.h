@@ -2,11 +2,16 @@
 #include <vector>
 #include "Mensagens.h"
 #include "ClienteDados.h"
+#include "Semaforo.h"
+#include "Mutex_t.h"
 
 class Servidor
 {
-	std::vector<Mensagens*> msgs;
-	std::vector<ClienteDados*> clientes;
+private:
+	static Semaforo				sem_ServerData;
+	static Mutex_t				mut_ServerData;
+	std::vector<Mensagens*>		msgs;
+	std::vector<ClienteDados*>	clientes;
 public:
 	enum rMsg {
 		USER_NOT_REGISTERED,
