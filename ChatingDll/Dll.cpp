@@ -3,27 +3,50 @@
 
 #include "Dll.h"
 #include "ChatComunication.h"
+HANDLE hPipe;
+HANDLE assyncPipe;
+enum commands_t {
+	REGISTER_NEW_USER,
+	LOGIN,
+	LANCAR_CHAT,
+	ENVIAR_MSG_PRIVADA,
+	ENVIAR_MSG_PUBLICA,
+	FECHAR_CHAT,
+	LER_INFO_INICIAL,
+	CRIAR_USER,
+	DESLIGAR,
+	LER_MENSAGEM_PRIVADA,
+	LER_MENSAGEM_PUBLICA,
+	ELIMINAR_UTILIZADOR,
+	LOGOUT
+};
+DLL_IMP_API int AbrirPipe(){
+	hPipe = CreateFile(
+		pipeName,
+		GENERIC_READ | GENERIC_WRITE,
+		0, //no sharing
+		NULL, //default security attributes
+		OPEN_EXISTING, //opens existing pipe
+		0, //default attributes
+		NULL); //no template file
+	if (hPipe == INVALID_HANDLE_VALUE)
+		return 0;
 
+	if (GetLastError() == ERROR_PIPE_BUSY)
+		return 0;
+	return 1;
+}
 int Autenticar(const TCHAR *login, const TCHAR *pass)
 {
-	HANDLE hPipe;
+	
 	chatbuffer_t buffer;
-
-    hPipe = CreateFile(
-        pipeName,
-        GENERIC_READ | GENERIC_WRITE,
-        0, //no sharing
-        NULL, //default security attributes
-        OPEN_EXISTING, //opens existing pipe
-        0, //default attributes
-        NULL); //no template file
-
-    if (hPipe == INVALID_HANDLE_VALUE)
-        return 0;
-
-    if (GetLastError() == ERROR_PIPE_BUSY) 
-        return 0;
-
+	int sl, sp;
+	sl = _tcslen(login);
+	sp = _tcslen(pass);
+	_tcscpy_s(buffer.args[0], _tcslen(login)*sizeof(TCHAR), login);
+	_tcscpy_s(buffer.args[1], _tcslen(pass)*sizeof(TCHAR), pass);
+	buffer.command = LOGIN;
+	
 	PTCHAR msg = TEXT("Ligacao com sucesso");
 	//DWORD msgBytes;
 	DWORD bytesSent;
@@ -32,15 +55,14 @@ int Autenticar(const TCHAR *login, const TCHAR *pass)
 	// Envio de pedido
 	success = WriteFile(hPipe,
 		&buffer, //message
-		sizeof(buffer), //message length
+		sizeof(chatbuffer_t), //message length
 		&bytesSent, //bytes written
 		NULL); //not overlapped
 
 	if (!success) 
 		return -1;
 
-	// Fecha o pipe
-	CloseHandle(hPipe);
+
 
 	return 1;
 }
@@ -102,5 +124,7 @@ int Sair()
 
 int Desligar()
 {
+	// Fecha o pipe
+	CloseHandle(hPipe);
 	return 0;
 }

@@ -73,7 +73,8 @@ UTILIZADOR Server::getUtilizadorOnline(int index)
 }
 
 int Server::cAutenticar(TCHAR* login, TCHAR *pass)
-{
+{	
+	AbrirPipe(); //Abre o pipe para a comunicacao
 	int res = Autenticar(login, pass);
 
 	if (res == 1) {

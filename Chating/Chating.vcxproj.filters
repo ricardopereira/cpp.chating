@@ -28,9 +28,6 @@
     <Filter Include="External">
       <UniqueIdentifier>{c17a90af-bcb3-4388-98ca-db7fca5cd5a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\DLL">
-      <UniqueIdentifier>{227a2084-5abc-470f-b2c6-b1cb9c658612}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JanelaPrincipal.cpp">
@@ -122,9 +119,6 @@
     <ClInclude Include="..\Core\Thread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DLL\Dll.h">
-      <Filter>Header Files\DLL</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Chating.rc">
@@ -132,7 +126,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="DLL\ChatingDll.lib">
+    <Library Include="..\Debug\ChatingDll.lib">
       <Filter>External</Filter>
     </Library>
   </ItemGroup>

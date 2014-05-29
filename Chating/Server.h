@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DLL/Dll.h"
+#include "../ChatingDll/Dll.h"
 #include "Common.h"
 #include <sstream>
 
