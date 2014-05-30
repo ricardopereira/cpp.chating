@@ -1,10 +1,10 @@
 #include "Servidor.h"
+#include "Registry.h"
 
 
 Servidor::Servidor()
 {
 }
-///////////SEMMMMMMMMMMMMMMMMAAAAAAAAAAAAAAAAFFFFFFFFOOOORRROOOSSSS PREEEECISAMMMMMMM_SE
 
 Servidor::~Servidor()
 {
@@ -19,6 +19,9 @@ void Servidor::NovaMensagem(DATA data, int user1, int user2, sTchar_t msg){
 	this->mut_ServerData.Release();
 	
 }
+void Servidor::LoadRegistry(){
+	Registry::LoadData(this->clientes, this->msgs);
+}
 
 Servidor::rMsg Servidor::Login(sTchar_t username, sTchar_t password, ClienteDados* cliente){
 	this->mut_ServerData.Wait();
@@ -27,7 +30,10 @@ Servidor::rMsg Servidor::Login(sTchar_t username, sTchar_t password, ClienteDado
 		if (clientes.at(i)->GetUsername() == username){
 			if (clientes.at(i)->GetPassword() == password){
 				cliente = clientes.at(i);
-				return Servidor::SUCCESS;
+				if (cliente->GetTipo() == 2)
+					return Servidor::SUCCESS_ADMIN;
+				else
+					return Servidor::SUCCESS;
 			}
 			else{
 				cliente = nullptr;

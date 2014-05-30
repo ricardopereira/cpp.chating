@@ -77,26 +77,27 @@ int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 	AbrirPipe(); //Abre o pipe para a comunicacao
 	int res = Autenticar(login, pass);
 
-	if (res == 1) {
+	if (res == SUCCESS) {
 		this->autenticado = true;
 		this->privilegiosAdmin = false;
 		this->loginAutenticado = login;
-
 		loggedIn();
+		return 1;
 	}
-	else if (res == 2) {
+	else if (res == SUCCESS_ADMIN) {
 		this->autenticado = true;
 		this->privilegiosAdmin = true;
 		this->loginAutenticado = login; //Administrador
 
 		loggedIn();
+		return 2;
 	}
 	else {
 		this->autenticado = false;
 		this->privilegiosAdmin = false;
 		this->loginAutenticado = TEXT("");
 	}
-	return res;
+	return 0;
 }
 
 void Server::loggedIn()

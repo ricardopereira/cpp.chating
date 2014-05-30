@@ -20,6 +20,8 @@ enum commands_t {
 	ELIMINAR_UTILIZADOR,
 	LOGOUT
 };
+
+
 DLL_IMP_API int AbrirPipe(){
 	hPipe = CreateFile(
 		pipeName,
@@ -50,6 +52,7 @@ int Autenticar(const TCHAR *login, const TCHAR *pass)
 	PTCHAR msg = TEXT("Ligacao com sucesso");
 	//DWORD msgBytes;
 	DWORD bytesSent;
+	DWORD bytesRead;
 	BOOL success = 0;
 
 	// Envio de pedido
@@ -61,10 +64,16 @@ int Autenticar(const TCHAR *login, const TCHAR *pass)
 
 	if (!success) 
 		return -1;
-
-
-
-	return 1;
+	success = ReadFile(
+		hPipe,
+		&buffer,
+		sizeof(chatbuffer_t),
+		&bytesRead,
+		NULL);
+	if (!success)
+		return -1;
+	
+	return buffer.arg_num;
 }
 
 int LerListaUtilizadores(UTILIZADOR *utilizadores)

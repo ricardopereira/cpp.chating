@@ -20,6 +20,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	bool powerOff = false;
 	BOOL leituraEscritaSucesso = false;
 	DWORD bytesLidos = 0;
+	DWORD bytesEscritos = 0;
 	int temp_command; //substituir pelo campo correspondente conforme a estrutura.
 	sTchar_t pass = TEXT(""); //temp
 	sTchar_t usrname = TEXT(""); //temp
@@ -56,8 +57,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			break;
 		case ThreadCliente::LOGIN:
 			tcout << TEXT("\nLogin: ") << buffer.args[0] << TEXT("Password: ") << buffer.args[1] << TEXT("\n");
-			break;
-			server->Login(usrname, pass, this->currentClient);
+			buffer.arg_num = server->Login(buffer.args[0], buffer.args[1], this->currentClient);
 			break;
 		case ThreadCliente::LANCAR_CHAT:
 			server->LancarChat(usrname, this->currentPartner);
@@ -84,6 +84,12 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 		case ThreadCliente::LOGOUT:
 			break;
 		}
+
+		leituraEscritaSucesso = WriteFile(hPipe,
+			&buffer, //message
+			sizeof(chatbuffer_t), //message length
+			&bytesEscritos, //bytes written
+			NULL); //not overlapped
 
 
 	}

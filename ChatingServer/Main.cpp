@@ -45,6 +45,7 @@ void comandStart()
 	BOOL success = 0;
 	vector<ThreadCliente*> clients;	
 	Servidor server;
+	server.LoadRegistry();
 	while (1) {
 		hPipe = CreateNamedPipe(pipeName,
 			PIPE_ACCESS_DUPLEX, //OpenMode

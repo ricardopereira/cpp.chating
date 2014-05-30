@@ -18,6 +18,20 @@
 
 extern "C"
 {
+	enum returnMessages {
+		USER_NOT_REGISTERED,
+		USER_NOT_FOUND,
+		INCORRECT_PASSWORD,
+		SUCCESS,
+		SUCCESS_ADMIN,
+		NO_PRIVILEDGES,
+		USER_BUSY,
+		PIPE_ERROR,
+		REGEDIT_OK,
+		REGEDIT_FIRST_TIME,
+		REGEDIT_NOT_OK
+	};
+
 	typedef struct {
 		TCHAR login[TAMLOGIN], password[TAMPASS];
 		short int tipo; //1-utilizador 2-admin

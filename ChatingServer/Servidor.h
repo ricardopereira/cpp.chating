@@ -18,6 +18,7 @@ public:
 		USER_NOT_FOUND,
 		INCORRECT_PASSWORD,
 		SUCCESS,
+		SUCCESS_ADMIN,
 		NO_PRIVILEDGES,
 		USER_BUSY,
 		PIPE_ERROR,
@@ -26,6 +27,7 @@ public:
 		REGEDIT_NOT_OK
 	};
 	void NovaMensagem(DATA data, int user1, int user2, sTchar_t msg);
+	void LoadRegistry();
 	rMsg Login(sTchar_t username, sTchar_t password, ClienteDados* cliente);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
 	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
