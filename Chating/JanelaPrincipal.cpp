@@ -94,6 +94,23 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDCANCEL:
 			EndDialog(hWnd,IDCANCEL);
 			break;
+		case IDC_NEWUSER:
+			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
+			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
+			res = ptrServidor->cRegistar(login, password);
+			if (res == SUCCESS ){
+				sTchar_t text;
+				text = TEXT("Utilizador registado com sucesso. Pode proceder com a operação de login.");
+				MessageBox(hWnd, text.c_str(), TEXT("Registar novo utilizador"), MB_OK | MB_ICONINFORMATION);
+			}
+			else{
+				sTchar_t text;
+				text = TEXT("Não foi possível registar o utilizador.");
+				MessageBox(hWnd, text.c_str(), TEXT("Registar novo utilizador"), MB_OK | MB_ICONINFORMATION);
+			}
+			
+			break;
+
 		}
 		break;
 	}

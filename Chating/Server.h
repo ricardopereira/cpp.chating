@@ -20,6 +20,8 @@ public:
 	Server();
 
 	int cAutenticar(TCHAR* login, TCHAR* pass);
+	int cRegistar(TCHAR* login, TCHAR* pass);
+
 	void cLerInformacaoInicial();
 
 	void cEnviarMensagemPublica(const TCHAR *texto);

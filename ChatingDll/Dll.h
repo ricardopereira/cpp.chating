@@ -55,6 +55,7 @@ extern "C"
 	//Funções a serem exportadas/importadas
 	DLL_IMP_API int AbrirPipe();
 	DLL_IMP_API int Autenticar(const TCHAR *login, const TCHAR *pass);
+	DLL_IMP_API int Registar(const TCHAR *login, const TCHAR *pass);
 	DLL_IMP_API int LerListaUtilizadores(UTILIZADOR *utilizadores);
 	DLL_IMP_API int LerListaUtilizadoresRegistados(UTILIZADOR *utilizadores);
 	DLL_IMP_API int IniciarConversa(const TCHAR *utilizador);

@@ -1,5 +1,5 @@
 #include "Server.h"
-
+int pipeAberto = 0;
 Server::Server()
 {
 	reset();
@@ -73,8 +73,10 @@ UTILIZADOR Server::getUtilizadorOnline(int index)
 }
 
 int Server::cAutenticar(TCHAR* login, TCHAR *pass)
-{	
-	AbrirPipe(); //Abre o pipe para a comunicacao
+{
+	if (!pipeAberto){
+		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
+	}
 	int res = Autenticar(login, pass);
 
 	if (res == SUCCESS) {
@@ -98,6 +100,15 @@ int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 		this->loginAutenticado = TEXT("");
 	}
 	return 0;
+}
+
+int Server::cRegistar(TCHAR* login, TCHAR *pass)
+{
+	if (!pipeAberto){
+		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
+	}
+	int res = Registar(login, pass);
+	return res;
 }
 
 void Server::loggedIn()

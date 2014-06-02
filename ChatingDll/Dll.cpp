@@ -42,9 +42,6 @@ int Autenticar(const TCHAR *login, const TCHAR *pass)
 {
 	
 	chatbuffer_t buffer;
-	int sl, sp;
-	sl = _tcslen(login);
-	sp = _tcslen(pass);
 	_tcscpy_s(buffer.args[0], _tcslen(login)*sizeof(TCHAR), login);
 	_tcscpy_s(buffer.args[1], _tcslen(pass)*sizeof(TCHAR), pass);
 	buffer.command = LOGIN;
@@ -54,7 +51,6 @@ int Autenticar(const TCHAR *login, const TCHAR *pass)
 	DWORD bytesSent;
 	DWORD bytesRead;
 	BOOL success = 0;
-
 	// Envio de pedido
 	success = WriteFile(hPipe,
 		&buffer, //message
@@ -73,6 +69,40 @@ int Autenticar(const TCHAR *login, const TCHAR *pass)
 	if (!success)
 		return -1;
 	
+	return buffer.arg_num;
+}
+int Registar(const TCHAR *login, const TCHAR *pass)
+{
+	
+	chatbuffer_t buffer;
+	_tcscpy_s(buffer.args[0], _tcslen(login)*sizeof(TCHAR), login);
+	_tcscpy_s(buffer.args[1], _tcslen(pass)*sizeof(TCHAR), pass);
+	buffer.command = REGISTER_NEW_USER;
+
+	PTCHAR msg = TEXT("Ligacao com sucesso");
+	//DWORD msgBytes;
+	DWORD bytesSent;
+	DWORD bytesRead;
+	BOOL success = 0;
+
+	// Envio de pedido
+	success = WriteFile(hPipe,
+		&buffer, //message
+		sizeof(chatbuffer_t), //message length
+		&bytesSent, //bytes written
+		NULL); //not overlapped
+
+	if (!success)
+		return -1;
+	success = ReadFile(
+		hPipe,
+		&buffer,
+		sizeof(chatbuffer_t),
+		&bytesRead,
+		NULL);
+	if (!success)
+		return -1;
+
 	return buffer.arg_num;
 }
 
