@@ -4,11 +4,7 @@
 #include "../ChatingDll/Dll.h"
 #include "Shell.h"
 //userReceiver = -2 -> Public
-typedef struct msg_t {
-	DWORD userSender;
-	DWORD userReceiver;
-	MENSAGEM mensagem;
-}MSG_T;
+
 MSG_T *messages;
 
 DWORD nUsers=0;

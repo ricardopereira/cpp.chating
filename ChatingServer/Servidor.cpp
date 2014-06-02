@@ -30,10 +30,14 @@ Servidor::rMsg Servidor::Login(sTchar_t username, sTchar_t password, ClienteDado
 		if (clientes.at(i)->GetUsername() == username){
 			if (clientes.at(i)->GetPassword() == password){
 				cliente = clientes.at(i);
-				if (cliente->GetTipo() == 2)
+				if (cliente->GetTipo() == 2){
+					cliente->CreatePrivatePipe();
 					return Servidor::SUCCESS_ADMIN;
-				else
+				}
+				else{
+					cliente->CreatePrivatePipe();
 					return Servidor::SUCCESS;
+				}
 			}
 			else{
 				cliente = nullptr;

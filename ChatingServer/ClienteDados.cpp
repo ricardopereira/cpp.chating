@@ -1,4 +1,7 @@
 #include "ClienteDados.h"
+#include "../ChatingDll/Dll.h"
+#include <string>
+#include "Shell.h"
 
 
 ClienteDados::ClienteDados(sTchar_t username, sTchar_t password, int tipo)
@@ -32,4 +35,24 @@ sTchar_t ClienteDados::GetPassword()const{
 }
 int ClienteDados::GetTipo()const{
 	return this->tipo;
+}
+
+void ClienteDados::CreatePrivatePipe(){
+	//_stprintf_s(jogadores[i].nomePipe, 30, "\\\\.\\pipe\\%suser", jogadores[i].username);
+	oTcharStream_t pipeName;
+	pipeName << TEXT("\\\.\\pipe\\") << this->username;
+	
+	this->privatePipe = INVALID_HANDLE_VALUE;
+	this->privatePipe = CreateNamedPipe(pipeName.str().c_str(),
+		PIPE_ACCESS_DUPLEX,
+		PIPE_TYPE_MESSAGE |
+		PIPE_WAIT,
+		PIPE_UNLIMITED_INSTANCES,
+		sizeof(MSG_T),
+		sizeof(MSG_T),
+		0,
+		NULL);
+
+	if (this->privatePipe == INVALID_HANDLE_VALUE)
+		_tprintf(TEXT("\nErro na criacao do pipe: Erro no (%d)\n"), GetLastError());
 }

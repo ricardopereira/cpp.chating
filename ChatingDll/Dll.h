@@ -47,6 +47,12 @@ extern "C"
 		DATA instante;
 	} MENSAGEM;
 
+	typedef struct msg_t {
+		DWORD userSender;
+		DWORD userReceiver;
+		MENSAGEM mensagem;
+	}MSG_T;
+
 	typedef struct {
 		MENSAGEM publicas[NUMMSGSPUBLICAS];
 		MENSAGEM privadas[NUMUTILIZADORES][NUMMSGSPRIVADAS];

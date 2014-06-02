@@ -6,6 +6,7 @@ class ClienteDados
 	sTchar_t password;
 	int tipo;
 	bool online;
+	HANDLE privatePipe;
 
 
 public:
@@ -16,6 +17,7 @@ public:
 	sTchar_t GetUsername()const;
 	sTchar_t GetPassword()const;
 	int GetTipo()const;
+	void CreatePrivatePipe();
 
 
 };

@@ -11,7 +11,7 @@ LRESULT CALLBACK internalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	// onPaint: Ponteiro para estrutura de WM_PAINT
 	PAINTSTRUCT ps;
 
-	// Get a window pointer associated with this window
+	// Obter um ponteiro associado a esta janela
 	CustomWindow *ptr = (CustomWindow*)GetWindowLong(hWnd, GWL_USERDATA);
 	// It should be valid, assert so
 	_ASSERT(ptr);
