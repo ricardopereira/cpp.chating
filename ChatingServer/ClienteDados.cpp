@@ -38,7 +38,6 @@ int ClienteDados::GetTipo()const{
 }
 
 void ClienteDados::CreatePrivatePipe(){
-	//_stprintf_s(jogadores[i].nomePipe, 30, "\\\\.\\pipe\\%suser", jogadores[i].username);
 	oTcharStream_t pipeName;
 	pipeName << TEXT("\\\.\\pipe\\") << this->username;
 	
