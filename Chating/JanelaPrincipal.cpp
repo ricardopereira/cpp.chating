@@ -258,6 +258,7 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 	// ToDo: Validar isto
 	hdc = GetDC(hWnd);
 	this->memdc = CreateCompatibleDC(hdc);
+	assyncThread.LancarThread();
 }
 
 void JanelaPrincipal::onShow(HWND hWnd)

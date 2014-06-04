@@ -39,7 +39,7 @@ int ClienteDados::GetTipo()const{
 
 void ClienteDados::CreatePrivatePipe(){
 	oTcharStream_t pipeName;
-	pipeName << TEXT("\\\.\\pipe\\") << this->username;
+	pipeName << TEXT("\\\\.\\pipe\\") << this->username;
 	
 	this->privatePipe = INVALID_HANDLE_VALUE;
 	this->privatePipe = CreateNamedPipe(pipeName.str().c_str(),
@@ -47,8 +47,8 @@ void ClienteDados::CreatePrivatePipe(){
 		PIPE_TYPE_MESSAGE |
 		PIPE_WAIT,
 		PIPE_UNLIMITED_INSTANCES,
-		sizeof(MSG_T),
-		sizeof(MSG_T),
+		sizeof(MSG_T)*50,
+		sizeof(MSG_T)*50,
 		0,
 		NULL);
 

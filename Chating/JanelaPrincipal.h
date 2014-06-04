@@ -10,6 +10,7 @@
 #include "EditBox.h"
 #include "ChatBox.h"
 #include "ThreadPrivateChat.h"
+#include "AssyncThread.h"
 
 using namespace std;
 
@@ -26,12 +27,13 @@ private:
 	int					BotaoEnviarId;
 	ChatBox*			AreaMensagens;
 
-	ListBox* ListaUtilizadores;
-	vector<Layout*> layoutVertical;
-	vector<Layout*> layoutHorizontal;
-	Server servidor;
+	ListBox*			ListaUtilizadores;
+	vector<Layout*>		layoutVertical;
+	vector<Layout*>		layoutHorizontal;
+	Server				servidor;
 
-	ThreadPrivateChat* privateChat;
+	AssyncThread		assyncThread;
+	ThreadPrivateChat*	privateChat;
 	
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;
