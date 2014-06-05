@@ -8,7 +8,7 @@ ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int
 {
 	this->username = username;
 	this->password = password;
-	this->tipo = tipo; // ToDo: Perguntar ao Mário - isto é o quê? Admin é 1?
+	this->tipo = tipo; // ToDo: talvez seja melhor criar enumerado
 	this->online = false;
 }
 
@@ -28,9 +28,11 @@ void ClienteDados::SetOffline(){
 sTchar_t ClienteDados::GetUsername()const{
 	return this->username;
 }
+
 sTchar_t ClienteDados::GetPassword()const{
 	return this->password;
 }
+
 int ClienteDados::GetTipo()const{
 	return this->tipo;
 }
@@ -51,5 +53,5 @@ void ClienteDados::CreatePrivatePipe(){
 		NULL);
 
 	if (this->privatePipe == INVALID_HANDLE_VALUE)
-		_tprintf(TEXT("\nErro na criacao do pipe: Erro no (%d)\n"), GetLastError());
+		_tprintf(TEXT("\nErro na criacao do pipe: %d\n"), GetLastError());
 }

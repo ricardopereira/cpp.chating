@@ -207,7 +207,11 @@ void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 		this->servidor.cEnviarMensagemPublica(msg);
 				
 		// Coloca no ChatBox
-		MENSAGEM ultima = LerMensagensPublicas(); //ToDo: DLL
+		//MENSAGEM ultima = LerMensagensPublicas(); //ToDo: DLL
+
+		// Teste
+		MENSAGEM ultima;
+		_tcscpy_s(ultima.texto, _tcslen(msg)*sizeof(TCHAR), msg);
 		AreaMensagens->addMessage(this->servidor.getLoginAutenticado(),ultima);
 	}
 }

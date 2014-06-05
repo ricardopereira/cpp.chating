@@ -41,13 +41,13 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 		{
 			if (GetLastError() == ERROR_BROKEN_PIPE)
 			{
-				tcout << TEXT("ThreadCliente: Cliente desligou-se.\n");
+				tcout << TEXT("ThreadCliente: cliente desligou-se.\n");
 				//contador--; //possiveis erros
 				//TERMINAR:: CloseHandle(
 			}
 			else
 			{
-				tcout << TEXT("ThreadCliente: Ocorreu um erro de leitura.\n");
+				tcout << TEXT("ThreadCliente: ocorreu um erro de leitura.\n");
 			}
 			break;
 		}
@@ -58,11 +58,11 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			buffer.arg_num = server->RegisterUser(buffer.args[0], buffer.args[1], /*tipo*/1);
 			break;
 		case ThreadCliente::LOGIN:
-			tcout << TEXT("\nThreadCliente: Login: ") << buffer.args[0] << endl << TEXT("Password: ") << buffer.args[1] << TEXT("\n");
+			tcout << TEXT("\nThreadCliente: Login: ") << buffer.args[0] << endl << TEXT("Password: ") << buffer.args[1] << TEXT("\n") << endl;
 			result = server->Login(buffer.args[0], buffer.args[1], this->currentClient);
 
 			if (result == Servidor::USER_NOT_FOUND && server->getUserCount() == 0)
-				tcout << TEXT("ThreadCliente: não foi possível criar o registo");
+				tcout << TEXT("ThreadCliente: nao foi possivel criar o registo por defeito") << endl;
 
 			buffer.arg_num = result;
 			break;
@@ -73,7 +73,10 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->SendPrivateMessage(*this->currentPartner);
 			break;
 		case ThreadCliente::ENVIAR_MSG_PUBLICA:
-			server->SendPublicMessage();
+
+			tcout << TEXT("\nThreadCliente: Recebeu mensagem: ") << buffer.args[0] << endl;
+
+			//server->SendPublicMessage();
 			break;
 		case ThreadCliente::FECHAR_CHAT:
 			server->CloseChat();

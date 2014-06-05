@@ -21,6 +21,8 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 	MSG_T buffer[50];
 	DWORD bytesRead;
 
+	// ToDo: Pipe com Read e Write?!
+
 	hPipe = CreateFile( //A criação do pipe
 		this->pipeName.c_str(),
 		GENERIC_READ |
@@ -32,14 +34,15 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 		NULL);
 
 	if (hPipe == INVALID_HANDLE_VALUE)
-		MessageBox(0, TEXT("ERRO: pipe"), TEXT("Erro"), MB_OK | MB_ICONERROR);///////
+		MessageBox(0, TEXT("AssyncThread: Pipe inválido"), TEXT("Erro"), MB_OK | MB_ICONERROR);
 
 	while (1)
 	{
+		// Espera que o pipe fique disponível do lado do Servidor
 		if (!WaitNamedPipe(this->pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
-			MessageBox(0, TEXT("ERRO: Erro conexão"), TEXT("Erro"), MB_OK | MB_ICONERROR);
+			MessageBox(0, TEXT("AssyncThread: Erro conexão ao pipe"), TEXT("Erro"), MB_OK | MB_ICONERROR);
 		//			if(conectado){
-		else{
+		else {
 			int success = ReadFile(
 				hPipe,
 				&buffer,
@@ -48,10 +51,6 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 				NULL);
 			if (!success)
 				return -1;
-		
 		}
 	}
-
-
 }
-
