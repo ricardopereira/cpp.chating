@@ -12,6 +12,7 @@ Server *ptrServidor;
 JanelaPrincipal::JanelaPrincipal()
 {
 	privateChat = NULL;
+	assyncThread = NULL;
 	// Init
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
@@ -27,6 +28,9 @@ JanelaPrincipal::~JanelaPrincipal()
 	// Libertar elementos layoutHorizontal: De outra forma
 	for (vector<Layout*>::iterator it = layoutHorizontal.begin(); it != layoutHorizontal.end(); ++it)
 		delete *it;
+
+	delete privateChat;
+	delete assyncThread;
 
 	delete txtEnviar;
 	delete BotaoLike;
@@ -166,6 +170,10 @@ void JanelaPrincipal::login(HWND hWnd)
 		// Lista de utilizadores
 		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
 			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i).login);
+
+		// Cria thread para receber mensagens
+		assyncThread = new AssyncThread(servidor.getLoginAutenticado());
+		assyncThread->LancarThread();
 	}
 	refresh(hWnd);
 }
@@ -258,7 +266,6 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 	// ToDo: Validar isto
 	hdc = GetDC(hWnd);
 	this->memdc = CreateCompatibleDC(hdc);
-	assyncThread.LancarThread();
 }
 
 void JanelaPrincipal::onShow(HWND hWnd)

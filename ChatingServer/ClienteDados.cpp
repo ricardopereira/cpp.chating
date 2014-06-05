@@ -4,19 +4,18 @@
 #include "Shell.h"
 
 
-ClienteDados::ClienteDados(sTchar_t username, sTchar_t password, int tipo)
+ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int tipo)
 {
 	this->username = username;
 	this->password = password;
-	this->tipo = tipo;
+	this->tipo = tipo; // ToDo: Perguntar ao Mário - isto é o quê? Admin é 1?
 	this->online = false;
 }
 
-
 ClienteDados::~ClienteDados()
 {
-}
 
+}
 
 void ClienteDados::SetOnline(){
 	this->online = true;
@@ -25,7 +24,6 @@ void ClienteDados::SetOnline(){
 void ClienteDados::SetOffline(){
 	this->online = false;
 }
-
 
 sTchar_t ClienteDados::GetUsername()const{
 	return this->username;

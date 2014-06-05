@@ -9,9 +9,7 @@ AssyncThread::AssyncThread(sTchar_t username)
 	tempText << TEXT("\\\\.\\pipe\\") << username;
 
 	this->pipeName = tempText.str();
-
 }
-
 
 AssyncThread::~AssyncThread()
 {
@@ -22,6 +20,7 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 	//pointer to server class handles, and other stuff
 	MSG_T buffer[50];
 	DWORD bytesRead;
+
 	hPipe = CreateFile( //A criação do pipe
 		this->pipeName.c_str(),
 		GENERIC_READ |
@@ -31,6 +30,7 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 		OPEN_EXISTING,
 		0,
 		NULL);
+
 	if (hPipe == INVALID_HANDLE_VALUE)
 		MessageBox(0, TEXT("ERRO: pipe"), TEXT("Erro"), MB_OK | MB_ICONERROR);///////
 

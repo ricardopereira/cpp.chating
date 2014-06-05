@@ -26,4 +26,3 @@ int Mensagens::GetReceiver()const{
 int Mensagens::GetSender()const{
 	return this->user2;
 }
-

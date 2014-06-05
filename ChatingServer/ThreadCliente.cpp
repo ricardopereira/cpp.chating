@@ -3,6 +3,7 @@
 #include "ChatComunication.h"
 #include "Servidor.h"
 #include "Mensagens.h"
+
 ThreadCliente::ThreadCliente(HANDLE hPipe, Servidor* server)
 {
 	this->ptrClasse = this;
@@ -25,6 +26,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	sTchar_t pass = TEXT(""); //temp
 	sTchar_t usrname = TEXT(""); //temp
 	sTchar_t usrnametoremove = TEXT(""); //temp
+	int result;
 	
 	while (!powerOff) {
 		
@@ -45,7 +47,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			}
 			else
 			{
-				tcout << TEXT("ThreadAtendeCliente: Ocorreu um erro de leitura.\n");
+				tcout << TEXT("ThreadCliente: Ocorreu um erro de leitura.\n");
 			}
 			break;
 		}
@@ -56,8 +58,13 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			buffer.arg_num = server->RegisterUser(buffer.args[0], buffer.args[1], /*tipo*/1);
 			break;
 		case ThreadCliente::LOGIN:
-			tcout << TEXT("\nLogin: ") << buffer.args[0] << TEXT("Password: ") << buffer.args[1] << TEXT("\n");
-			buffer.arg_num = server->Login(buffer.args[0], buffer.args[1], this->currentClient);
+			tcout << TEXT("\nThreadCliente: Login: ") << buffer.args[0] << endl << TEXT("Password: ") << buffer.args[1] << TEXT("\n");
+			result = server->Login(buffer.args[0], buffer.args[1], this->currentClient);
+
+			if (result == Servidor::USER_NOT_FOUND && server->getUserCount() == 0)
+				tcout << TEXT("ThreadCliente: não foi possível criar o registo");
+
+			buffer.arg_num = result;
 			break;
 		case ThreadCliente::LANCAR_CHAT:
 			server->LancarChat(usrname, this->currentPartner);
@@ -90,8 +97,6 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			sizeof(chatbuffer_t), //message length
 			&bytesEscritos, //bytes written
 			NULL); //not overlapped
-
-
 	}
 	
 	return 1;

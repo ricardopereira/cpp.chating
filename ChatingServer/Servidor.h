@@ -30,16 +30,15 @@ public:
 	void LoadRegistry();
 	rMsg Login(sTchar_t username, sTchar_t password, ClienteDados* cliente);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
+	rMsg RemoveUser(sTchar_t username);
 	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
 	rMsg SendPrivateMessage(ClienteDados &partner);
 	rMsg SendPublicMessage();
 	rMsg CloseChat();
 	rMsg RetrieveInformation();
-	rMsg RemoveUser(sTchar_t username);
+
+	int getUserCount();
 
 	Servidor();
 	~Servidor();
-
-	
 };
-
