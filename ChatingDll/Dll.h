@@ -31,6 +31,12 @@ extern "C"
 		REGEDIT_FIRST_TIME,
 		REGEDIT_NOT_OK
 	};
+	enum typeMessages {
+		PRIVATE_MESSAGE,
+		PUBLIC_MESSAGE,
+		LIST_USERS_ONLINE,
+		LIST_ALL_USERS
+	};
 
 	typedef struct {
 		TCHAR login[TAMLOGIN], password[TAMPASS];
@@ -48,9 +54,12 @@ extern "C"
 	} MENSAGEM;
 
 	typedef struct msg_t {
+		DWORD nMessages;
+		DWORD messageType;
 		DWORD userSender;
 		DWORD userReceiver;
 		MENSAGEM mensagem;
+		TCHAR utilizador[TAMLOGIN];
 	}MSG_T;
 
 	typedef struct {
