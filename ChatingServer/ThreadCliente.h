@@ -15,6 +15,7 @@ public:
 	~ThreadCliente();
 	virtual DWORD WINAPI funcaoThread();
 
+	// ToDo: Enumerado na classe? Isto não é comum a todos?
 	enum commands_t {
 		REGISTER_NEW_USER,
 		LOGIN,

@@ -4,19 +4,18 @@
 #include "Shell.h"
 
 
-ClienteDados::ClienteDados(sTchar_t username, sTchar_t password, int tipo)
+ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int tipo)
 {
 	this->username = username;
 	this->password = password;
-	this->tipo = tipo;
+	this->tipo = tipo; // ToDo: talvez seja melhor criar enumerado
 	this->online = false;
 }
 
-
 ClienteDados::~ClienteDados()
 {
-}
 
+}
 
 void ClienteDados::SetOnline(){
 	this->online = true;
@@ -26,13 +25,14 @@ void ClienteDados::SetOffline(){
 	this->online = false;
 }
 
-
 sTchar_t ClienteDados::GetUsername()const{
 	return this->username;
 }
+
 sTchar_t ClienteDados::GetPassword()const{
 	return this->password;
 }
+
 int ClienteDados::GetTipo()const{
 	return this->tipo;
 }
@@ -53,5 +53,5 @@ void ClienteDados::CreatePrivatePipe(){
 		NULL);
 
 	if (this->privatePipe == INVALID_HANDLE_VALUE)
-		_tprintf(TEXT("\nErro na criacao do pipe: Erro no (%d)\n"), GetLastError());
+		_tprintf(TEXT("\nErro na criacao do pipe: %d\n"), GetLastError());
 }

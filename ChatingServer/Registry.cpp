@@ -36,7 +36,7 @@ Servidor::rMsg Registry::LoadData(
 	else
 		//Se a chave foi criada, inicializar os valores
 	if (queAconteceu == REG_CREATED_NEW_KEY){
-		tcout << TEXT("\nChave: HKEY_LOCAL_MACHINE\\Software\\MinhaAplicação criada\n");
+		tcout << TEXT("\nChave: HKEY_LOCAL_MACHINE\\Software\\ChatServidor criada\n");
 
 		nUsers++;
 		RegSetValueEx(chave, TEXT("nUsers"), 0, REG_DWORD, (LPBYTE)&nUsers, sizeof(DWORD));
@@ -112,9 +112,9 @@ Servidor::rMsg Registry::LoadData(
 		RegCloseKey(chave);
 		return Servidor::REGEDIT_OK;
 	}
-
 	return Servidor::REGEDIT_NOT_OK;
 }
+
 Servidor::rMsg Registry::SaveData(
 	std::vector<ClienteDados*>& clientdata,
 	std::vector<Mensagens*>& msgdata
@@ -169,6 +169,4 @@ Servidor::rMsg Registry::SaveData(
 	}
 
 	return Servidor::REGEDIT_NOT_OK;
-
-
 }

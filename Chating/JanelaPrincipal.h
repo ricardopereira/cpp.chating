@@ -32,7 +32,7 @@ private:
 	vector<Layout*>		layoutHorizontal;
 	Server				servidor;
 
-	AssyncThread		assyncThread;
+	AssyncThread*		assyncThread;
 	ThreadPrivateChat*	privateChat;
 	
 	void Redimensionar(HWND hWnd);

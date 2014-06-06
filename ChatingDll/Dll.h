@@ -2,7 +2,7 @@
 #ifndef TPDLL_H
 #define TPDLL_H
 
-
+// ToDo: Então isto é para esquecer? Usa-se sempre o chatbuffer_t?
 #define TAMLOGIN 15
 #define TAMPASS 15
 #define TAMTEXTO 100
@@ -60,7 +60,7 @@ extern "C"
 		DWORD userReceiver;
 		MENSAGEM mensagem;
 		TCHAR utilizador[TAMLOGIN];
-	}MSG_T;
+	} MSG_T;
 
 	typedef struct {
 		MENSAGEM publicas[NUMMSGSPUBLICAS];

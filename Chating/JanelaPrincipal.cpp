@@ -12,6 +12,7 @@ Server *ptrServidor;
 JanelaPrincipal::JanelaPrincipal()
 {
 	privateChat = NULL;
+	assyncThread = NULL;
 	// Init
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
@@ -27,6 +28,9 @@ JanelaPrincipal::~JanelaPrincipal()
 	// Libertar elementos layoutHorizontal: De outra forma
 	for (vector<Layout*>::iterator it = layoutHorizontal.begin(); it != layoutHorizontal.end(); ++it)
 		delete *it;
+
+	delete privateChat;
+	delete assyncThread;
 
 	delete txtEnviar;
 	delete BotaoLike;
@@ -110,7 +114,6 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			
 			break;
-
 		}
 		break;
 	}
@@ -166,6 +169,12 @@ void JanelaPrincipal::login(HWND hWnd)
 		// Lista de utilizadores
 		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
 			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i).login);
+
+		// ToDo: Verificar a situação do Cancelar no Login
+
+		// Cria thread para receber mensagens
+		assyncThread = new AssyncThread(servidor.getLoginAutenticado(),*this->AreaMensagens,*this->ListaUtilizadores);
+		assyncThread->LancarThread();
 	}
 	refresh(hWnd);
 }
@@ -199,8 +208,12 @@ void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 		this->servidor.cEnviarMensagemPublica(msg);
 				
 		// Coloca no ChatBox
-		MENSAGEM ultima = LerMensagensPublicas(); //ToDo: DLL
-		AreaMensagens->addMessage(this->servidor.getLoginAutenticado(),ultima);
+		//MENSAGEM ultima = LerMensagensPublicas(); //ToDo: DLL
+
+		// Teste
+		MENSAGEM ultima;
+		_tcscpy_s(ultima.texto, _tcslen(msg)*sizeof(TCHAR), msg);
+		AreaMensagens->addMessagePrivate(this->servidor.getLoginAutenticado(),ultima);
 	}
 }
 
@@ -258,7 +271,6 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 	// ToDo: Validar isto
 	hdc = GetDC(hWnd);
 	this->memdc = CreateCompatibleDC(hdc);
-	assyncThread.LancarThread();
 }
 
 void JanelaPrincipal::onShow(HWND hWnd)

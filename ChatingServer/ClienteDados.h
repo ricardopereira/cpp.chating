@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Common.h"
+
 class ClienteDados
 {
 	sTchar_t username;
@@ -7,10 +9,8 @@ class ClienteDados
 	int tipo;
 	bool online;
 	HANDLE privatePipe;
-
-
 public:
-	ClienteDados(sTchar_t username, sTchar_t password, int tipo);
+	ClienteDados(const sTchar_t username, const sTchar_t password, int tipo);
 	~ClienteDados();
 	void SetOnline();
 	void SetOffline();
@@ -18,7 +18,5 @@ public:
 	sTchar_t GetPassword()const;
 	int GetTipo()const;
 	void CreatePrivatePipe();
-
-
 };
 

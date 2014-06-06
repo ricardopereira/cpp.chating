@@ -74,7 +74,10 @@ UTILIZADOR Server::getUtilizadorOnline(int index)
 
 int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 {
-	if (!pipeAberto){
+	if (!pipeAberto) {
+		// ToDo: Não seria melhor a DLL gerir o pipe?!
+		//afinal, o recurso é da DLL, não da interface que apenas abusa da DLL
+
 		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
 	}
 	int res = Autenticar(login, pass);

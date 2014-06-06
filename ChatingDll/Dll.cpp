@@ -3,8 +3,11 @@
 
 #include "Dll.h"
 #include "ChatComunication.h"
+
 HANDLE hPipe;
 HANDLE assyncPipe;
+
+// ToDo: Não deveria ser comum a todos? Colocar no ChatComunication?
 enum commands_t {
 	REGISTER_NEW_USER,
 	LOGIN,
@@ -21,8 +24,7 @@ enum commands_t {
 	LOGOUT
 };
 
-
-DLL_IMP_API int AbrirPipe(){
+DLL_IMP_API int AbrirPipe() {
 	hPipe = CreateFile(
 		pipeName,
 		GENERIC_READ | GENERIC_WRITE,
@@ -38,9 +40,9 @@ DLL_IMP_API int AbrirPipe(){
 		return 0;
 	return 1;
 }
+
 int Autenticar(const TCHAR *login, const TCHAR *pass)
 {
-	
 	chatbuffer_t buffer;
 	_tcscpy_s(buffer.args[0], _tcslen(login)*sizeof(TCHAR), login);
 	_tcscpy_s(buffer.args[1], _tcslen(pass)*sizeof(TCHAR), pass);
@@ -71,9 +73,9 @@ int Autenticar(const TCHAR *login, const TCHAR *pass)
 	
 	return buffer.arg_num;
 }
+
 int Registar(const TCHAR *login, const TCHAR *pass)
-{
-	
+{	
 	chatbuffer_t buffer;
 	_tcscpy_s(buffer.args[0], _tcslen(login)*sizeof(TCHAR), login);
 	_tcscpy_s(buffer.args[1], _tcslen(pass)*sizeof(TCHAR), pass);
@@ -133,6 +135,33 @@ int EnviarMensagemPrivada(const TCHAR *msg)
 void EnviarMensagemPublica(const TCHAR *msg)
 {
 	// Escrever no pipe
+	chatbuffer_t buffer;
+	buffer.command = ENVIAR_MSG_PUBLICA;
+	_tcscpy_s(buffer.args[0], _tcslen(msg)*sizeof(TCHAR), msg);
+	// ToDo: convém saber o login na mensagem
+	
+	//DWORD msgBytes;
+	DWORD bytesSent;
+	DWORD bytesRead;
+	BOOL success = 0;
+
+	// Envio de pedido
+	success = WriteFile(hPipe,
+		&buffer, //message
+		sizeof(chatbuffer_t), //message length
+		&bytesSent, //bytes written
+		NULL); //not overlapped
+
+	if (!success) 
+		return;
+
+	// Recebe a resposta
+	success = ReadFile(
+		hPipe,
+		&buffer,
+		sizeof(chatbuffer_t),
+		&bytesRead,
+		NULL);
 }
 
 CHAT LerInformacaoInicial()
@@ -146,6 +175,8 @@ MENSAGEM LerMensagensPublicas()
 {
 	// Ler do pipe
 	MENSAGEM dumb;
+	// ToDo: será a AssyncThread a tratar desta parte, certo?
+	//AssyncThread tem que passar para a DLL!!
 	return dumb;
 }
 
