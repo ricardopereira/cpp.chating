@@ -14,12 +14,14 @@ Servidor::~Servidor()
 void Servidor::NovaMensagem(DATA data, int user1, int user2, sTchar_t msg) {
 	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
+
 	this->msgs.push_back(new Mensagens(data, user1, user2, msg));
+
 	this->sem_ServerData.Release();
 	this->mut_ServerData.Release();	
 }
 
-void Servidor::LoadRegistry(){
+void Servidor::LoadRegistry() {
 	Registry::LoadData(this->clientes, this->msgs);
 }
 
@@ -64,6 +66,7 @@ Servidor::rMsg Servidor::RegisterUser(sTchar_t username, sTchar_t password, int 
 
 	this->sem_ServerData.Release();
 	this->mut_ServerData.Release();
+
 	//Limitar a adição de novos utilizadores?
 	return Servidor::SUCCESS;
 }
@@ -131,12 +134,14 @@ Servidor::rMsg Servidor::RemoveUser(sTchar_t username) {
 	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
 
-	for (unsigned int i = 0; i < clientes.size(); i++){
-		if (clientes.at(i)->GetUsername() == username){
+	for (unsigned int i = 0; i < clientes.size(); i++) {
+		if (clientes.at(i)->GetUsername() == username) {
 			//terminar
 			return Servidor::SUCCESS;
 		}
 	}
+
+
 
 	this->sem_ServerData.Release();
 	this->mut_ServerData.Release();

@@ -112,9 +112,9 @@ Servidor::rMsg Registry::LoadData(
 		RegCloseKey(chave);
 		return Servidor::REGEDIT_OK;
 	}
-
 	return Servidor::REGEDIT_NOT_OK;
 }
+
 Servidor::rMsg Registry::SaveData(
 	std::vector<ClienteDados*>& clientdata,
 	std::vector<Mensagens*>& msgdata
@@ -169,6 +169,4 @@ Servidor::rMsg Registry::SaveData(
 	}
 
 	return Servidor::REGEDIT_NOT_OK;
-
-
 }

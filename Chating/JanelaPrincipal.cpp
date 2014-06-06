@@ -114,7 +114,6 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			
 			break;
-
 		}
 		break;
 	}
@@ -171,6 +170,8 @@ void JanelaPrincipal::login(HWND hWnd)
 		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
 			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i).login);
 
+		// ToDo: Verificar a situação do Cancelar no Login
+
 		// Cria thread para receber mensagens
 		assyncThread = new AssyncThread(servidor.getLoginAutenticado());
 		assyncThread->LancarThread();
@@ -212,7 +213,7 @@ void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 		// Teste
 		MENSAGEM ultima;
 		_tcscpy_s(ultima.texto, _tcslen(msg)*sizeof(TCHAR), msg);
-		AreaMensagens->addMessage(this->servidor.getLoginAutenticado(),ultima);
+		AreaMensagens->addMessagePrivate(this->servidor.getLoginAutenticado(),ultima);
 	}
 }
 
