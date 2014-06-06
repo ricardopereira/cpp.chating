@@ -7,7 +7,7 @@ AssyncThread::AssyncThread(sTchar_t username, ChatBox& messageArea, ListBox& lis
 	this->ptrClasse = this;
 	oTcharStream_t tempText;
 
-	tempText << TEXT("\\\\.\\pipe\\") << username;
+	tempText << TEXT("\\\\.\\pipe\\") << username << TEXT('\0');
 
 	this->pipeName = tempText.str();
 }
@@ -26,6 +26,11 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 	DWORD bytesRead;
 
 	// ToDo: Pipe com Read e Write?!
+	if (!WaitNamedPipe(this->pipeName.c_str(), NMPWAIT_WAIT_FOREVER)){
+		MessageBox(0, TEXT("AssyncThread: Erro conexão ao pipe"), TEXT("Erro"), MB_OK | MB_ICONERROR);
+		ExitThread(1);
+		return 1; //Verify this
+	}
 
 	hPipe = CreateFile( //A criação do pipe
 		this->pipeName.c_str(),
@@ -43,13 +48,11 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 	while (1)
 	{
 		// Espera que o pipe fique disponível do lado do Servidor
-		if (!WaitNamedPipe(this->pipeName.c_str(), NMPWAIT_WAIT_FOREVER))
-			MessageBox(0, TEXT("AssyncThread: Erro conexão ao pipe"), TEXT("Erro"), MB_OK | MB_ICONERROR);
+
 		//			if(conectado){
-		else {
 			int success = ReadFile(
 				hPipe,
-				&buffer,
+				buffer,
 				sizeof(MSG_T)*50,
 				&bytesRead,
 				NULL);
@@ -70,6 +73,6 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 				break;
 			
 			}
-		}
+		
 	}
 }

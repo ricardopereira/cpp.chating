@@ -153,15 +153,7 @@ int Server::cEnviarMensagemPrivada(const TCHAR *texto)
 
 void Server::cEnviarMensagemPublica(const TCHAR *texto)
 {
-	// ToDo: colcoar código duplicado num método - cEnviarMensagemPrivada
-	TCHAR msgWithUser[TAMTEXTO];
-
-	for (unsigned int i=0; i <= (unsigned int)_tcslen(texto)+1; i++) // Mais o terminador,  && i < TAMTEXTO
-	{
-		msgWithUser[i] = texto[i];
-	}
-
-	EnviarMensagemPublica(msgWithUser);
+	EnviarMensagemPublica(texto, this->getLoginAutenticado().c_str());
 	return;
 }
 

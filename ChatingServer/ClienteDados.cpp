@@ -4,12 +4,13 @@
 #include "Shell.h"
 
 
-ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int tipo)
+ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int tipo, int id)
 {
 	this->username = username;
 	this->password = password;
 	this->tipo = tipo; // ToDo: talvez seja melhor criar enumerado
 	this->online = false;
+	this->id = id;
 }
 
 ClienteDados::~ClienteDados()
@@ -39,19 +40,33 @@ int ClienteDados::GetTipo()const{
 
 void ClienteDados::CreatePrivatePipe(){
 	oTcharStream_t pipeName;
-	pipeName << TEXT("\\\\.\\pipe\\") << this->username;
-	
+	pipeName << TEXT("\\\\.\\pipe\\") << this->username << TEXT('\0');
+
 	this->privatePipe = INVALID_HANDLE_VALUE;
 	this->privatePipe = CreateNamedPipe(pipeName.str().c_str(),
 		PIPE_ACCESS_DUPLEX,
 		PIPE_TYPE_MESSAGE |
 		PIPE_WAIT,
 		PIPE_UNLIMITED_INSTANCES,
-		sizeof(MSG_T)*50,
-		sizeof(MSG_T)*50,
+		sizeof(MSG_T)* 50,
+		sizeof(MSG_T)* 50,
 		0,
 		NULL);
 
 	if (this->privatePipe == INVALID_HANDLE_VALUE)
 		_tprintf(TEXT("\nErro na criacao do pipe: %d\n"), GetLastError());
 }
+
+int ClienteDados::GetId()const{
+	return this->id;
+}
+
+HANDLE ClienteDados::GetPipe()const{
+	return this->privatePipe;
+}
+
+bool ClienteDados::GetIsOnline()const{
+	return this->online;
+}
+
+

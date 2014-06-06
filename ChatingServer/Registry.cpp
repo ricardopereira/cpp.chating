@@ -46,7 +46,7 @@ Servidor::rMsg Registry::LoadData(
 
 		///jogadores = (JOGADOR *)malloc(sizeof(JOGADOR)); //adicionar o administrador com as credenciais por omissão.
 		//inicializarJogador(TEXT("admin"), TEXT("admin"));
-		clientdata.push_back(new ClienteDados(TEXT("admin"), TEXT("admin"), 2));
+		clientdata.push_back(new ClienteDados(TEXT("admin"), TEXT("admin"), 2, clientdata.size()));
 		users = new UTILIZADOR[nUsers];
 		_tcscpy_s(users[0].login, clientdata.at(0)->GetUsername().size() *sizeof(TCHAR), clientdata.at(0)->GetUsername().c_str());
 		_tcscpy_s(users[0].password, clientdata.at(0)->GetPassword().size() *sizeof(TCHAR), clientdata.at(0)->GetPassword().c_str());
@@ -80,7 +80,7 @@ Servidor::rMsg Registry::LoadData(
 
 		for (DWORD i = 0; i < nUsers; i++)
 		{
-			clientdata.push_back(new ClienteDados(users[i].login, users[i].password, users[i].tipo));
+			clientdata.push_back(new ClienteDados(users[i].login, users[i].password, users[i].tipo, clientdata.size()));
 		}
 
 		tamanho = sizeof(DWORD);

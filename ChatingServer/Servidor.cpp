@@ -11,7 +11,7 @@ Servidor::~Servidor()
 //apagar memoria alocada dinamicamente
 }
 
-void Servidor::NovaMensagem(DATA data, int user1, int user2, sTchar_t msg) {
+void Servidor::NovaMensagem(DATA data, int user1, int user2, sTchar_t msg) { //apgar
 	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
 
@@ -25,47 +25,51 @@ void Servidor::LoadRegistry() {
 	Registry::LoadData(this->clientes, this->msgs);
 }
 
-Servidor::rMsg Servidor::Login(sTchar_t username, sTchar_t password, ClienteDados* cliente) { 
-	this->mut_ServerData.Wait();
+Servidor::rMsg Servidor::Login(sTchar_t username, sTchar_t password, int* pos) { 
 	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+	
 
 	for (unsigned int i = 0; i < clientes.size(); i++) {
 		if (clientes.at(i)->GetUsername() == username) {
 			if (clientes.at(i)->GetPassword() == password) {
-				cliente = clientes.at(i);
-				cliente->SetOnline();
-
-				if (cliente->GetTipo() == 2) {
-					cliente->CreatePrivatePipe();
+				
+				clientes.at(i)->SetOnline();
+				*pos = i;
+				if (clientes.at(i)->GetTipo() == 2) {
+					clientes.at(i)->CreatePrivatePipe();
+					this->mut_ServerData.Release();
+					this->sem_ServerData.Release();
 					return Servidor::SUCCESS_ADMIN;
 				}
 				else{
-					cliente->CreatePrivatePipe();
+					clientes.at(i)->CreatePrivatePipe();
+					this->mut_ServerData.Release();
+					this->sem_ServerData.Release();
 					return Servidor::SUCCESS;
 				}
 			}
 			else{
-				cliente = nullptr;
+				this->mut_ServerData.Release();
+				this->sem_ServerData.Release();
 				return Servidor::INCORRECT_PASSWORD;
 			}
 		}
 	}
-
-	this->sem_ServerData.Release();
+	
 	this->mut_ServerData.Release();
-
-	cliente = nullptr;
+	this->sem_ServerData.Release();
 	return Servidor::USER_NOT_FOUND;
 }
 
 Servidor::rMsg Servidor::RegisterUser(sTchar_t username, sTchar_t password, int type) {
-	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
 
-	clientes.push_back(new ClienteDados(username, password, type));
+	clientes.push_back(new ClienteDados(username, password, type, this->clientes.size()));
 
-	this->sem_ServerData.Release();
 	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
 
 	//Limitar a adição de novos utilizadores?
 	return Servidor::SUCCESS;
@@ -99,12 +103,39 @@ Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados &partner) {
 	return Servidor::PIPE_ERROR;
 }
 
-Servidor::rMsg Servidor::SendPublicMessage() {
-	this->mut_ServerData.Wait();
+Servidor::rMsg Servidor::SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente){
 	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+	SYSTEMTIME hora;
+	GetSystemTime(&hora);
+	DATA dataActual;
+	dataActual.ano = hora.wYear;
+	dataActual.dia = hora.wDay;
+	dataActual.mes = hora.wMonth;
+	dataActual.hora = hora.wHour;
+	dataActual.minuto = hora.wMinute;
+	dataActual.segundo = hora.wSecond;
+	
 
-	this->sem_ServerData.Release();
+	this->msgs.push_back(new Mensagens(dataActual, cliente->GetId(), -1, message));
+	
+	MSG_T buffer[50];
+	buffer[0].mensagem.instante = dataActual;
+	_tcscpy_s(buffer[0].mensagem.texto, message.size() *sizeof(TCHAR), message.c_str());
+	buffer[0].messageType = PUBLIC_MESSAGE;
+	buffer[0].nMessages = 1;
+	_tcscpy_s(buffer[0].utilizador, owner.size()*sizeof(TCHAR), owner.c_str());
+	
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		if (this->clientes.at(i)->GetIsOnline()){
+			this->SendToClient(buffer, clientes.at(i)->GetPipe());
+		}
+	}
+	
+
 	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
 
 	return Servidor::SUCCESS;
 	return Servidor::PIPE_ERROR;
@@ -151,4 +182,23 @@ Servidor::rMsg Servidor::RemoveUser(sTchar_t username) {
 int Servidor::getUserCount()
 {
 	return clientes.size();
+}
+
+int Servidor::SendToClient(MSG_T* buffer, HANDLE hPipe){
+	
+	DWORD leituraEscritaSucesso;
+	DWORD bytesEscritos;
+	
+		leituraEscritaSucesso = WriteFile(hPipe,
+		buffer, //message
+		sizeof(MSG_T)*50, //message length
+		&bytesEscritos, //bytes written
+		NULL); //not overlapped
+
+		return 1;
+}
+
+ClienteDados* Servidor::getClientData(int& pos){
+
+	return this->clientes.at(pos);
 }

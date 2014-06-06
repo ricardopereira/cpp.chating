@@ -59,7 +59,10 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			break;
 		case ThreadCliente::LOGIN:
 			tcout << TEXT("\nThreadCliente: Login: ") << buffer.args[0] << endl << TEXT("Password: ") << buffer.args[1] << TEXT("\n") << endl;
-			result = server->Login(buffer.args[0], buffer.args[1], this->currentClient);
+			int pos;
+			result = server->Login(buffer.args[0], buffer.args[1], &pos);
+			if (result == Servidor::SUCCESS || result == Servidor::SUCCESS_ADMIN)
+				this->currentClient = server->getClientData(pos);
 
 			if (result == Servidor::USER_NOT_FOUND && server->getUserCount() == 0)
 				tcout << TEXT("ThreadCliente: nao foi possivel criar o registo por defeito") << endl;
@@ -75,8 +78,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 		case ThreadCliente::ENVIAR_MSG_PUBLICA:
 
 			tcout << TEXT("\nThreadCliente: Recebeu mensagem: ") << buffer.args[0] << endl;
-
-			//server->SendPublicMessage();
+			server->SendPublicMessage(buffer.args[0], buffer.args[1],this->currentClient);
 			break;
 		case ThreadCliente::FECHAR_CHAT:
 			server->CloseChat();

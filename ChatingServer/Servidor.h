@@ -12,6 +12,7 @@ private:
 	Mutex_t						mut_ServerData;
 	std::vector<Mensagens*>		msgs;
 	std::vector<ClienteDados*>	clientes;
+	int SendToClient(MSG_T* buffer , HANDLE hPipe);
 public:
 	enum rMsg {
 		USER_NOT_REGISTERED,
@@ -28,14 +29,15 @@ public:
 	};
 	void NovaMensagem(DATA data, int user1, int user2, sTchar_t msg);
 	void LoadRegistry();
-	rMsg Login(sTchar_t username, sTchar_t password, ClienteDados* cliente);
+	rMsg Login(sTchar_t username, sTchar_t password, int* pos);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
 	rMsg RemoveUser(sTchar_t username);
 	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
 	rMsg SendPrivateMessage(ClienteDados &partner);
-	rMsg SendPublicMessage();
+	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
 	rMsg CloseChat();
 	rMsg RetrieveInformation();
+	ClienteDados* getClientData(int& pos);
 
 	int getUserCount();
 

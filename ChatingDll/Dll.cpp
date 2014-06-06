@@ -132,12 +132,13 @@ int EnviarMensagemPrivada(const TCHAR *msg)
 	return 0;
 }
 
-void EnviarMensagemPublica(const TCHAR *msg)
+void EnviarMensagemPublica(const TCHAR *msg, const TCHAR *owner)
 {
 	// Escrever no pipe
 	chatbuffer_t buffer;
 	buffer.command = ENVIAR_MSG_PUBLICA;
 	_tcscpy_s(buffer.args[0], _tcslen(msg)*sizeof(TCHAR), msg);
+	_tcscpy_s(buffer.args[1], _tcslen(owner)*sizeof(TCHAR), owner);
 	// ToDo: convém saber o login na mensagem
 	
 	//DWORD msgBytes;

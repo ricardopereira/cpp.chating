@@ -7,6 +7,7 @@ class Mensagens
 private:
 	DATA data;
 	sTchar_t msg;
+	sTchar_t owner;
 	int user1;
 	int user2;
 public:
