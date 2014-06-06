@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Control.h"
-#include "Common.h"
+#include "../ChatingServer/Common.h"
 
 class Button : public Control
 {

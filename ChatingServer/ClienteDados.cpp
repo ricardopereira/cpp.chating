@@ -25,16 +25,24 @@ void ClienteDados::SetOffline(){
 	this->online = false;
 }
 
-sTchar_t ClienteDados::GetUsername()const{
+sTchar_t ClienteDados::GetUsername() const {
 	return this->username;
 }
 
-sTchar_t ClienteDados::GetPassword()const{
+sTchar_t ClienteDados::GetPassword() const {
 	return this->password;
 }
 
-int ClienteDados::GetTipo()const{
+int ClienteDados::GetTipo() const {
 	return this->tipo;
+}
+
+bool ClienteDados::getIsOnline() const {
+	return this->online;
+}
+
+bool ClienteDados::getIsAdmin() const {
+	return this->isAdmin;
 }
 
 void ClienteDados::CreatePrivatePipe(){

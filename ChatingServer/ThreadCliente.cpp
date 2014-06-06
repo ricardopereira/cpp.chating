@@ -1,6 +1,5 @@
 #include "Shell.h"
 #include "ThreadCliente.h"
-#include "ChatComunication.h"
 #include "Servidor.h"
 #include "Mensagens.h"
 
@@ -54,10 +53,10 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 
 		switch (buffer.command){
 			//Cada accção deve devolver um código de (in)sucesso
-		case ThreadCliente::REGISTER_NEW_USER:
+		case commands_t::REGISTER_NEW_USER:
 			buffer.arg_num = server->RegisterUser(buffer.args[0], buffer.args[1], /*tipo*/1);
 			break;
-		case ThreadCliente::LOGIN:
+		case commands_t::LOGIN:
 			tcout << TEXT("\nThreadCliente: Login: ") << buffer.args[0] << endl << TEXT("Password: ") << buffer.args[1] << TEXT("\n") << endl;
 			result = server->Login(buffer.args[0], buffer.args[1], this->currentClient);
 
@@ -66,32 +65,39 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 
 			buffer.arg_num = result;
 			break;
-		case ThreadCliente::LANCAR_CHAT:
+		case commands_t::LISTA_UTILIZADORES_TODOS:
+			buffer.arg_num = server->getUserCount();
+			break;
+		case commands_t::LISTA_UTILIZADORES_ONLINE:
+			buffer.arg_num = server->getUserOnlineCount();
+			server->RetrieveInformation();
+			break;
+		case commands_t::LANCAR_CHAT:
 			server->LancarChat(usrname, this->currentPartner);
 			break;
-		case ThreadCliente::ENVIAR_MSG_PRIVADA:
+		case commands_t::ENVIAR_MSG_PRIVADA:
 			server->SendPrivateMessage(*this->currentPartner);
 			break;
-		case ThreadCliente::ENVIAR_MSG_PUBLICA:
+		case commands_t::ENVIAR_MSG_PUBLICA:
 
 			tcout << TEXT("\nThreadCliente: Recebeu mensagem: ") << buffer.args[0] << endl;
 
 			//server->SendPublicMessage();
 			break;
-		case ThreadCliente::FECHAR_CHAT:
+		case commands_t::FECHAR_CHAT:
 			server->CloseChat();
 			break;
-		case ThreadCliente::LER_INFO_INICIAL:
+		case commands_t::LER_INFO_INICIAL:
 			server->RetrieveInformation();
 			break;
-		case ThreadCliente::LER_MENSAGEM_PUBLICA:
+		case commands_t::LER_MENSAGEM_PUBLICA:
 			break;
-		case ThreadCliente::LER_MENSAGEM_PRIVADA:
+		case commands_t::LER_MENSAGEM_PRIVADA:
 			break;
-		case ThreadCliente::ELIMINAR_UTILIZADOR:
+		case commands_t::ELIMINAR_UTILIZADOR:
 			server->RemoveUser(usrnametoremove);
 			break;
-		case ThreadCliente::LOGOUT:
+		case commands_t::LOGOUT:
 			break;
 		}
 
@@ -104,4 +110,3 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	
 	return 1;
 }
-

@@ -1,5 +1,5 @@
 #include "resource.h"
-#include "Common.h"
+#include "../ChatingServer/Common.h"
 #include "ChatBox.h"
 #include "ChatBoxItem.h"
 

@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "CustomWindow.h"
-#include "Common.h"
+#include "../ChatingServer/Common.h"
 #include "Layout.h"
 #include "Button.h"
 #include "EditBox.h"

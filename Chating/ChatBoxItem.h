@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common.h"
+#include "../ChatingServer/Common.h"
 #include "ChatBox.h"
 
 class ChatBoxItem

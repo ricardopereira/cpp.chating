@@ -18,7 +18,7 @@ void Servidor::NovaMensagem(DATA data, int user1, int user2, sTchar_t msg) {
 	this->msgs.push_back(new Mensagens(data, user1, user2, msg));
 
 	this->sem_ServerData.Release();
-	this->mut_ServerData.Release();	
+	this->mut_ServerData.Release();
 }
 
 void Servidor::LoadRegistry() {
@@ -39,12 +39,12 @@ Servidor::rMsg Servidor::Login(sTchar_t username, sTchar_t password, ClienteDado
 					cliente->CreatePrivatePipe();
 					return Servidor::SUCCESS_ADMIN;
 				}
-				else{
+				else {
 					cliente->CreatePrivatePipe();
 					return Servidor::SUCCESS;
 				}
 			}
-			else{
+			else {
 				cliente = nullptr;
 				return Servidor::INCORRECT_PASSWORD;
 			}
@@ -75,8 +75,8 @@ Servidor::rMsg Servidor::LancarChat(sTchar_t username, ClienteDados* partner) {
 	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
 
-	for (unsigned int i = 0; i < clientes.size(); i++){
-		if (clientes.at(i)->GetUsername() == username){
+	for (unsigned int i = 0; i < clientes.size(); i++) {
+		if (clientes.at(i)->GetUsername() == username) {
 			partner = clientes.at(i);
 			return Servidor::SUCCESS;
 		}
@@ -111,28 +111,28 @@ Servidor::rMsg Servidor::SendPublicMessage() {
 }
 
 Servidor::rMsg Servidor::CloseChat() {
-	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
 
-	this->sem_ServerData.Release();
 	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
 
 	return Servidor::SUCCESS;
 }
 
 Servidor::rMsg Servidor::RetrieveInformation() {
-	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
 
-	this->sem_ServerData.Release();
 	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
 
 	return Servidor::SUCCESS;
 }
 
 Servidor::rMsg Servidor::RemoveUser(sTchar_t username) {
-	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
 
 	for (unsigned int i = 0; i < clientes.size(); i++) {
 		if (clientes.at(i)->GetUsername() == username) {
@@ -141,14 +141,22 @@ Servidor::rMsg Servidor::RemoveUser(sTchar_t username) {
 		}
 	}
 
-
-
-	this->sem_ServerData.Release();
 	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
 	return Servidor::USER_NOT_FOUND;
 }
 
 int Servidor::getUserCount()
 {
 	return clientes.size();
+}
+
+int Servidor::getUserOnlineCount()
+{
+	int count = 0;
+	for (unsigned int i = 0; i < clientes.size(); i++)
+		if (clientes.at(i)->getIsOnline())
+			count++;
+	return count;
 }
