@@ -38,6 +38,7 @@ public:
 	rMsg RetrieveInformation();
 
 	int getUserCount();
+	int getUserOnlineCount();
 
 	Servidor();
 	~Servidor();

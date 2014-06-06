@@ -62,7 +62,7 @@ void JanelaPrivada::sendMessage(HWND hWnd, const TCHAR* msg)
 				
 		// Coloca no ChatBox
 		MENSAGEM ultima = LerMensagensPrivadas(); //ToDo: DLL
-		AreaMensagens->addMessagePrivate(this->servidor->getLoginAutenticado(),ultima);
+		AreaMensagens->addMessagePrivate(this->servidor->getLoginAutenticado().getUsername().c_str(),ultima);
 	}
 }
 

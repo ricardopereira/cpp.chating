@@ -1,26 +1,27 @@
 #pragma once
 
 #include "../ChatingDll/Dll.h"
-#include "Common.h"
+#include "../ChatingServer/Common.h"
+#include "../Logic/ChatUser.h"
 #include <sstream>
+#include <vector>
 
 class Server
 {
 private:
 	bool autenticado;
 	bool privilegiosAdmin;
-	sTchar_t loginAutenticado;
-	UTILIZADOR utilizadores[NUMUTILIZADORES];
-	UTILIZADOR utilizadoresOnline[NUMUTILIZADORES];
-	int totalUtilizadores;
-	int totalUtilizadoresOnline;
+	ChatUser* loginAutenticado;
 
-	void loggedIn();
+	std::vector<ChatUser*> utilizadores;
+	std::vector<ChatUser*> utilizadoresOnline;
+
+	void loggedIn(const TCHAR* username);
 public:
 	Server();
 
-	int cAutenticar(TCHAR* login, TCHAR* pass);
-	int cRegistar(TCHAR* login, TCHAR* pass);
+	int cAutenticar(const TCHAR* login, const TCHAR* pass);
+	int cRegistar(const TCHAR* login, const TCHAR* pass);
 
 	void cLerInformacaoInicial();
 
@@ -36,13 +37,19 @@ public:
 
 	void reset();
 
+	void deleteUtilizador(const TCHAR *username); // Só para admin
 	int getTotalUtilizadores();
 	int getTotalUtilizadoresOnline();
 
-	UTILIZADOR getUtilizador(int index);
-	UTILIZADOR getUtilizadorOnline(int index);
+	ChatUser* addUtilizador(const TCHAR *username);
+	ChatUser* addUtilizadorOnline(const TCHAR *username);
+	void removeUtilizador(const TCHAR *username);
+	void removeUtilizadorOnline(const TCHAR *username);
+	ChatUser* getUtilizador(unsigned int index);
+	ChatUser* getUtilizador(const TCHAR *username);
+	ChatUser* getUtilizadorOnline(unsigned int index);
 
 	bool getIsAutenticado();
 	bool getIsAdministrador();
-	const sTchar_t& getLoginAutenticado();
+	const ChatUser& getLoginAutenticado();
 };

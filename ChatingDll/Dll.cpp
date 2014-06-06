@@ -7,23 +7,6 @@
 HANDLE hPipe;
 HANDLE assyncPipe;
 
-// ToDo: Não deveria ser comum a todos? Colocar no ChatComunication?
-enum commands_t {
-	REGISTER_NEW_USER,
-	LOGIN,
-	LANCAR_CHAT,
-	ENVIAR_MSG_PRIVADA,
-	ENVIAR_MSG_PUBLICA,
-	FECHAR_CHAT,
-	LER_INFO_INICIAL,
-	CRIAR_USER,
-	DESLIGAR,
-	LER_MENSAGEM_PRIVADA,
-	LER_MENSAGEM_PUBLICA,
-	ELIMINAR_UTILIZADOR,
-	LOGOUT
-};
-
 DLL_IMP_API int AbrirPipe() {
 	hPipe = CreateFile(
 		pipeName,
@@ -39,6 +22,37 @@ DLL_IMP_API int AbrirPipe() {
 	if (GetLastError() == ERROR_PIPE_BUSY)
 		return 0;
 	return 1;
+}
+
+int doSimpleRequest(commands_t command)
+{
+	// Escrever no pipe
+	chatbuffer_t buffer;
+	buffer.command = command;
+	
+	DWORD bytesSent;
+	DWORD bytesRead;
+	BOOL success = 0;
+
+	// Envio de pedido
+	success = WriteFile(hPipe,
+		&buffer, //message
+		sizeof(chatbuffer_t), //message length
+		&bytesSent, //bytes written
+		NULL); //not overlapped
+
+	if (!success)
+		return -1;
+
+	// Recebe a resposta
+	success = ReadFile(
+		hPipe,
+		&buffer,
+		sizeof(chatbuffer_t),
+		&bytesRead,
+		NULL);
+
+	return success;
 }
 
 int Autenticar(const TCHAR *login, const TCHAR *pass)
@@ -108,10 +122,19 @@ int Registar(const TCHAR *login, const TCHAR *pass)
 	return buffer.arg_num;
 }
 
-int LerListaUtilizadores(UTILIZADOR *utilizadores)
+int RemoverUtilizador(const TCHAR *login)
 {
-	// Ler do pipe
 	return 0;
+}
+
+int LerListaUtilizadores()
+{
+	return doSimpleRequest(commands_t::LISTA_UTILIZADORES_ONLINE);
+}
+
+int LerListaUtilizadoresRegistados()
+{
+	return doSimpleRequest(commands_t::LISTA_UTILIZADORES_TODOS);
 }
 
 int IniciarConversa(const TCHAR *utilizador)
@@ -136,7 +159,7 @@ void EnviarMensagemPublica(const TCHAR *msg)
 {
 	// Escrever no pipe
 	chatbuffer_t buffer;
-	buffer.command = ENVIAR_MSG_PUBLICA;
+	buffer.command = commands_t::ENVIAR_MSG_PUBLICA;
 	_tcscpy_s(buffer.args[0], _tcslen(msg)*sizeof(TCHAR), msg);
 	// ToDo: convém saber o login na mensagem
 	
@@ -166,9 +189,8 @@ void EnviarMensagemPublica(const TCHAR *msg)
 
 CHAT LerInformacaoInicial()
 {
-	// Ler do pipe
-	CHAT dumb;
-	return dumb;
+	CHAT result;
+	return result;
 }
 
 MENSAGEM LerMensagensPublicas()
