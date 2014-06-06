@@ -173,7 +173,7 @@ void JanelaPrincipal::login(HWND hWnd)
 		// ToDo: Verificar a situação do Cancelar no Login
 
 		// Cria thread para receber mensagens
-		assyncThread = new AssyncThread(servidor.getLoginAutenticado());
+		assyncThread = new AssyncThread(servidor.getLoginAutenticado(),*this->AreaMensagens,*this->ListaUtilizadores);
 		assyncThread->LancarThread();
 	}
 	refresh(hWnd);
