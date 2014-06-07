@@ -184,8 +184,8 @@ void JanelaPrincipal::login(HWND hWnd)
 	if (result == IDOK && this->servidor.getIsAutenticado())
 	{
 		// ToDo: ler da instancia do Server
-		CHAT chatInit = LerInformacaoInicial();
-		AreaMensagens->addChat(this->servidor.getLoginAutenticado().getUsername().c_str(),chatInit);
+		this->servidor.cLerInformacaoInicial();
+		//AreaMensagens->addChat(this->servidor.getLoginAutenticado().getUsername().c_str(),chatInit); //apagar 
 
 		// Lista de utilizadores
 		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)

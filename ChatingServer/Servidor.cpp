@@ -160,7 +160,51 @@ Servidor::rMsg Servidor::CloseChat() {
 Servidor::rMsg Servidor::RetrieveInformation() {
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
+	std::vector<Mensagens*> publicMessages;
+	for (unsigned int i = 0; i < this->msgs.size(); i++)
+	{
+		if (this->msgs.at(i)->GetReceiver() == -1) { //-1 => mensagens públicas 
+			publicMessages.push_back(this->msgs.at(i));
+		}
 
+	
+	}
+	int start = 0;
+	MSG_T buffer[50];
+	
+	if (publicMessages.size() > 50){
+		start = publicMessages.size() - 50; //Devolver apenas as últimas 50 mensagens
+		buffer[0].nMessages = 50;
+	}
+	else{
+		buffer[0].nMessages = publicMessages.size();
+	}
+	int k = 0;
+	for (unsigned int i = start; i < publicMessages.size(); i++)
+	{
+		for (unsigned int j = 0; j < this->clientes.size(); j++)
+		{
+			if (publicMessages.at(i)->GetSender() == this->clientes.at(j)->GetId()){
+				
+				_tcscpy_s(buffer[k].utilizador, this->clientes.at(j)->GetUsername().size()*sizeof(TCHAR), this->clientes.at(j)->GetUsername().c_str());
+				break;
+			}
+		}
+		buffer[k].mensagem.instante = publicMessages.at(i)->GetDataMensagem();
+		_tcscpy_s(buffer[k].mensagem.texto, publicMessages.at(i)->GetMensagem.size() *sizeof(TCHAR), publicMessages.at(i)->GetMensagem.c_str());
+		buffer[k].messageType = PUBLIC_MESSAGE;
+
+
+		k++;
+	}
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		if (this->clientes.at(i)->GetIsOnline()){
+			this->SendToClient(buffer, clientes.at(i)->GetPipe());
+		}
+	}
+	
+	
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
 

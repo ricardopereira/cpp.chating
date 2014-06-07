@@ -97,6 +97,11 @@ void Server::removeUtilizador(const TCHAR *username)
 
 }
 
+void Server::cLerInformacaoInicial()
+{
+	LerInformacaoInicial();
+}
+
 void Server::removeUtilizadorOnline(const TCHAR *username)
 {
 
