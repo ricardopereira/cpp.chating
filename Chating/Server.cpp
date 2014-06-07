@@ -89,17 +89,24 @@ ChatUser* Server::addUtilizadorOnline(const TCHAR *username)
 		user = addUtilizador(username);
 		utilizadores.push_back(user);
 	}
+	user->setOnline();
 	return user;
-}
-
-void Server::removeUtilizador(const TCHAR *username)
-{
-
 }
 
 void Server::removeUtilizadorOnline(const TCHAR *username)
 {
+	ChatUser* user = getUtilizador(username);
+	if (!user)
+		return;
 
+	user->setOffline();
+
+	// ToDo: remover do vector
+}
+
+void Server::clearUtilizadoresOnline()
+{
+	utilizadoresOnline.clear();
 }
 
 int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
@@ -170,15 +177,7 @@ int Server::cDesligarConversa()
 
 int Server::cEnviarMensagemPrivada(const TCHAR *texto)
 {
-	// ToDo: 2 * TAMTEXTO ?!
-	TCHAR msgWithUser[TAMTEXTO];
-
-	for (unsigned int i=0; i <= (unsigned int)_tcslen(texto)+1; i++) // Mais o terminador,  && i < TAMTEXTO
-	{
-		msgWithUser[i] = texto[i];
-	}
-
-	return EnviarMensagemPrivada(msgWithUser);
+	return EnviarMensagemPrivada(texto);
 }
 
 void Server::cEnviarMensagemPublica(const TCHAR *texto)

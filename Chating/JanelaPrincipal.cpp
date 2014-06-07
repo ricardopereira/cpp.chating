@@ -79,10 +79,12 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (ptrServidor)
 				res = ptrServidor->cAutenticar(login, password);
 
+			// Administrador
 			if (res == 2) {
 				MessageBox(hWnd, TEXT("Login com sucesso: Administrador"), TEXT("Login"), MB_OK | MB_ICONWARNING);
 				EndDialog(hWnd,IDOK);
 			}
+			// Normal
 			else if (res == 1) {
 				TCHAR text[TAMTEXTO];
 				_stprintf_s(text, TAMTEXTO, _T("Login com sucesso: %s"), login);
@@ -99,6 +101,7 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EndDialog(hWnd,IDCANCEL);
 			break;
 		case IDC_NEWUSER:
+			// Registar utilizador
 			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
 
@@ -183,9 +186,7 @@ void JanelaPrincipal::login(HWND hWnd)
 
 	if (result == IDOK && this->servidor.getIsAutenticado())
 	{
-		// ToDo: ler da instancia do Server
-		CHAT chatInit = LerInformacaoInicial();
-		AreaMensagens->addChat(this->servidor.getLoginAutenticado().getUsername().c_str(),chatInit);
+		this->AreaMensagens->setUsername(servidor.getLoginAutenticado().getUsername().c_str());
 
 		// Lista de utilizadores
 		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
@@ -227,14 +228,6 @@ void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 
 		// Envia mensagem
 		this->servidor.cEnviarMensagemPublica(msg);
-				
-		// Coloca no ChatBox
-		//MENSAGEM ultima = LerMensagensPublicas(); //ToDo: DLL
-
-		// Teste
-		MENSAGEM ultima;
-		_tcscpy_s(ultima.texto, _tcslen(msg)*sizeof(TCHAR), msg);
-		AreaMensagens->addMessagePrivate(this->servidor.getLoginAutenticado().getUsername().c_str(),ultima);
 	}
 }
 
@@ -318,12 +311,12 @@ void JanelaPrincipal::onMove(HWND hWnd)
 
 void JanelaPrincipal::onMouseWheelUp(HWND hWnd)
 {
-	this->AreaMensagens->scrollUp();
+	this->AreaMensagens->scrollDown();
 }
 
 void JanelaPrincipal::onMouseWheelDown(HWND hWnd)
 {
-	this->AreaMensagens->scrollDown();
+	this->AreaMensagens->scrollUp();
 }
 
 void JanelaPrincipal::onPaint(HWND hWnd, HDC &hdc, RECT &rect)

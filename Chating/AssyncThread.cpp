@@ -48,36 +48,41 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 	{
 		// Espera que o pipe fique disponível do lado do Servidor
 
-		//			if(conectado){
-			int success = ReadFile(
-				hPipe,
-				buffer,
-				sizeof(MSG_T)*50,
-				&bytesRead,
-				NULL);
-			if (!success)
-				return -1;
+		int success = ReadFile(
+			hPipe,
+			buffer,
+			sizeof(MSG_T)*50,
+			&bytesRead,
+			NULL);
+
+		if (!success)
+			return -1;
 			
-			switch (buffer[0].messageType){
-			case LIST_ALL_USERS:
-				for (DWORD i = 0; i < buffer[0].nMessages; i++){
-					this->server.addUtilizador(buffer[i].utilizador);
-				}
-				break;
-			case LIST_USERS_ONLINE:
-				for (DWORD i = 0; i < buffer[0].nMessages; i++){
-					this->server.addUtilizadorOnline(buffer[i].utilizador);
-				}
-				break;
-			case PRIVATE_MESSAGE:
-				break;
-			case PUBLIC_MESSAGE:
-				for (DWORD i = 0; i < buffer[0].nMessages; i++){
-					this->messageArea.addMessage(buffer[i].utilizador, buffer[i].mensagem);
-				}
-				break;
-			
+		switch (buffer[0].messageType){
+		case LIST_ALL_USERS:
+			for (DWORD i = 0; i < buffer[0].nMessages; i++){
+				this->server.addUtilizador(buffer[i].utilizador);
 			}
-		
+			break;
+		case LIST_USERS_ONLINE:
+			this->server.clearUtilizadoresOnline();
+			for (DWORD i = 0; i < buffer[0].nMessages; i++){
+				this->server.addUtilizadorOnline(buffer[i].utilizador);
+			}
+			break;
+		case PRIVATE_MESSAGE:
+			break;
+		case PUBLIC_MESSAGE:
+			for (DWORD i = 0; i < buffer[0].nMessages; i++){
+				this->messageArea.addMessage(buffer[i].utilizador, buffer[i].mensagem);
+			}
+			break;			
+		case USER_ONLINE:
+			this->server.addUtilizadorOnline(buffer[0].utilizador);
+			break;
+		case USER_OFFLINE:
+			this->server.removeUtilizadorOnline(buffer[0].utilizador);
+			break;
+		}
 	}
 }

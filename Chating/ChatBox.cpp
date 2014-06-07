@@ -86,6 +86,11 @@ void ChatBox::clear()
 	refresh();
 }
 
+void ChatBox::setUsername(const sTchar_t& username)
+{
+	this->username = username;
+}
+
 void ChatBox::addChat(const sTchar_t& userOwner, CHAT chat)
 {
 	// ToDo: diferenciar de publico e privado
@@ -99,38 +104,12 @@ void ChatBox::addChat(const sTchar_t& userOwner, CHAT chat)
 
 void ChatBox::addMessage(const sTchar_t& userOwner, MENSAGEM msg)
 {
-	TCHAR delimiter = ':';
-	bool userIsReady = false;
-	sTchar_t user;
-	sTchar_t message;
-
-	// Interpretar mensagem do servidor
-	//Retirar o nome do utilizador e a mensagem
-	for (unsigned int i=0; i <= (unsigned int)_tcslen(msg.texto); i++)
-	{
-		if (!userIsReady && msg.texto[i] == delimiter) {
-			userIsReady = true;
-			continue;
-		}
-		if (userIsReady && message.size() == 0 && msg.texto[i-1] == delimiter)
-			continue;
-		if (msg.texto[i] == '\0')
-			continue;
-
-		if (userIsReady)
-			// Mensagem
-			message.push_back(msg.texto[i]);
-		else
-			// Utilizador
-			user.push_back(msg.texto[i]);
-	}
-
-	if (user == userOwner)
+	if (this->username == userOwner)
 		// Mensagem do próprio
-		addMessageOnRight(user,message);
+		addMessageOnRight(userOwner,msg.texto);
 	else
 		// Mensagem de outro
-		addMessageOnLeft(user,message);
+		addMessageOnLeft(userOwner,msg.texto);
 
 	// ToDo: adicionar o Instante no item da mensagem
 

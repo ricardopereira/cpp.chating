@@ -60,8 +60,13 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			tcout << TEXT("\nThreadCliente: Login: ") << buffer.args[0] << endl << TEXT("Password: ") << buffer.args[1] << TEXT("\n") << endl;
 			int pos;
 			result = server->Login(buffer.args[0], buffer.args[1], &pos);
+
+			// Login com sucesso
 			if (result == Servidor::SUCCESS || result == Servidor::SUCCESS_ADMIN)
+			{
 				this->currentClient = server->getClientData(pos);
+				server->SendUserGoOnline(this->currentClient);
+			}
 
 			if (result == Servidor::USER_NOT_FOUND && server->getUserCount() == 0)
 				tcout << TEXT("ThreadCliente: nao foi possivel criar o registo por defeito") << endl;
@@ -70,10 +75,11 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			break;
 		case commands_t::LISTA_UTILIZADORES_TODOS:
 			buffer.arg_num = server->getUserCount();
+			server->SendUsers(this->currentClient);
 			break;
 		case commands_t::LISTA_UTILIZADORES_ONLINE:
 			buffer.arg_num = server->getUserOnlineCount();
-			server->RetrieveInformation();
+			server->SendUsersOnline(this->currentClient);
 			break;
 		case commands_t::LANCAR_CHAT:
 			server->LancarChat(usrname, this->currentPartner);
@@ -82,9 +88,8 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->SendPrivateMessage(*this->currentPartner);
 			break;
 		case commands_t::ENVIAR_MSG_PUBLICA:
-
 			tcout << TEXT("\nThreadCliente: Recebeu mensagem: ") << buffer.args[0] << endl;
-			server->SendPublicMessage(buffer.args[0], buffer.args[1],this->currentClient);
+			server->SendPublicMessage(buffer.args[0], buffer.args[1], this->currentClient);
 			break;
 		case commands_t::FECHAR_CHAT:
 			server->CloseChat();

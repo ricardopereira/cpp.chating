@@ -43,11 +43,11 @@ public:
 
 	ChatUser* addUtilizador(const TCHAR *username);
 	ChatUser* addUtilizadorOnline(const TCHAR *username);
-	void removeUtilizador(const TCHAR *username);
 	void removeUtilizadorOnline(const TCHAR *username);
 	ChatUser* getUtilizador(unsigned int index);
 	ChatUser* getUtilizador(const TCHAR *username);
 	ChatUser* getUtilizadorOnline(unsigned int index);
+	void clearUtilizadoresOnline();
 
 	bool getIsAutenticado();
 	bool getIsAdministrador();

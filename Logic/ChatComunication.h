@@ -4,6 +4,8 @@
 
 /*Comunicacao*/
 
+#define BUFFER_RECORDS 50
+
 enum commands_t {
 	REGISTER_NEW_USER,
 	LOGIN,
