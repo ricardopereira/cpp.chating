@@ -80,15 +80,11 @@ ChatUser* Server::addUtilizador(const TCHAR *username)
 ChatUser* Server::addUtilizadorOnline(const TCHAR *username)
 {
 	ChatUser* user = getUtilizador(username);
-	if (user)
-	{
-		utilizadoresOnline.push_back(user);
-	}
-	else
+	if (!user)
 	{
 		user = addUtilizador(username);
-		utilizadores.push_back(user);
 	}
+	utilizadoresOnline.push_back(user);
 	user->setOnline();
 	return user;
 }
