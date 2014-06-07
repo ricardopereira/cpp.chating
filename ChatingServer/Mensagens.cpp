@@ -22,9 +22,9 @@ const DATA& Mensagens::GetDataMensagem(){
 }
 
 int Mensagens::GetReceiver()const{
-	return this->user1;
+	return this->user2;
 }
 
 int Mensagens::GetSender()const{
-	return this->user2;
+	return this->user1;
 }

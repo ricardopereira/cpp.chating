@@ -73,7 +73,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			break;
 		case commands_t::LISTA_UTILIZADORES_ONLINE:
 			buffer.arg_num = server->getUserOnlineCount();
-			server->RetrieveInformation();
+			//server->RetrieveInformation(); //NOPE NOPE NOPE
 			break;
 		case commands_t::LANCAR_CHAT:
 			server->LancarChat(usrname, this->currentPartner);

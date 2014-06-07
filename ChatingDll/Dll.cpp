@@ -188,10 +188,36 @@ void EnviarMensagemPublica(const TCHAR *msg, const TCHAR *owner)
 		NULL);
 }
 
-CHAT LerInformacaoInicial()
+void LerInformacaoInicial()
 {
-	CHAT result;
-	return result;
+	// Escrever no pipe
+	chatbuffer_t buffer;
+	buffer.command = commands_t::LER_INFO_INICIAL;
+	// ToDo: convém saber o login na mensagem
+
+	//DWORD msgBytes;
+	DWORD bytesSent;
+	DWORD bytesRead;
+	BOOL success = 0;
+
+	// Envio de pedido
+	success = WriteFile(hPipe,
+		&buffer, //message
+		sizeof(chatbuffer_t), //message length
+		&bytesSent, //bytes written
+		NULL); //not overlapped
+
+	if (!success)
+		return;
+
+	// Recebe a resposta
+	success = ReadFile(
+		hPipe,
+		&buffer,
+		sizeof(chatbuffer_t),
+		&bytesRead,
+		NULL);
+	return;
 }
 
 MENSAGEM LerMensagensPublicas()
