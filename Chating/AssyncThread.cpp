@@ -1,8 +1,8 @@
 #include "AssyncThread.h"
 #include "../ChatingDll/Dll.h"
 
-AssyncThread::AssyncThread(sTchar_t username, ChatBox& messageArea, ListBox& listUsers)
-: messageArea(messageArea), listUsers(listUsers)
+AssyncThread::AssyncThread(sTchar_t username, Server& server, ChatBox& messageArea)
+: server(server), messageArea(messageArea)
 {
 	this->ptrClasse = this;
 	oTcharStream_t tempText;
@@ -14,11 +14,10 @@ AssyncThread::AssyncThread(sTchar_t username, ChatBox& messageArea, ListBox& lis
 
 AssyncThread::~AssyncThread()
 {
+
 }
 
 DWORD WINAPI AssyncThread::funcaoThread(){
-	
-	
 	
 	HANDLE hPipe = INVALID_HANDLE_VALUE;
 	//pointer to server class handles, and other stuff
@@ -61,8 +60,14 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			
 			switch (buffer[0].messageType){
 			case LIST_ALL_USERS:
+				for (DWORD i = 0; i < buffer[0].nMessages; i++){
+					this->server.addUtilizador(buffer[i].utilizador);
+				}
 				break;
 			case LIST_USERS_ONLINE:
+				for (DWORD i = 0; i < buffer[0].nMessages; i++){
+					this->server.addUtilizadorOnline(buffer[i].utilizador);
+				}
 				break;
 			case PRIVATE_MESSAGE:
 				break;

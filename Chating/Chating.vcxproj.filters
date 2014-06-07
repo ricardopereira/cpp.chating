@@ -28,6 +28,12 @@
     <Filter Include="External">
       <UniqueIdentifier>{c17a90af-bcb3-4388-98ca-db7fca5cd5a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Logic">
+      <UniqueIdentifier>{cc911dd5-5451-4675-8c72-6c21d586d560}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logic">
+      <UniqueIdentifier>{45ffe75f-324e-46f1-b3e6-3e594766da9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JanelaPrincipal.cpp">
@@ -75,6 +81,9 @@
     <ClCompile Include="AssyncThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Logic\ChatUser.cpp">
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JanelaPrincipal.h">
@@ -110,9 +119,6 @@
     <ClInclude Include="CustomWindow.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -124,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="AssyncThread.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\ChatUser.h">
+      <Filter>Header Files\Logic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

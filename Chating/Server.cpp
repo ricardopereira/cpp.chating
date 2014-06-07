@@ -1,5 +1,7 @@
 #include "Server.h"
+
 int pipeAberto = 0;
+
 Server::Server()
 {
 	reset();
@@ -15,64 +17,92 @@ bool Server::getIsAdministrador()
 	return this->privilegiosAdmin;
 }
 
-const sTchar_t& Server::getLoginAutenticado()
+const ChatUser& Server::getLoginAutenticado()
 {
-	return this->loginAutenticado;
+	return *this->loginAutenticado;
 }
 
 void Server::reset()
 {
 	this->autenticado = false;
 	this->privilegiosAdmin = false;
-	this->loginAutenticado = TEXT("");
-
-	this->totalUtilizadoresOnline = 0;
-	this->totalUtilizadores = 0;
+	this->loginAutenticado = NULL;
 }
 
 int Server::getTotalUtilizadores()
 {
-	return this->totalUtilizadores;
+	return this->utilizadores.size();
 }
 
 int Server::getTotalUtilizadoresOnline()
 {
-	return this->totalUtilizadoresOnline;
+	return this->utilizadoresOnline.size();
 }
 
-UTILIZADOR Server::getUtilizador(int index)
+ChatUser* Server::getUtilizador(unsigned int index)
 {
-	UTILIZADOR res;
-
-	// Teste
-	_stprintf_s(res.login, TAMLOGIN, TEXT(""));
-	_stprintf_s(res.password, TAMPASS, TEXT(""));
-	res.estado = 0;
-	res.tipo = 0;
-
-	if (index >= 0 && index < this->totalUtilizadores)
-		return utilizadores[index];
+	if (index >= 0 && index < this->utilizadores.size())
+		return utilizadores.at(index);
 	else
-		return res;
+		return NULL;
 }
 
-UTILIZADOR Server::getUtilizadorOnline(int index)
+ChatUser* Server::getUtilizador(const TCHAR *username)
 {
-	UTILIZADOR res;
-
-	// Teste
-	_stprintf_s(res.login, TAMLOGIN, TEXT(""));
-	_stprintf_s(res.password, TAMPASS, TEXT(""));
-	res.estado = 0;
-	res.tipo = 0;
-
-	if (index >= 0 && index < this->totalUtilizadoresOnline)
-		return utilizadoresOnline[index];
-	else
-		return res;
+	for (unsigned int i = 0; i < utilizadores.size(); i++)
+	{
+		if (_tcscmp(utilizadores.at(i)->getUsername().c_str(), username) == 0)
+			return  utilizadores.at(i);
+	}
+	return NULL;
 }
 
-int Server::cAutenticar(TCHAR* login, TCHAR *pass)
+ChatUser* Server::getUtilizadorOnline(unsigned int index)
+{
+	if (index >= 0 && index < this->utilizadoresOnline.size())
+		return utilizadoresOnline.at(index);
+	else
+		return NULL;
+}
+
+void Server::deleteUtilizador(const TCHAR *username)
+{
+	int res = RemoverUtilizador(username);
+}
+
+ChatUser* Server::addUtilizador(const TCHAR *username)
+{
+	ChatUser* user = new ChatUser(username);
+	utilizadores.push_back(user);
+	return user;
+}
+
+ChatUser* Server::addUtilizadorOnline(const TCHAR *username)
+{
+	ChatUser* user = getUtilizador(username);
+	if (user)
+	{
+		utilizadoresOnline.push_back(user);
+	}
+	else
+	{
+		user = addUtilizador(username);
+		utilizadores.push_back(user);
+	}
+	return user;
+}
+
+void Server::removeUtilizador(const TCHAR *username)
+{
+
+}
+
+void Server::removeUtilizadorOnline(const TCHAR *username)
+{
+
+}
+
+int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
 {
 	if (!pipeAberto) {
 		// ToDo: Não seria melhor a DLL gerir o pipe?!
@@ -83,29 +113,28 @@ int Server::cAutenticar(TCHAR* login, TCHAR *pass)
 	int res = Autenticar(login, pass);
 
 	if (res == SUCCESS) {
+		loggedIn(login);
+		// ToDo - Redundante!
 		this->autenticado = true;
 		this->privilegiosAdmin = false;
-		this->loginAutenticado = login;
-		loggedIn();
 		return 1;
 	}
 	else if (res == SUCCESS_ADMIN) {
+		loggedIn(login);
+		// ToDo - Redundante!
 		this->autenticado = true;
 		this->privilegiosAdmin = true;
-		this->loginAutenticado = login; //Administrador
-
-		loggedIn();
 		return 2;
 	}
 	else {
 		this->autenticado = false;
 		this->privilegiosAdmin = false;
-		this->loginAutenticado = TEXT("");
+		this->loginAutenticado = NULL;
 	}
 	return 0;
 }
 
-int Server::cRegistar(TCHAR* login, TCHAR *pass)
+int Server::cRegistar(const TCHAR* login, const TCHAR *pass)
 {
 	if (!pipeAberto){
 		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
@@ -114,23 +143,24 @@ int Server::cRegistar(TCHAR* login, TCHAR *pass)
 	return res;
 }
 
-void Server::loggedIn()
+void Server::loggedIn(const TCHAR* username)
 {
-	this->totalUtilizadoresOnline = LerListaUtilizadores(this->utilizadoresOnline);
-	//this->totalUtilizadores = LerListaUtilizadoresRegistados(this->utilizadores);
+	ChatUser* user = addUtilizadorOnline(username);
+	user->setOnline();
+
+	//Administrador
+	if (_tcscmp(TEXT("admin"), username) == 0)
+		user->setAdmin();
+	
+	this->loginAutenticado = user;
+
+	LerListaUtilizadoresRegistados();
+	LerListaUtilizadores();
 }
 
 int Server::cIniciarConversa(const TCHAR *utilizador)
 { 
-	// ToDo: 2 * TAMLOGIN ?!
-	TCHAR userAux[TAMLOGIN];
-
-	for (unsigned int i=0; i <= (unsigned int)_tcslen(utilizador)+1; i++) // Mais o terminador,  && i < TAMLOGIN
-	{
-		userAux[i] = utilizador[i];
-	}
-
-	return IniciarConversa(userAux);
+	return IniciarConversa(utilizador);
 }
 
 int Server::cDesligarConversa()
@@ -153,13 +183,7 @@ int Server::cEnviarMensagemPrivada(const TCHAR *texto)
 
 void Server::cEnviarMensagemPublica(const TCHAR *texto)
 {
-	EnviarMensagemPublica(texto, this->getLoginAutenticado().c_str());
-	return;
-}
-
-void Server::cLerInformacaoInicial()
-{
-	CHAT info = LerInformacaoInicial();
+	EnviarMensagemPublica(texto, this->getLoginAutenticado().getUsername().c_str());
 	return;
 }
 

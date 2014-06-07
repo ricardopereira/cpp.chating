@@ -8,6 +8,8 @@ class ClienteDados
 	sTchar_t password;
 	int tipo;
 	bool online;
+	bool isAdmin;
+	bool hasPrivateChat;
 	HANDLE privatePipe;
 	int id;
 public:
@@ -15,12 +17,12 @@ public:
 	~ClienteDados();
 	void SetOnline();
 	void SetOffline();
-	sTchar_t GetUsername()const;
-	sTchar_t GetPassword()const;
-	int GetTipo()const;
+	sTchar_t GetUsername() const;
+	sTchar_t GetPassword() const;
+	int GetTipo() const;
+	bool GetIsOnline() const;
+	bool getIsAdmin() const;
 	void CreatePrivatePipe();
 	int GetId()const;
 	HANDLE GetPipe()const;
-	bool GetIsOnline()const;
 };
-

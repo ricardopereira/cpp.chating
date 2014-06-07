@@ -1,6 +1,6 @@
 #pragma once
 #include "../Core/Thread.h"
-#include "Common.h"
+#include "../ChatingServer/Common.h"
 #include "ChatBox.h"
 #include "ListBox.h"
 
@@ -9,10 +9,10 @@ class AssyncThread :
 {
 private:
 	sTchar_t pipeName;
-	ListBox &listUsers;
-	ChatBox &messageArea;
+	Server& server;
+	ChatBox& messageArea;
 public:
-	AssyncThread(sTchar_t username, ChatBox& messageArea, ListBox& listUsers);
+	AssyncThread(sTchar_t username, Server& server, ChatBox& messageArea);
 	~AssyncThread();
 	virtual DWORD WINAPI funcaoThread();
 };

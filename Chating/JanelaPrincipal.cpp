@@ -101,6 +101,7 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDC_NEWUSER:
 			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
+
 			res = ptrServidor->cRegistar(login, password);
 			if (res == SUCCESS ){
 				sTchar_t text;
@@ -112,7 +113,6 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				text = TEXT("Não foi possível registar o utilizador.");
 				MessageBox(hWnd, text.c_str(), TEXT("Registar novo utilizador"), MB_OK | MB_ICONINFORMATION);
 			}
-			
 			break;
 		}
 		break;
@@ -132,9 +132,30 @@ BOOL CALLBACK DialogUtilizadores(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		_ASSERT(ptrServidor);
 
 		for (int i = 0; i < ptrServidor->getTotalUtilizadores(); i++) {
-			SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_ADDSTRING, 0, (LPARAM)ptrServidor->getUtilizador(i).login);
+			SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_ADDSTRING, 0, (LPARAM)ptrServidor->getUtilizador(i)->getUsername().c_str());
 		}
 		return 1;
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case IDCANCEL:
+			EndDialog(hWnd,IDCANCEL);
+			break;
+		case IDC_CANCELALUTILIZADORES:
+			EndDialog(hWnd,IDCANCEL);
+			break;
+		case IDC_ELIMINARUTILIZADOR:
+			// Obter item da lista de utilizadores
+			int i = SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETCURSEL, 0, 0);
+
+			// Existe um item seleccionado
+			if (i >= 0)
+			{
+				TCHAR utilizador[TAMLOGIN];
+				SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETTEXT, i, (LPARAM)utilizador);
+				ptrServidor->deleteUtilizador(utilizador);
+			}
+			break;
+		}
 	}
 	return 0;
 }
@@ -164,16 +185,16 @@ void JanelaPrincipal::login(HWND hWnd)
 	{
 		// ToDo: ler da instancia do Server
 		CHAT chatInit = LerInformacaoInicial();
-		AreaMensagens->addChat(this->servidor.getLoginAutenticado(),chatInit);
+		AreaMensagens->addChat(this->servidor.getLoginAutenticado().getUsername().c_str(),chatInit);
 
 		// Lista de utilizadores
 		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
-			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i).login);
+			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i)->getUsername().c_str());
 
 		// ToDo: Verificar a situação do Cancelar no Login
 
 		// Cria thread para receber mensagens
-		assyncThread = new AssyncThread(servidor.getLoginAutenticado(),*this->AreaMensagens,*this->ListaUtilizadores);
+		assyncThread = new AssyncThread(servidor.getLoginAutenticado().getUsername().c_str(), this->servidor, *this->AreaMensagens);
 		assyncThread->LancarThread();
 	}
 	refresh(hWnd);
@@ -213,7 +234,7 @@ void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 		// Teste
 		MENSAGEM ultima;
 		_tcscpy_s(ultima.texto, _tcslen(msg)*sizeof(TCHAR), msg);
-		AreaMensagens->addMessagePrivate(this->servidor.getLoginAutenticado(),ultima);
+		AreaMensagens->addMessagePrivate(this->servidor.getLoginAutenticado().getUsername().c_str(),ultima);
 	}
 }
 

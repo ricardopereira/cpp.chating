@@ -40,6 +40,7 @@ public:
 	ClienteDados* getClientData(int& pos);
 
 	int getUserCount();
+	int getUserOnlineCount();
 
 	Servidor();
 	~Servidor();
