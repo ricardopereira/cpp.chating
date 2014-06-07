@@ -67,18 +67,29 @@ ChatUser* Server::getUtilizadorOnline(unsigned int index)
 
 void Server::deleteUtilizador(const TCHAR *username)
 {
+	if (_tcscmp(username,TEXT("")) == 0)
+		return;
 	int res = RemoverUtilizador(username);
 }
 
 ChatUser* Server::addUtilizador(const TCHAR *username)
 {
-	ChatUser* user = new ChatUser(username);
-	utilizadores.push_back(user);
+	if (_tcscmp(username,TEXT("")) == 0)
+		return NULL;
+	ChatUser* user = getUtilizador(username);
+	if (!user)
+	{
+		user = new ChatUser(username);
+		utilizadores.push_back(user);
+	}
 	return user;
 }
 
 ChatUser* Server::addUtilizadorOnline(const TCHAR *username)
 {
+	if (_tcscmp(username,TEXT("")) == 0)
+		return NULL;
+
 	ChatUser* user = getUtilizador(username);
 	if (!user)
 	{
@@ -107,6 +118,9 @@ void Server::clearUtilizadoresOnline()
 
 int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
 {
+	if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(pass,TEXT("")) == 0)
+		return 0;
+
 	if (!pipeAberto) {
 		// ToDo: Não seria melhor a DLL gerir o pipe?!
 		//afinal, o recurso é da DLL, não da interface que apenas abusa da DLL
@@ -123,7 +137,7 @@ int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
 		return 1;
 	}
 	else if (res == SUCCESS_ADMIN) {
-		loggedIn(login);
+		loggedIn(login,true);
 		// ToDo - Redundante!
 		this->autenticado = true;
 		this->privilegiosAdmin = true;
@@ -139,6 +153,8 @@ int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
 
 int Server::cRegistar(const TCHAR* login, const TCHAR *pass)
 {
+	if (_tcscmp(login,TEXT("")) == 0)
+		return 0;
 	if (!pipeAberto){
 		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
 	}
@@ -146,23 +162,27 @@ int Server::cRegistar(const TCHAR* login, const TCHAR *pass)
 	return res;
 }
 
-void Server::loggedIn(const TCHAR* username)
+void Server::loggedIn(const TCHAR* username, bool isAdmin)
 {
 	ChatUser* user = addUtilizadorOnline(username);
 	user->setOnline();
 
-	//Administrador
-	if (_tcscmp(TEXT("admin"), username) == 0)
+	if (isAdmin)
 		user->setAdmin();
 	
 	this->loginAutenticado = user;
+}
 
-	LerListaUtilizadoresRegistados();
-	LerListaUtilizadores();
+void Server::loggedOut(const TCHAR* username)
+{
+	// ToDo
+	this->loginAutenticado = NULL;
 }
 
 int Server::cIniciarConversa(const TCHAR *utilizador)
-{ 
+{
+	if (_tcscmp(utilizador,TEXT("")) == 0)
+		return 0;
 	return IniciarConversa(utilizador);
 }
 

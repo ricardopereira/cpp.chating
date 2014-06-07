@@ -11,6 +11,8 @@ private:
 	Servidor* server;
 	ClienteDados* currentClient;
 	ClienteDados* currentPartner;
+
+	sTchar_t getInfo();
 public:
 	ThreadCliente(HANDLE hPipe, Servidor* server);
 	~ThreadCliente();

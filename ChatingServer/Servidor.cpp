@@ -102,9 +102,9 @@ Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados &partner) {
 	return Servidor::PIPE_ERROR;
 }
 
-Servidor::rMsg Servidor::SendUsers(ClienteDados* cliente)
+Servidor::rMsg Servidor::SendUsers(ClienteDados* currentClient)
 {
-	if (!cliente) 
+	if (!currentClient) 
 		return Servidor::USER_NOT_FOUND;
 
 	this->sem_ServerData.Wait();
@@ -114,18 +114,22 @@ Servidor::rMsg Servidor::SendUsers(ClienteDados* cliente)
 	buffer[0].nMessages = 0;
 	buffer[0].messageType = LIST_ALL_USERS;
 
+	ClienteDados* itemClient;
+
 	for (unsigned int i = 0; i < this->clientes.size(); i++)
 	{
+		itemClient = clientes.at(i);
+
 		// Limite
 		if (buffer[0].nMessages == BUFFER_RECORDS)
 			break;
 
-		_tcscpy_s(buffer[buffer[0].nMessages].utilizador, cliente->GetUsername().size()*sizeof(TCHAR), cliente->GetUsername().c_str());
+		_tcscpy_s(buffer[buffer[0].nMessages].utilizador, itemClient->GetUsername().size()*sizeof(TCHAR), itemClient->GetUsername().c_str());
 		// Total de utilizadores
 		buffer[0].nMessages++;
 	}
 
-	this->SendToClient(buffer, cliente->GetPipe());
+	this->SendToClient(buffer, currentClient->GetPipe());
 
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
@@ -133,11 +137,11 @@ Servidor::rMsg Servidor::SendUsers(ClienteDados* cliente)
 	return Servidor::SUCCESS;
 }
 
-Servidor::rMsg Servidor::SendUsersOnline(ClienteDados* cliente)
+Servidor::rMsg Servidor::SendUsersOnline(ClienteDados* currentClient)
 {
-	if (!cliente) 
+	if (!currentClient) 
 		return Servidor::USER_NOT_FOUND;
-
+	
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
 	
@@ -145,20 +149,24 @@ Servidor::rMsg Servidor::SendUsersOnline(ClienteDados* cliente)
 	buffer[0].nMessages = 0;
 	buffer[0].messageType = LIST_USERS_ONLINE;
 
+	ClienteDados* itemClient;
+
 	for (unsigned int i = 0; i < this->clientes.size(); i++)
 	{
+		itemClient = clientes.at(i);
+
 		// Limite
 		if (buffer[0].nMessages == BUFFER_RECORDS)
 			break;
 
-		if (this->clientes.at(i)->GetIsOnline()) {
-			_tcscpy_s(buffer[buffer[0].nMessages].utilizador, cliente->GetUsername().size()*sizeof(TCHAR), cliente->GetUsername().c_str());
+		if (itemClient->GetIsOnline()) {
+			_tcscpy_s(buffer[buffer[0].nMessages].utilizador, itemClient->GetUsername().size()*sizeof(TCHAR), itemClient->GetUsername().c_str());
 			// Total de utilizadores
 			buffer[0].nMessages++;
 		}
 	}
 
-	this->SendToClient(buffer, cliente->GetPipe());
+	this->SendToClient(buffer, currentClient->GetPipe());
 
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();

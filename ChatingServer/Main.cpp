@@ -1,11 +1,15 @@
 #include <iostream>
 #include <windows.h>
 #include <tchar.h>
+#include <io.h>
+#include <fcntl.h>
+#include <stdio.h>
 
 #include "Shell.h"
 #include "ChatComunication.h"
 #include "ThreadCliente.h"
 #include "Servidor.h"
+
 using namespace std;
 
 void comandStart();
@@ -13,6 +17,13 @@ void comandStart();
 int main()
 {
 	Shell sh;
+
+	//UNICODE: By default, windows console does not process wide characters. 
+	//Probably the simplest way to enable that functionality is to call _setmode:
+#ifdef UNICODE 
+	//_setmode(_fileno(stdin), _O_WTEXT); 
+	//_setmode(_fileno(stdout), _O_WTEXT); 
+#endif
 
 	// Iniciar a shell
 	sh.open();
@@ -45,7 +56,10 @@ void comandStart()
 	BOOL success = 0;
 	vector<ThreadCliente*> clients;	
 	Servidor server;
+
+	// Registo
 	server.LoadRegistry();
+
 	while (1) {
 		hPipe = CreateNamedPipe(pipeName,
 			PIPE_ACCESS_DUPLEX, //OpenMode
@@ -69,42 +83,15 @@ void comandStart()
 		// Verificar conectividade
 		if (connected)
 		{
+			// Cliente conectado
+			tcout << TEXT("New thread ") << clients.size() << TEXT(": client connected") << endl;
 			clients.push_back(new ThreadCliente(hPipe, &server));
 			clients.back()->LancarThread();
-			// Cliente conectado
-			tcout << TEXT("O cliente ligou-se") << endl;
 		}
 		else{ //Não consegue conexão -> fechar handle.
 			CloseHandle(hPipe);
 		}
 	}
-	//// Ler mensagens
-	//TCHAR msg[BUFFERSIZE];
-	//DWORD msgBytes;
-
-	//while (1)
-	//{
-	//	success = ReadFile(hPipe,
-	//		msg, // buffer to receive data 
-	//		BUFFERSIZE*sizeof(TCHAR), // size of buffer 
-	//		&msgBytes, // number of bytes read 
-	//		NULL); // not overlapped I/O 
-
-	//	if (!success || msgBytes == 0)
-	//	{   
-	//		if (GetLastError() == ERROR_BROKEN_PIPE)
-	//		{
-	//			wcout << TEXT("Client disconnected: ") << GetLastError() << endl;
-	//		}
-	//		else
-	//		{
-	//			wcout << TEXT("ReadFile failed: ") << GetLastError() << endl;
-	//		}
-	//		break;
-	//	}
-	//	else
-	//			wcout << msg << endl;
-	//}
 
 	//if (connected)
 	//{

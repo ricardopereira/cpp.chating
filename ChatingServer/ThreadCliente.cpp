@@ -40,13 +40,11 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 		{
 			if (GetLastError() == ERROR_BROKEN_PIPE)
 			{
-				tcout << TEXT("ThreadCliente: cliente desligou-se.\n");
-				//contador--; //possiveis erros
-				//TERMINAR:: CloseHandle(
+				tcout << getInfo() << TEXT("disconnected") << endl;
 			}
 			else
 			{
-				tcout << TEXT("ThreadCliente: ocorreu um erro de leitura.\n");
+				tcout << getInfo() << TEXT("read error" << endl);
 			}
 			break;
 		}
@@ -57,7 +55,6 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			buffer.arg_num = server->RegisterUser(buffer.args[0], buffer.args[1], /*tipo*/1);
 			break;
 		case commands_t::LOGIN:
-			tcout << TEXT("\nThreadCliente: Login: ") << buffer.args[0] << endl << TEXT("Password: ") << buffer.args[1] << TEXT("\n") << endl;
 			int pos;
 			result = server->Login(buffer.args[0], buffer.args[1], &pos);
 
@@ -66,10 +63,11 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			{
 				this->currentClient = server->getClientData(pos);
 				server->SendUserGoOnline(this->currentClient);
+				tcout << getInfo() << TEXT("logged in - ") << buffer.args[0] << endl;
 			}
 
 			if (result == Servidor::USER_NOT_FOUND && server->getUserCount() == 0)
-				tcout << TEXT("ThreadCliente: nao foi possivel criar o registo por defeito") << endl;
+				tcout << getInfo() << TEXT("no users") << endl;
 
 			buffer.arg_num = result;
 			break;
@@ -88,7 +86,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->SendPrivateMessage(*this->currentPartner);
 			break;
 		case commands_t::ENVIAR_MSG_PUBLICA:
-			tcout << TEXT("\nThreadCliente: Recebeu mensagem: ") << buffer.args[0] << endl;
+			tcout << getInfo() << TEXT("message: ") << buffer.args[0] << endl;
 			server->SendPublicMessage(buffer.args[0], buffer.args[1], this->currentClient);
 			break;
 		case commands_t::FECHAR_CHAT:
@@ -116,4 +114,14 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	}
 	
 	return 1;
+}
+
+sTchar_t ThreadCliente::getInfo()
+{
+	oTcharStream_t stream;
+	if (this->currentClient)
+		stream << TEXT("ThreadCliente") << this->currentClient->GetId() << TEXT(": ");
+	else
+		stream << TEXT("ThreadCliente") << this->threadID << TEXT(": ");
+	return stream.str();
 }

@@ -24,17 +24,16 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 	MSG_T buffer[50];
 	DWORD bytesRead;
 
-	// ToDo: Pipe com Read e Write?!
 	if (!WaitNamedPipe(this->pipeName.c_str(), NMPWAIT_WAIT_FOREVER)){
 		MessageBox(0, TEXT("AssyncThread: Erro conexão ao pipe"), TEXT("Erro"), MB_OK | MB_ICONERROR);
 		ExitThread(1);
 		return 1; //Verify this
 	}
 
-	hPipe = CreateFile( //A criação do pipe
+	//Abrir o pipe
+	hPipe = CreateFile(
 		this->pipeName.c_str(),
-		GENERIC_READ |
-		GENERIC_WRITE,
+		GENERIC_READ,
 		0,
 		NULL,
 		OPEN_EXISTING,

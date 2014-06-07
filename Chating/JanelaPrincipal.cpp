@@ -76,6 +76,9 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
 
+			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
+				break;
+
 			if (ptrServidor)
 				res = ptrServidor->cAutenticar(login, password);
 
@@ -104,6 +107,9 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Registar utilizador
 			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
+
+			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
+				break;
 
 			res = ptrServidor->cRegistar(login, password);
 			if (res == SUCCESS ){
@@ -188,17 +194,22 @@ void JanelaPrincipal::login(HWND hWnd)
 	{
 		this->AreaMensagens->setUsername(servidor.getLoginAutenticado().getUsername().c_str());
 
-		// Lista de utilizadores
-		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
-			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i)->getUsername().c_str());
-
-		// ToDo: Verificar a situação do Cancelar no Login
+		refresh(hWnd);
 
 		// Cria thread para receber mensagens
 		assyncThread = new AssyncThread(servidor.getLoginAutenticado().getUsername().c_str(), this->servidor, *this->AreaMensagens);
 		assyncThread->LancarThread();
+
+		// Esperar que a assyncThread fique pronta a receber dados
+		Sleep(200);
+
+		LerListaUtilizadores();
+		LerListaUtilizadoresRegistados();
 	}
-	refresh(hWnd);
+	else if (result == IDCANCEL)
+	{
+		DestroyWindow(hWnd);
+	}
 }
 
 void JanelaPrincipal::logout(HWND hWnd)
@@ -272,8 +283,18 @@ void JanelaPrincipal::refresh(HWND hWnd)
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
 	}
+
+	refreshData();
 }
 
+void JanelaPrincipal::refreshData()
+{
+	this->ListaUtilizadores->clear();
+
+	// Lista de utilizadores
+	for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
+		this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i)->getUsername().c_str());
+}
 
 // Eventos
 

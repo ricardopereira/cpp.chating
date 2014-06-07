@@ -30,7 +30,6 @@ Servidor::rMsg Registry::LoadData(
 	if (RegCreateKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\ChatServidor"), 0, NULL, REG_OPTION_VOLATILE, ///REG_OPTION_VOLATILE->Sem persistência
 		KEY_ALL_ACCESS, NULL, &chave, &queAconteceu) != ERROR_SUCCESS){
 
-
 		return Servidor::REGEDIT_OK;
 	}
 	else
@@ -43,9 +42,6 @@ Servidor::rMsg Registry::LoadData(
 		nMessages = 0;
 		RegSetValueEx(chave, TEXT("nMessages"), 0, REG_DWORD, (LPBYTE)&nMessages, sizeof(DWORD));
 
-
-		///jogadores = (JOGADOR *)malloc(sizeof(JOGADOR)); //adicionar o administrador com as credenciais por omissão.
-		//inicializarJogador(TEXT("admin"), TEXT("admin"));
 		clientdata.push_back(new ClienteDados(TEXT("admin"), TEXT("admin"), 2, clientdata.size()));
 		users = new UTILIZADOR[nUsers];
 		_tcscpy_s(users[0].login, clientdata.at(0)->GetUsername().size() *sizeof(TCHAR), clientdata.at(0)->GetUsername().c_str());
@@ -75,8 +71,6 @@ Servidor::rMsg Registry::LoadData(
 		tamanho = sizeof(UTILIZADOR)*nUsers;
 		tipo = REG_BINARY;
 		RegQueryValueEx(chave, TEXT("Users"), NULL, &tipo, (LPBYTE)users, &tamanho);
-
-		
 
 		for (DWORD i = 0; i < nUsers; i++)
 		{
@@ -111,6 +105,10 @@ Servidor::rMsg Registry::LoadData(
 		delete []users;
 		RegCloseKey(chave);
 		return Servidor::REGEDIT_OK;
+	}
+	else
+	{
+		tcout << TEXT("\nRegisto não foi criado\n");
 	}
 	return Servidor::REGEDIT_NOT_OK;
 }

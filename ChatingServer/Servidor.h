@@ -37,8 +37,8 @@ public:
 	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
 	rMsg SendPrivateMessage(ClienteDados &partner);
 	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
-	rMsg SendUsers(ClienteDados* cliente);
-	rMsg SendUsersOnline(ClienteDados* cliente);
+	rMsg SendUsers(ClienteDados* currentClient);
+	rMsg SendUsersOnline(ClienteDados* currentClient);
 	rMsg SendUserGoOnline(ClienteDados* cliente);
 	rMsg SendUserGoOffline(ClienteDados* cliente);
 	rMsg CloseChat();
