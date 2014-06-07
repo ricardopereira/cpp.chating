@@ -27,8 +27,8 @@ public:
 		REGEDIT_FIRST_TIME, 
 		REGEDIT_NOT_OK
 	};
-	void NovaMensagem(DATA data, int user1, int user2, sTchar_t msg);
 	void LoadRegistry();
+	void SaveRegistry();
 	rMsg Login(sTchar_t username, sTchar_t password, int* pos);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
 	rMsg RemoveUser(sTchar_t username);
@@ -44,4 +44,5 @@ public:
 
 	Servidor();
 	~Servidor();
+
 };

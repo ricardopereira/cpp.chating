@@ -5,6 +5,7 @@
 #include "Shell.h"
 #include "ChatComunication.h"
 #include "ThreadCliente.h"
+#include "ThreadSaveRegistry.h"
 #include "Servidor.h"
 using namespace std;
 
@@ -46,6 +47,10 @@ void comandStart()
 	vector<ThreadCliente*> clients;	
 	Servidor server;
 	server.LoadRegistry();
+	
+	ThreadSaveRegistry threadSaveRegistry(server);
+	threadSaveRegistry.LancarThread();
+
 	while (1) {
 		hPipe = CreateNamedPipe(pipeName,
 			PIPE_ACCESS_DUPLEX, //OpenMode

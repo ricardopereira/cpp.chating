@@ -11,18 +11,24 @@ Servidor::~Servidor()
 //apagar memoria alocada dinamicamente
 }
 
-void Servidor::NovaMensagem(DATA data, int user1, int user2, sTchar_t msg) { //apgar
-	this->mut_ServerData.Wait();
-	this->sem_ServerData.Wait();
 
-	this->msgs.push_back(new Mensagens(data, user1, user2, msg));
-
-	this->sem_ServerData.Release();
-	this->mut_ServerData.Release();
-}
 
 void Servidor::LoadRegistry() {
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
 	Registry::LoadData(this->clientes, this->msgs);
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+}
+
+void Servidor::SaveRegistry(){
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+	
+	Registry::SaveData(this->clientes, this->msgs);
+	
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
 }
 
 Servidor::rMsg Servidor::Login(sTchar_t username, sTchar_t password, int* pos) { 
