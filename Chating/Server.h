@@ -16,7 +16,8 @@ private:
 	std::vector<ChatUser*> utilizadores;
 	std::vector<ChatUser*> utilizadoresOnline;
 
-	void loggedIn(const TCHAR* username);
+	void loggedIn(const TCHAR* username, bool isAdmin=false);
+	void loggedOut(const TCHAR* username);
 public:
 	Server();
 
@@ -43,11 +44,11 @@ public:
 
 	ChatUser* addUtilizador(const TCHAR *username);
 	ChatUser* addUtilizadorOnline(const TCHAR *username);
-	void removeUtilizador(const TCHAR *username);
 	void removeUtilizadorOnline(const TCHAR *username);
 	ChatUser* getUtilizador(unsigned int index);
 	ChatUser* getUtilizador(const TCHAR *username);
 	ChatUser* getUtilizadorOnline(unsigned int index);
+	void clearUtilizadoresOnline();
 
 	bool getIsAutenticado();
 	bool getIsAdministrador();

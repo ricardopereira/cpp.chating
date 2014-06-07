@@ -67,48 +67,60 @@ ChatUser* Server::getUtilizadorOnline(unsigned int index)
 
 void Server::deleteUtilizador(const TCHAR *username)
 {
+	if (_tcscmp(username,TEXT("")) == 0)
+		return;
 	int res = RemoverUtilizador(username);
 }
 
 ChatUser* Server::addUtilizador(const TCHAR *username)
 {
-	ChatUser* user = new ChatUser(username);
-	utilizadores.push_back(user);
-	return user;
-}
-
-ChatUser* Server::addUtilizadorOnline(const TCHAR *username)
-{
+	if (_tcscmp(username,TEXT("")) == 0)
+		return NULL;
 	ChatUser* user = getUtilizador(username);
-	if (user)
+	if (!user)
 	{
-		utilizadoresOnline.push_back(user);
-	}
-	else
-	{
-		user = addUtilizador(username);
+		user = new ChatUser(username);
 		utilizadores.push_back(user);
 	}
 	return user;
 }
 
-void Server::removeUtilizador(const TCHAR *username)
+ChatUser* Server::addUtilizadorOnline(const TCHAR *username)
 {
+	if (_tcscmp(username,TEXT("")) == 0)
+		return NULL;
 
-}
-
-void Server::cLerInformacaoInicial()
-{
-	LerInformacaoInicial();
+	ChatUser* user = getUtilizador(username);
+	if (!user)
+	{
+		user = addUtilizador(username);
+	}
+	utilizadoresOnline.push_back(user);
+	user->setOnline();
+	return user;
 }
 
 void Server::removeUtilizadorOnline(const TCHAR *username)
 {
+	ChatUser* user = getUtilizador(username);
+	if (!user)
+		return;
 
+	user->setOffline();
+
+	// ToDo: remover do vector
+}
+
+void Server::clearUtilizadoresOnline()
+{
+	utilizadoresOnline.clear();
 }
 
 int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
 {
+	if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(pass,TEXT("")) == 0)
+		return 0;
+
 	if (!pipeAberto) {
 		// ToDo: Não seria melhor a DLL gerir o pipe?!
 		//afinal, o recurso é da DLL, não da interface que apenas abusa da DLL
@@ -125,7 +137,7 @@ int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
 		return 1;
 	}
 	else if (res == SUCCESS_ADMIN) {
-		loggedIn(login);
+		loggedIn(login,true);
 		// ToDo - Redundante!
 		this->autenticado = true;
 		this->privilegiosAdmin = true;
@@ -141,6 +153,8 @@ int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
 
 int Server::cRegistar(const TCHAR* login, const TCHAR *pass)
 {
+	if (_tcscmp(login,TEXT("")) == 0)
+		return 0;
 	if (!pipeAberto){
 		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
 	}
@@ -148,23 +162,27 @@ int Server::cRegistar(const TCHAR* login, const TCHAR *pass)
 	return res;
 }
 
-void Server::loggedIn(const TCHAR* username)
+void Server::loggedIn(const TCHAR* username, bool isAdmin)
 {
 	ChatUser* user = addUtilizadorOnline(username);
 	user->setOnline();
 
-	//Administrador
-	if (_tcscmp(TEXT("admin"), username) == 0)
+	if (isAdmin)
 		user->setAdmin();
 	
 	this->loginAutenticado = user;
+}
 
-	LerListaUtilizadoresRegistados();
-	LerListaUtilizadores();
+void Server::loggedOut(const TCHAR* username)
+{
+	// ToDo
+	this->loginAutenticado = NULL;
 }
 
 int Server::cIniciarConversa(const TCHAR *utilizador)
-{ 
+{
+	if (_tcscmp(utilizador,TEXT("")) == 0)
+		return 0;
 	return IniciarConversa(utilizador);
 }
 
@@ -175,15 +193,7 @@ int Server::cDesligarConversa()
 
 int Server::cEnviarMensagemPrivada(const TCHAR *texto)
 {
-	// ToDo: 2 * TAMTEXTO ?!
-	TCHAR msgWithUser[TAMTEXTO];
-
-	for (unsigned int i=0; i <= (unsigned int)_tcslen(texto)+1; i++) // Mais o terminador,  && i < TAMTEXTO
-	{
-		msgWithUser[i] = texto[i];
-	}
-
-	return EnviarMensagemPrivada(msgWithUser);
+	return EnviarMensagemPrivada(texto);
 }
 
 void Server::cEnviarMensagemPublica(const TCHAR *texto)

@@ -76,13 +76,18 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
 
+			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
+				break;
+
 			if (ptrServidor)
 				res = ptrServidor->cAutenticar(login, password);
 
+			// Administrador
 			if (res == 2) {
 				MessageBox(hWnd, TEXT("Login com sucesso: Administrador"), TEXT("Login"), MB_OK | MB_ICONWARNING);
 				EndDialog(hWnd,IDOK);
 			}
+			// Normal
 			else if (res == 1) {
 				TCHAR text[TAMTEXTO];
 				_stprintf_s(text, TAMTEXTO, _T("Login com sucesso: %s"), login);
@@ -99,8 +104,12 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EndDialog(hWnd,IDCANCEL);
 			break;
 		case IDC_NEWUSER:
+			// Registar utilizador
 			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
+
+			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
+				break;
 
 			res = ptrServidor->cRegistar(login, password);
 			if (res == SUCCESS ){
@@ -183,21 +192,25 @@ void JanelaPrincipal::login(HWND hWnd)
 
 	if (result == IDOK && this->servidor.getIsAutenticado())
 	{
-		
-		//AreaMensagens->addChat(this->servidor.getLoginAutenticado().getUsername().c_str(),chatInit); //apagar 
+		this->AreaMensagens->setUsername(servidor.getLoginAutenticado().getUsername().c_str());
 
-		// Lista de utilizadores
-		for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
-			this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i)->getUsername().c_str());
-
-		// ToDo: Verificar a situação do Cancelar no Login
+		refresh(hWnd);
 
 		// Cria thread para receber mensagens
 		assyncThread = new AssyncThread(servidor.getLoginAutenticado().getUsername().c_str(), this->servidor, *this->AreaMensagens);
 		assyncThread->LancarThread();
-		this->servidor.cLerInformacaoInicial();
+
+		// Esperar que a assyncThread fique pronta a receber dados
+		Sleep(200);
+
+		LerListaUtilizadores();
+		LerListaUtilizadoresRegistados();
+		LerInformacaoInicial();
 	}
-	refresh(hWnd);
+	else if (result == IDCANCEL)
+	{
+		DestroyWindow(hWnd);
+	}
 }
 
 void JanelaPrincipal::logout(HWND hWnd)
@@ -227,14 +240,6 @@ void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 
 		// Envia mensagem
 		this->servidor.cEnviarMensagemPublica(msg);
-				
-		// Coloca no ChatBox
-		//MENSAGEM ultima = LerMensagensPublicas(); //ToDo: DLL
-
-		// Teste
-		MENSAGEM ultima;
-		_tcscpy_s(ultima.texto, _tcslen(msg)*sizeof(TCHAR), msg);
-		AreaMensagens->addMessagePrivate(this->servidor.getLoginAutenticado().getUsername().c_str(),ultima);
 	}
 }
 
@@ -279,8 +284,18 @@ void JanelaPrincipal::refresh(HWND hWnd)
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
 	}
+
+	refreshData();
 }
 
+void JanelaPrincipal::refreshData()
+{
+	this->ListaUtilizadores->clear();
+
+	// Lista de utilizadores
+	for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
+		this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i)->getUsername().c_str());
+}
 
 // Eventos
 
@@ -318,12 +333,12 @@ void JanelaPrincipal::onMove(HWND hWnd)
 
 void JanelaPrincipal::onMouseWheelUp(HWND hWnd)
 {
-	this->AreaMensagens->scrollUp();
+	this->AreaMensagens->scrollDown();
 }
 
 void JanelaPrincipal::onMouseWheelDown(HWND hWnd)
 {
-	this->AreaMensagens->scrollDown();
+	this->AreaMensagens->scrollUp();
 }
 
 void JanelaPrincipal::onPaint(HWND hWnd, HDC &hdc, RECT &rect)

@@ -37,6 +37,8 @@ private:
 	
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;
+
+	void refreshData();
 public:
 	JanelaPrincipal();
 	~JanelaPrincipal();

@@ -11,12 +11,12 @@ Servidor::~Servidor()
 //apagar memoria alocada dinamicamente
 }
 
-
-
 void Servidor::LoadRegistry() {
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
+
 	Registry::LoadData(this->clientes, this->msgs);
+
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
 }
@@ -34,7 +34,6 @@ void Servidor::SaveRegistry(){
 Servidor::rMsg Servidor::Login(sTchar_t username, sTchar_t password, int* pos) { 
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
-	
 
 	for (unsigned int i = 0; i < clientes.size(); i++) {
 		if (clientes.at(i)->GetUsername() == username) {
@@ -82,8 +81,8 @@ Servidor::rMsg Servidor::RegisterUser(sTchar_t username, sTchar_t password, int 
 }
 
 Servidor::rMsg Servidor::LancarChat(sTchar_t username, ClienteDados* partner) {
-	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
 
 	for (unsigned int i = 0; i < clientes.size(); i++) {
 		if (clientes.at(i)->GetUsername() == username) {
@@ -92,26 +91,158 @@ Servidor::rMsg Servidor::LancarChat(sTchar_t username, ClienteDados* partner) {
 		}
 	}
 
-	this->sem_ServerData.Release();
 	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
 	partner = nullptr;
 	return Servidor::USER_NOT_FOUND;
 }
 
 Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados &partner) {
-	this->mut_ServerData.Wait();
 	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
 
-	this->sem_ServerData.Release();
 	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
 
 	return Servidor::SUCCESS;
 	return Servidor::PIPE_ERROR;
 }
 
+Servidor::rMsg Servidor::SendUsers(ClienteDados* currentClient)
+{
+	if (!currentClient) 
+		return Servidor::USER_NOT_FOUND;
+
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+	
+	MSG_T buffer[50];
+	buffer[0].nMessages = 0;
+	buffer[0].messageType = LIST_ALL_USERS;
+
+	ClienteDados* itemClient;
+
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		itemClient = clientes.at(i);
+
+		// Limite
+		if (buffer[0].nMessages == BUFFER_RECORDS)
+			break;
+
+		_tcscpy_s(buffer[buffer[0].nMessages].utilizador, itemClient->GetUsername().size()*sizeof(TCHAR), itemClient->GetUsername().c_str());
+		// Total de utilizadores
+		buffer[0].nMessages++;
+	}
+
+	this->SendToClient(buffer, currentClient->GetPipe());
+
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
+	return Servidor::SUCCESS;
+}
+
+Servidor::rMsg Servidor::SendUsersOnline(ClienteDados* currentClient)
+{
+	if (!currentClient) 
+		return Servidor::USER_NOT_FOUND;
+	
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+	
+	MSG_T buffer[50];
+	buffer[0].nMessages = 0;
+	buffer[0].messageType = LIST_USERS_ONLINE;
+
+	ClienteDados* itemClient;
+
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		itemClient = clientes.at(i);
+
+		// Limite
+		if (buffer[0].nMessages == BUFFER_RECORDS)
+			break;
+
+		if (itemClient->GetIsOnline()) {
+			_tcscpy_s(buffer[buffer[0].nMessages].utilizador, itemClient->GetUsername().size()*sizeof(TCHAR), itemClient->GetUsername().c_str());
+			// Total de utilizadores
+			buffer[0].nMessages++;
+		}
+	}
+
+	this->SendToClient(buffer, currentClient->GetPipe());
+
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
+	return Servidor::SUCCESS;
+}
+
+Servidor::rMsg Servidor::SendUserGoOnline(ClienteDados* cliente)
+{
+	if (!cliente) 
+		return Servidor::USER_NOT_FOUND;
+
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+	
+	MSG_T buffer[1];
+	buffer[0].nMessages = 0;
+	buffer[0].messageType = typeMessages::USER_ONLINE;
+	_tcscpy_s(buffer[0].utilizador, cliente->GetUsername().size()*sizeof(TCHAR), cliente->GetUsername().c_str());
+
+	// Broadcast
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		if (this->clientes.at(i)->GetIsOnline()){
+			this->SendToClient(buffer, clientes.at(i)->GetPipe());
+		}
+	}
+
+	this->SendToClient(buffer, cliente->GetPipe());
+
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
+	return Servidor::SUCCESS;
+}
+
+Servidor::rMsg Servidor::SendUserGoOffline(ClienteDados* cliente)
+{
+	if (!cliente) 
+		return Servidor::USER_NOT_FOUND;
+
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+	
+	MSG_T buffer[1];
+	buffer[0].nMessages = 0;
+	buffer[0].messageType = typeMessages::USER_OFFLINE;
+	_tcscpy_s(buffer[0].utilizador, cliente->GetUsername().size()*sizeof(TCHAR), cliente->GetUsername().c_str());
+
+	// Broadcast
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		if (this->clientes.at(i)->GetIsOnline()){
+			this->SendToClient(buffer, clientes.at(i)->GetPipe());
+		}
+	}
+
+	this->SendToClient(buffer, cliente->GetPipe());
+
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
+	return Servidor::SUCCESS;
+}
+
 Servidor::rMsg Servidor::SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente){
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
+
+	// Instante atual
 	SYSTEMTIME hora;
 	GetSystemTime(&hora);
 	DATA dataActual;
@@ -122,9 +253,10 @@ Servidor::rMsg Servidor::SendPublicMessage(sTchar_t message, sTchar_t owner, Cli
 	dataActual.minuto = hora.wMinute;
 	dataActual.segundo = hora.wSecond;
 	
-
+	// Guarda mensagem
 	this->msgs.push_back(new Mensagens(dataActual, cliente->GetId(), -1, message));
 	
+	// Prepara mensagem
 	MSG_T buffer[50];
 	buffer[0].mensagem.instante = dataActual;
 	_tcscpy_s(buffer[0].mensagem.texto, message.size() *sizeof(TCHAR), message.c_str());
@@ -132,19 +264,18 @@ Servidor::rMsg Servidor::SendPublicMessage(sTchar_t message, sTchar_t owner, Cli
 	buffer[0].nMessages = 1;
 	_tcscpy_s(buffer[0].utilizador, owner.size()*sizeof(TCHAR), owner.c_str());
 	
+	// Broadcast
 	for (unsigned int i = 0; i < this->clientes.size(); i++)
 	{
 		if (this->clientes.at(i)->GetIsOnline()){
 			this->SendToClient(buffer, clientes.at(i)->GetPipe());
 		}
 	}
-	
 
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
 
 	return Servidor::SUCCESS;
-	return Servidor::PIPE_ERROR;
 }
 
 Servidor::rMsg Servidor::CloseChat() {
@@ -249,13 +380,13 @@ int Servidor::SendToClient(MSG_T* buffer, HANDLE hPipe){
 	DWORD leituraEscritaSucesso;
 	DWORD bytesEscritos;
 	
-		leituraEscritaSucesso = WriteFile(hPipe,
+	leituraEscritaSucesso = WriteFile(hPipe,
 		buffer, //message
 		sizeof(MSG_T)*50, //message length
 		&bytesEscritos, //bytes written
 		NULL); //not overlapped
 
-		return 1;
+	return 1;
 }
 
 ClienteDados* Servidor::getClientData(int& pos){

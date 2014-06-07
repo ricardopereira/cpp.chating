@@ -1,9 +1,11 @@
 #pragma once
+
 #include <vector>
 #include "Mensagens.h"
 #include "ClienteDados.h"
 #include "Semaforo.h"
 #include "Mutex_t.h"
+#include "ChatComunication.h"
 
 class Servidor
 {
@@ -35,6 +37,10 @@ public:
 	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
 	rMsg SendPrivateMessage(ClienteDados &partner);
 	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
+	rMsg SendUsers(ClienteDados* currentClient);
+	rMsg SendUsersOnline(ClienteDados* currentClient);
+	rMsg SendUserGoOnline(ClienteDados* cliente);
+	rMsg SendUserGoOffline(ClienteDados* cliente);
 	rMsg CloseChat();
 	rMsg RetrieveInformation();
 	ClienteDados* getClientData(int& pos);
