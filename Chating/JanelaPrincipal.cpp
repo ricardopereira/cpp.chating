@@ -205,6 +205,7 @@ void JanelaPrincipal::login(HWND hWnd)
 
 		LerListaUtilizadores();
 		LerListaUtilizadoresRegistados();
+		LerInformacaoInicial();
 	}
 	else if (result == IDCANCEL)
 	{

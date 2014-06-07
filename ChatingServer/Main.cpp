@@ -8,6 +8,7 @@
 #include "Shell.h"
 #include "ChatComunication.h"
 #include "ThreadCliente.h"
+#include "ThreadSaveRegistry.h"
 #include "Servidor.h"
 
 using namespace std;
@@ -59,6 +60,9 @@ void comandStart()
 
 	// Registo
 	server.LoadRegistry();
+
+	ThreadSaveRegistry threadSaveRegistry(server);
+	threadSaveRegistry.LancarThread();
 
 	while (1) {
 		hPipe = CreateNamedPipe(pipeName,

@@ -147,7 +147,7 @@ Servidor::rMsg Registry::SaveData(
 
 	/////TERMINAR ABAIXO
 	//Criar/abrir uma chave em HKEY_LOCAL_MACHINE\Software\MinhaAplicacao
-	if (RegCreateKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\ForcaServidor"), 0, NULL, REG_OPTION_VOLATILE, ///REG_OPTION_VOLATILE->Sem persistência
+	if (RegCreateKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\ChatServidor"), 0, NULL, REG_OPTION_VOLATILE, ///REG_OPTION_VOLATILE->Sem persistência
 		KEY_ALL_ACCESS, NULL, &chave, &queAconteceu) != ERROR_SUCCESS){
 
 

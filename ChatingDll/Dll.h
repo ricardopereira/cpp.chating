@@ -84,7 +84,7 @@ extern "C"
 	DLL_IMP_API int DesligarConversa();
 	DLL_IMP_API int EnviarMensagemPrivada(const TCHAR *msg);
 	DLL_IMP_API void EnviarMensagemPublica(const TCHAR *msg, const TCHAR *owner);
-	DLL_IMP_API CHAT LerInformacaoInicial();
+	DLL_IMP_API void LerInformacaoInicial();
 	DLL_IMP_API MENSAGEM LerMensagensPublicas();
 	DLL_IMP_API MENSAGEM LerMensagensPrivadas();
 	DLL_IMP_API int Sair();
