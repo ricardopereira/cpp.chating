@@ -9,6 +9,7 @@
 #include "EditBox.h"
 #include "ChatBox.h"
 #include "Controller.h"
+#include "AssyncThread.h"
 
 using namespace std;
 
@@ -33,10 +34,11 @@ private:
 
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;
+	AssyncThread* assyncThread;
 
 	JanelaPrivada() { controller = new Controller; /* Memory leak mas é privado :) */ };
 public:
-	JanelaPrivada(Controller& servidor, const sTchar_t& username);
+	JanelaPrivada(Controller& controller, const sTchar_t& username, AssyncThread* assyncThread);
 	~JanelaPrivada();
 
 	void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,

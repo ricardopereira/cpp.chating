@@ -17,6 +17,9 @@ AssyncThread::~AssyncThread()
 {
 
 }
+void AssyncThread::setPrivateMessageArea(ChatBox &privateMessageArea){
+	this->privateMessageArea = &privateMessageArea;
+}
 
 DWORD WINAPI AssyncThread::funcaoThread(){
 	

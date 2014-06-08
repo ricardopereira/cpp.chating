@@ -13,9 +13,11 @@ private:
 	ChatBox& messageArea;
 	ListBox& listUserOnline;
 
+	ChatBox* privateMessageArea;
 	void forceRefresh();
 public:
 	AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea, ListBox& listUserOnline);
+	void setPrivateMessageArea(ChatBox &privateMessageArea);
 	~AssyncThread();
 	virtual DWORD WINAPI funcaoThread();
 };
