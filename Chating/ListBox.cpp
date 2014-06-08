@@ -44,9 +44,10 @@ void ListBox::clear()
 	HWND hlb = GetDlgItem(this->hWndPai, this->ControloId);
 	if (IsWindow(hlb)) {
 		int count = SendMessage(hlb,LB_GETCOUNT,0,0);
-		if (count == LB_ERR) return;
-		// ToDo: existe aqui um bug
-		for (int i = 0; i < count; i++)
-			SendMessage(hlb,LB_DELETESTRING,(WPARAM)i,(LPARAM)0);
+		if (count == LB_ERR)
+			return;
+		int idx = count - 1;
+		while (count)
+			count = SendMessage(hlb,LB_DELETESTRING,(WPARAM)idx--,(LPARAM)0);
 	}
 }
