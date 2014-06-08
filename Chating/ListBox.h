@@ -12,6 +12,7 @@ public:
 
 	void Mostra(HWND hWnd);
 
+	void refresh();
 	void addString(const TCHAR* value);
 	void clear();
 };

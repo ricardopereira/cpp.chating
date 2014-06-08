@@ -30,6 +30,11 @@ void ListBox::Mostra(HWND hWnd)
 		);
 }
 
+void ListBox::refresh()
+{
+	InvalidateRect(hWnd, NULL, TRUE);
+}
+
 void ListBox::addString(const TCHAR* value)
 {
 	SendDlgItemMessage(this->hWndPai, this->ControloId, LB_ADDSTRING, 0, (LPARAM)value);

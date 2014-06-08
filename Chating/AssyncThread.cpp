@@ -2,8 +2,8 @@
 #include "../ChatingDll/Dll.h"
 #include "../Logic/ChatComunication.h"
 
-AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea)
-: controller(controller), messageArea(messageArea)
+AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea, ListBox& listUserOnline)
+: controller(controller), messageArea(messageArea), listUserOnline(listUserOnline)
 {
 	this->ptrClasse = this;
 	oTcharStream_t tempText;
@@ -79,10 +79,19 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			break;
 		case USER_ONLINE:
 			this->controller.addUtilizadorOnline(buffer[0].utilizador);
+			forceRefresh();
 			break;
 		case USER_OFFLINE:
 			this->controller.removeUtilizadorOnline(buffer[0].utilizador);
+			forceRefresh();
 			break;
 		}
 	}
+}
+
+void AssyncThread::forceRefresh()
+{
+	listUserOnline.clear();
+	for (int i = 0; i < this->controller.getTotalUtilizadoresOnline(); i++)
+		listUserOnline.addString(this->controller.getUtilizadorOnline(i)->getUsername().c_str());
 }

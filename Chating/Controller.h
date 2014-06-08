@@ -17,7 +17,8 @@ private:
 	std::vector<ChatUser*> utilizadoresOnline;
 
 	void loggedIn(const TCHAR* username, bool isAdmin=false);
-	void loggedOut(const TCHAR* username);
+protected:
+	void destroyUtilizadores();
 public:
 	Controller();
 	~Controller();

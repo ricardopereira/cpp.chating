@@ -9,6 +9,11 @@ Controller::Controller()
 
 Controller::~Controller()
 {
+	destroyUtilizadores();
+}
+
+void Controller::destroyUtilizadores()
+{
 	for (unsigned int i = 0; i < utilizadores.size(); i++)
 	{
 		delete utilizadores.at(i);
@@ -17,11 +22,13 @@ Controller::~Controller()
 
 bool Controller::getIsAutenticado()
 {
+	// ToDo
 	return this->autenticado;
 }
 
 bool Controller::getIsAdministrador()
 {
+	// ToDo
 	return this->privilegiosAdmin;
 }
 
@@ -35,6 +42,10 @@ void Controller::reset()
 	this->autenticado = false;
 	this->privilegiosAdmin = false;
 	this->loginAutenticado = NULL;
+
+	utilizadoresOnline.clear();
+	utilizadores.clear();
+	destroyUtilizadores();
 }
 
 int Controller::getTotalUtilizadores()
@@ -187,12 +198,6 @@ void Controller::loggedIn(const TCHAR* username, bool isAdmin)
 		user->setAdmin();
 	
 	this->loginAutenticado = user;
-}
-
-void Controller::loggedOut(const TCHAR* username)
-{
-	// ToDo
-	this->loginAutenticado = NULL;
 }
 
 void Controller::loadPublicInformation()

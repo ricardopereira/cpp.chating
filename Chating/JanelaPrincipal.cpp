@@ -197,7 +197,8 @@ void JanelaPrincipal::login(HWND hWnd)
 		refresh(hWnd);
 
 		// Cria thread para receber mensagens
-		assyncThread = new AssyncThread(controller.getLoginAutenticado().getUsername().c_str(), this->controller, *this->AreaMensagens);
+		assyncThread = new AssyncThread(controller.getLoginAutenticado().getUsername().c_str(), 
+			this->controller, *this->AreaMensagens, *this->ListaUtilizadores);
 		assyncThread->LancarThread();
 
 		// Esperar que a assyncThread fique pronta a receber dados
