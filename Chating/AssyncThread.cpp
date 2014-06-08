@@ -1,5 +1,6 @@
 #include "AssyncThread.h"
 #include "../ChatingDll/Dll.h"
+#include "../Logic/ChatComunication.h"
 
 AssyncThread::AssyncThread(sTchar_t username, Server& server, ChatBox& messageArea)
 : server(server), messageArea(messageArea)
@@ -21,7 +22,7 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 	
 	HANDLE hPipe = INVALID_HANDLE_VALUE;
 	//pointer to server class handles, and other stuff
-	MSG_T buffer[50];
+	MSG_T buffer[BUFFER_RECORDS];
 	DWORD bytesRead;
 
 	if (!WaitNamedPipe(this->pipeName.c_str(), NMPWAIT_WAIT_FOREVER)){
@@ -50,7 +51,7 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 		int success = ReadFile(
 			hPipe,
 			buffer,
-			sizeof(MSG_T)*50,
+			sizeof(MSG_T)*BUFFER_RECORDS,
 			&bytesRead,
 			NULL);
 
@@ -75,7 +76,7 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			for (DWORD i = 0; i < buffer[0].nMessages; i++){
 				this->messageArea.addMessage(buffer[i].utilizador, buffer[i].mensagem);
 			}
-			break;			
+			break;
 		case USER_ONLINE:
 			this->server.addUtilizadorOnline(buffer[0].utilizador);
 			break;

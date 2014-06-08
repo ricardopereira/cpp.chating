@@ -9,7 +9,7 @@ HANDLE assyncPipe;
 
 DLL_IMP_API int AbrirPipe() {
 	hPipe = CreateFile(
-		pipeName,
+		PIPENAME_SERVER,
 		GENERIC_READ | GENERIC_WRITE,
 		0, //no sharing
 		NULL, //default security attributes
@@ -190,55 +190,12 @@ void EnviarMensagemPublica(const TCHAR *msg, const TCHAR *owner)
 
 void LerInformacaoInicial()
 {
-	// Escrever no pipe
-	chatbuffer_t buffer;
-	buffer.command = commands_t::LER_INFO_INICIAL;
-	// ToDo: convém saber o login na mensagem
-
-	//DWORD msgBytes;
-	DWORD bytesSent;
-	DWORD bytesRead;
-	BOOL success = 0;
-
-	// Envio de pedido
-	success = WriteFile(hPipe,
-		&buffer, //message
-		sizeof(chatbuffer_t), //message length
-		&bytesSent, //bytes written
-		NULL); //not overlapped
-
-	if (!success)
-		return;
-
-	// Recebe a resposta
-	success = ReadFile(
-		hPipe,
-		&buffer,
-		sizeof(chatbuffer_t),
-		&bytesRead,
-		NULL);
-	return;
-}
-
-MENSAGEM LerMensagensPublicas()
-{
-	// Ler do pipe
-	MENSAGEM dumb;
-	// ToDo: será a AssyncThread a tratar desta parte, certo?
-	//AssyncThread tem que passar para a DLL!!
-	return dumb;
-}
-
-MENSAGEM LerMensagensPrivadas()
-{
-	// Ler do pipe
-	MENSAGEM dumb;
-	return dumb;
+	doSimpleRequest(commands_t::LER_INFO_INICIAL);
 }
 
 int Sair()
 {
-	return 0;
+	return doSimpleRequest(commands_t::LOGOUT);
 }
 
 int Desligar()

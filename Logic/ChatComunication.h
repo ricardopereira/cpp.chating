@@ -1,6 +1,6 @@
 #ifndef CHATCOMUNICATION_H
 #define CHATCOMUNICATION_H
-#define pipeName _T("\\\\.\\pipe\\pipeserver") //PTCHAR LPTSTR PCTSTR
+#define PIPENAME_SERVER _T("\\\\.\\pipe\\pipeserver") //PTCHAR LPTSTR PCTSTR
 
 /*Comunicacao*/
 
@@ -18,8 +18,8 @@ enum commands_t {
 	LER_INFO_INICIAL,
 	CRIAR_USER,
 	DESLIGAR,
-	LER_MENSAGEM_PRIVADA,
-	LER_MENSAGEM_PUBLICA,
+	//LER_MENSAGEM_PRIVADA,
+	//LER_MENSAGEM_PUBLICA,
 	ELIMINAR_UTILIZADOR,
 	LOGOUT
 };

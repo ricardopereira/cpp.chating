@@ -80,7 +80,7 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 
 			if (ptrServidor)
-				res = ptrServidor->cAutenticar(login, password);
+				res = ptrServidor->login(login, password);
 
 			// Administrador
 			if (res == 2) {
@@ -111,7 +111,7 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
 				break;
 
-			res = ptrServidor->cRegistar(login, password);
+			res = ptrServidor->signUp(login, password);
 			if (res == SUCCESS ){
 				sTchar_t text;
 				text = TEXT("Utilizador registado com sucesso. Pode proceder com a operação de login.");
@@ -203,9 +203,7 @@ void JanelaPrincipal::login(HWND hWnd)
 		// Esperar que a assyncThread fique pronta a receber dados
 		Sleep(200);
 
-		LerListaUtilizadores();
-		LerListaUtilizadoresRegistados();
-		LerInformacaoInicial();
+		this->servidor.loadPublicInformation();
 	}
 	else if (result == IDCANCEL)
 	{
@@ -218,7 +216,7 @@ void JanelaPrincipal::logout(HWND hWnd)
 	oTcharStream_t res;
 	LRESULT opt = MessageBox(hWnd, TEXT("Deseja fazer logout?"), TEXT("Logout"), MB_YESNO | MB_ICONQUESTION);
 	if (opt == IDYES) {
-		res << this->servidor.cSair(); //Teste: res.str().c_str()
+		res << this->servidor.logout(); //Teste: res.str().c_str()
 		reset(hWnd);
 		//MessageBox(0, TEXT("Logout com sucesso"), TEXT("Logout"), MB_OK | MB_ICONINFORMATION);
 	}
@@ -312,6 +310,14 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 void JanelaPrincipal::onShow(HWND hWnd)
 {
 	login(hWnd);
+}
+
+bool JanelaPrincipal::onClose(HWND hWnd)
+{
+	delete assyncThread;
+	assyncThread = NULL;
+	this->servidor.logout();
+	return true;
 }
 
 void JanelaPrincipal::onActivate(HWND hWnd)

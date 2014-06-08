@@ -64,6 +64,30 @@ Servidor::rMsg Servidor::Login(sTchar_t username, sTchar_t password, int* pos) {
 	
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
+
+	return Servidor::USER_NOT_FOUND;
+}
+
+Servidor::rMsg Servidor::Logout(sTchar_t username)
+{
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+
+	// ToDo: utilizar o ponteiro da Thread
+	for (unsigned int i = 0; i < clientes.size(); i++) {
+		if (clientes.at(i)->GetUsername() == username) {
+			clientes.at(i)->SetOffline();
+
+			this->mut_ServerData.Release();
+			this->sem_ServerData.Release();
+
+			return Servidor::SUCCESS;
+		}
+	}
+	
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
 	return Servidor::USER_NOT_FOUND;
 }
 
@@ -78,6 +102,23 @@ Servidor::rMsg Servidor::RegisterUser(sTchar_t username, sTchar_t password, int 
 
 	//Limitar a adição de novos utilizadores?
 	return Servidor::SUCCESS;
+}
+
+Servidor::rMsg Servidor::RemoveUser(sTchar_t username) {
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+
+	for (unsigned int i = 0; i < clientes.size(); i++) {
+		if (clientes.at(i)->GetUsername() == username) {
+			//terminar
+			return Servidor::SUCCESS;
+		}
+	}
+
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
+	return Servidor::USER_NOT_FOUND;
 }
 
 Servidor::rMsg Servidor::LancarChat(sTchar_t username, ClienteDados* partner) {
@@ -116,7 +157,7 @@ Servidor::rMsg Servidor::SendUsers(ClienteDados* currentClient)
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
 	
-	MSG_T buffer[50];
+	MSG_T buffer[BUFFER_RECORDS];
 	buffer[0].nMessages = 0;
 	buffer[0].messageType = LIST_ALL_USERS;
 
@@ -151,7 +192,7 @@ Servidor::rMsg Servidor::SendUsersOnline(ClienteDados* currentClient)
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
 	
-	MSG_T buffer[50];
+	MSG_T buffer[BUFFER_RECORDS];
 	buffer[0].nMessages = 0;
 	buffer[0].messageType = LIST_USERS_ONLINE;
 
@@ -188,8 +229,8 @@ Servidor::rMsg Servidor::SendUserGoOnline(ClienteDados* cliente)
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
 	
-	MSG_T buffer[1];
-	buffer[0].nMessages = 0;
+	MSG_T buffer[BUFFER_RECORDS];
+	buffer[0].nMessages = 1;
 	buffer[0].messageType = typeMessages::USER_ONLINE;
 	_tcscpy_s(buffer[0].utilizador, cliente->GetUsername().size()*sizeof(TCHAR), cliente->GetUsername().c_str());
 
@@ -200,8 +241,6 @@ Servidor::rMsg Servidor::SendUserGoOnline(ClienteDados* cliente)
 			this->SendToClient(buffer, clientes.at(i)->GetPipe());
 		}
 	}
-
-	this->SendToClient(buffer, cliente->GetPipe());
 
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
@@ -217,8 +256,8 @@ Servidor::rMsg Servidor::SendUserGoOffline(ClienteDados* cliente)
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
 	
-	MSG_T buffer[1];
-	buffer[0].nMessages = 0;
+	MSG_T buffer[BUFFER_RECORDS];
+	buffer[0].nMessages = 1;
 	buffer[0].messageType = typeMessages::USER_OFFLINE;
 	_tcscpy_s(buffer[0].utilizador, cliente->GetUsername().size()*sizeof(TCHAR), cliente->GetUsername().c_str());
 
@@ -229,8 +268,6 @@ Servidor::rMsg Servidor::SendUserGoOffline(ClienteDados* cliente)
 			this->SendToClient(buffer, clientes.at(i)->GetPipe());
 		}
 	}
-
-	this->SendToClient(buffer, cliente->GetPipe());
 
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
@@ -257,7 +294,7 @@ Servidor::rMsg Servidor::SendPublicMessage(sTchar_t message, sTchar_t owner, Cli
 	this->msgs.push_back(new Mensagens(dataActual, cliente->GetId(), -1, message));
 	
 	// Prepara mensagem
-	MSG_T buffer[50];
+	MSG_T buffer[BUFFER_RECORDS];
 	buffer[0].mensagem.instante = dataActual;
 	_tcscpy_s(buffer[0].mensagem.texto, message.size() *sizeof(TCHAR), message.c_str());
 	buffer[0].messageType = PUBLIC_MESSAGE;
@@ -288,77 +325,49 @@ Servidor::rMsg Servidor::CloseChat() {
 	return Servidor::SUCCESS;
 }
 
-Servidor::rMsg Servidor::RetrieveInformation() {
-	MSG_T buffer[50];
+Servidor::rMsg Servidor::RetrieveInformation(ClienteDados* currentClient) {
+	MSG_T buffer[BUFFER_RECORDS];
+
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
-	std::vector<Mensagens*> publicMessages;
+
+	int k = 0;
+	Mensagens* itemMsg = NULL;
+	ClienteDados* itemCliente = NULL;
+	buffer[k].messageType = PUBLIC_MESSAGE;
+
 	for (unsigned int i = 0; i < this->msgs.size(); i++)
 	{
-		if (this->msgs.at(i)->GetReceiver() == -1) { //-1 => mensagens públicas 
-			publicMessages.push_back(this->msgs.at(i));
-		}
-
+		itemMsg = this->msgs.at(i);
+		if (itemMsg->GetReceiver() == -1) { //-1 => mensagens públicas 
+			for (unsigned int j = 0; j < this->clientes.size(); j++)
+			{
+				itemCliente = this->clientes.at(j);
+				if (itemMsg->GetSender() == itemCliente->GetId()) {
+					// Utilizador da mensagem
+					_tcscpy_s(buffer[k].utilizador, itemCliente->GetUsername().size()*sizeof(TCHAR), itemCliente->GetUsername().c_str());
+					// Instante da mensagem
+					buffer[k].mensagem.instante = itemMsg->GetDataMensagem();
+					// Texto
+					_tcscpy_s(buffer[k].mensagem.texto, itemMsg->GetMensagem().size()*sizeof(TCHAR), itemMsg->GetMensagem().c_str());
 	
-	}
-	int start = 0;
-	
-	
-	if (publicMessages.size() > 50){
-		start = publicMessages.size() - 50; //Devolver apenas as últimas 50 mensagens
-		buffer[0].nMessages = 50;
-	}
-	else{
-		buffer[0].nMessages = publicMessages.size();
-	}
-	int k = 0;
-	buffer[k].messageType = PUBLIC_MESSAGE;
-	for (unsigned int i = start; i < publicMessages.size(); i++)
-	{
-		for (unsigned int j = 0; j < this->clientes.size(); j++)
-		{
-			if (publicMessages.at(i)->GetSender() == this->clientes.at(j)->GetId()){
-				
-				_tcscpy_s(buffer[k].utilizador, this->clientes.at(j)->GetUsername().size()*sizeof(TCHAR), this->clientes.at(j)->GetUsername().c_str());
-				break;
+					// Next
+					k++;
+					break;
+				}
 			}
 		}
-		buffer[k].mensagem.instante = publicMessages.at(i)->GetDataMensagem();
-		_tcscpy_s(buffer[k].mensagem.texto, publicMessages.at(i)->GetMensagem().size() *sizeof(TCHAR), publicMessages.at(i)->GetMensagem().c_str());
-		
-
-
-		k++;
 	}
-	for (unsigned int i = 0; i < this->clientes.size(); i++)
-	{
-		if (this->clientes.at(i)->GetIsOnline()){
-			this->SendToClient(buffer, clientes.at(i)->GetPipe());
-		}
-	}
-	
+
+	// Total de registos
+	buffer[0].nMessages = k;
+
+	this->SendToClient(buffer, currentClient->GetPipe());
 	
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
 
 	return Servidor::SUCCESS;
-}
-
-Servidor::rMsg Servidor::RemoveUser(sTchar_t username) {
-	this->sem_ServerData.Wait();
-	this->mut_ServerData.Wait();
-
-	for (unsigned int i = 0; i < clientes.size(); i++) {
-		if (clientes.at(i)->GetUsername() == username) {
-			//terminar
-			return Servidor::SUCCESS;
-		}
-	}
-
-	this->mut_ServerData.Release();
-	this->sem_ServerData.Release();
-
-	return Servidor::USER_NOT_FOUND;
 }
 
 int Servidor::getUserCount()
@@ -382,7 +391,7 @@ int Servidor::SendToClient(MSG_T* buffer, HANDLE hPipe){
 	
 	leituraEscritaSucesso = WriteFile(hPipe,
 		buffer, //message
-		sizeof(MSG_T)*50, //message length
+		sizeof(MSG_T)*BUFFER_RECORDS, //message length
 		&bytesEscritos, //bytes written
 		NULL); //not overlapped
 

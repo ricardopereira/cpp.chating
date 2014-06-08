@@ -65,9 +65,21 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 				server->SendUserGoOnline(this->currentClient);
 				tcout << getInfo() << TEXT("logged in - ") << buffer.args[0] << endl;
 			}
-
-			if (result == Servidor::USER_NOT_FOUND && server->getUserCount() == 0)
+			else if (result == Servidor::USER_NOT_FOUND && server->getUserCount() == 0)
 				tcout << getInfo() << TEXT("no users") << endl;
+
+			buffer.arg_num = result;
+			break;
+		case commands_t::LOGOUT:
+			result = server->Logout(this->currentClient->GetUsername());
+			
+			// Logout com sucesso
+			if (result == Servidor::SUCCESS)
+			{
+				server->SendUserGoOffline(this->currentClient);
+				tcout << getInfo() << TEXT("logged out - ") << this->currentClient->GetUsername() << endl;
+				this->currentClient = NULL;
+			}
 
 			buffer.arg_num = result;
 			break;
@@ -93,16 +105,10 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->CloseChat();
 			break;
 		case commands_t::LER_INFO_INICIAL:
-			server->RetrieveInformation();
-			break;
-		case commands_t::LER_MENSAGEM_PUBLICA:
-			break;
-		case commands_t::LER_MENSAGEM_PRIVADA:
+			server->RetrieveInformation(this->currentClient);
 			break;
 		case commands_t::ELIMINAR_UTILIZADOR:
 			server->RemoveUser(usrnametoremove);
-			break;
-		case commands_t::LOGOUT:
 			break;
 		}
 
@@ -111,8 +117,21 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			sizeof(chatbuffer_t), //message length
 			&bytesEscritos, //bytes written
 			NULL); //not overlapped
+
+		if (buffer.command == commands_t::LOGOUT)
+			powerOff = true;
 	}
-	
+
+	// Forca o envio das ultimas alteracoes
+	FlushFileBuffers(this->hPipe);
+	// Desconectar
+	if (!DisconnectNamedPipe(this->hPipe)) {
+		tcout << getInfo() << TEXT("error on disconnecting pipe");
+		ExitThread(-1);
+	}
+	// Fechar instancia do pipe
+	CloseHandle(this->hPipe);
+
 	return 1;
 }
 

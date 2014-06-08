@@ -65,7 +65,8 @@ void comandStart()
 	threadSaveRegistry.LancarThread();
 
 	while (1) {
-		hPipe = CreateNamedPipe(pipeName,
+		// Criar instância
+		hPipe = CreateNamedPipe(PIPENAME_SERVER,
 			PIPE_ACCESS_DUPLEX, //OpenMode
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, //PipeMode
 			PIPE_UNLIMITED_INSTANCES, //MaxInstances
@@ -97,14 +98,8 @@ void comandStart()
 		}
 	}
 
-	//if (connected)
-	//{
-	//	// Forca o envio das ultimas alteracoes
-	//	FlushFileBuffers(hPipe); 
-	//	// Desconectar
-	//	DisconnectNamedPipe(hPipe);
-	//}
-
-	// Fechar instancia do pipe
-	CloseHandle(hPipe);
+	for (unsigned int i = 0; i < clients.size(); i++)
+	{
+		delete clients.at(i);
+	}
 }

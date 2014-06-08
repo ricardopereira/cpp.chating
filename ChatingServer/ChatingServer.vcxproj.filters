@@ -92,9 +92,6 @@
     <ClInclude Include="ThreadCliente.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Logic\ChatComunication.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Logic\ChatPrivate.h">
       <Filter>Header Files\Logic</Filter>
     </ClInclude>
@@ -139,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="ThreadSaveRegistry.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\ChatComunication.h">
+      <Filter>Header Files\Logic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

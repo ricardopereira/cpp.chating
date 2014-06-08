@@ -58,6 +58,7 @@ public:
 
 	// Eventos
 	virtual void onCreate(HWND hWnd, HDC &hdc);
+	virtual bool onClose(HWND hWnd);
 	virtual void onShow(HWND hWnd);
 	virtual void onActivate(HWND hWnd);
 	virtual void onResize(HWND hWnd);

@@ -20,21 +20,21 @@ private:
 	void loggedOut(const TCHAR* username);
 public:
 	Server();
+	~Server();
 
-	int cAutenticar(const TCHAR* login, const TCHAR* pass);
-	int cRegistar(const TCHAR* login, const TCHAR* pass);
+	int login(const TCHAR* login, const TCHAR* pass);
+	int logout();
+	int signUp(const TCHAR* login, const TCHAR* pass);
+	int shutdown();
 
-	void cLerInformacaoInicial();
+	void loadPublicInformation();
 
 	void cEnviarMensagemPublica(const TCHAR *texto);
 
-	// Privado
+	// Chat Privado
 	int cIniciarConversa(const TCHAR *utilizador);
 	int cDesligarConversa();
 	int cEnviarMensagemPrivada(const TCHAR *texto);
-
-	int cSair();
-	int cDesligar();
 
 	void reset();
 

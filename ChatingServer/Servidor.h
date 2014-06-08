@@ -29,9 +29,14 @@ public:
 		REGEDIT_FIRST_TIME, 
 		REGEDIT_NOT_OK
 	};
+
+	Servidor();
+	~Servidor();
+
 	void LoadRegistry();
 	void SaveRegistry();
 	rMsg Login(sTchar_t username, sTchar_t password, int* pos);
+	rMsg Logout(sTchar_t username);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
 	rMsg RemoveUser(sTchar_t username);
 	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
@@ -42,13 +47,9 @@ public:
 	rMsg SendUserGoOnline(ClienteDados* cliente);
 	rMsg SendUserGoOffline(ClienteDados* cliente);
 	rMsg CloseChat();
-	rMsg RetrieveInformation();
+	rMsg RetrieveInformation(ClienteDados* currentClient);
 	ClienteDados* getClientData(int& pos);
 
 	int getUserCount();
 	int getUserOnlineCount();
-
-	Servidor();
-	~Servidor();
-
 };

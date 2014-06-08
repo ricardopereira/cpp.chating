@@ -7,6 +7,14 @@ Server::Server()
 	reset();
 }
 
+Server::~Server()
+{
+	for (unsigned int i = 0; i < utilizadores.size(); i++)
+	{
+		delete utilizadores.at(i);
+	}
+}
+
 bool Server::getIsAutenticado()
 {
 	return this->autenticado;
@@ -69,6 +77,9 @@ void Server::deleteUtilizador(const TCHAR *username)
 {
 	if (_tcscmp(username,TEXT("")) == 0)
 		return;
+
+	// ToDo: delete
+
 	int res = RemoverUtilizador(username);
 }
 
@@ -106,9 +117,14 @@ void Server::removeUtilizadorOnline(const TCHAR *username)
 	if (!user)
 		return;
 
-	user->setOffline();
-
-	// ToDo: remover do vector
+	for (unsigned int i = 0; i < utilizadoresOnline.size(); i++)
+	{
+		if (utilizadoresOnline.at(i) == user) {
+			utilizadoresOnline.erase(utilizadoresOnline.begin()+i);
+			user->setOffline();
+			return;
+		}
+	}
 }
 
 void Server::clearUtilizadoresOnline()
@@ -116,7 +132,7 @@ void Server::clearUtilizadoresOnline()
 	utilizadoresOnline.clear();
 }
 
-int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
+int Server::login(const TCHAR* login, const TCHAR *pass)
 {
 	if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(pass,TEXT("")) == 0)
 		return 0;
@@ -151,7 +167,7 @@ int Server::cAutenticar(const TCHAR* login, const TCHAR *pass)
 	return 0;
 }
 
-int Server::cRegistar(const TCHAR* login, const TCHAR *pass)
+int Server::signUp(const TCHAR* login, const TCHAR *pass)
 {
 	if (_tcscmp(login,TEXT("")) == 0)
 		return 0;
@@ -179,6 +195,13 @@ void Server::loggedOut(const TCHAR* username)
 	this->loginAutenticado = NULL;
 }
 
+void Server::loadPublicInformation()
+{
+	LerListaUtilizadores();
+	LerListaUtilizadoresRegistados();
+	LerInformacaoInicial();
+}
+
 int Server::cIniciarConversa(const TCHAR *utilizador)
 {
 	if (_tcscmp(utilizador,TEXT("")) == 0)
@@ -202,8 +225,11 @@ void Server::cEnviarMensagemPublica(const TCHAR *texto)
 	return;
 }
 
-int Server::cSair()
+int Server::logout()
 { 
+	if (!this->getIsAutenticado())
+		return 0;
+
 	int res = Sair();
 	
 	//if (res) ?
@@ -211,7 +237,7 @@ int Server::cSair()
 	return res;
 }
 
-int Server::cDesligar()
+int Server::shutdown()
 { 
 	return 1;
 }

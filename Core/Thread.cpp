@@ -3,10 +3,16 @@
 Thread::Thread()
 {
 	this->threadID = 0;
+	this->handleThread = NULL;
 }
 
 Thread::~Thread()
 {
+	//Fora do ciclo de criação das threads
+	//Esperar threads terminarem
+
+	//if (this->handleThread)
+	//	WaitForSingleObject(this->handleThread,INFINITE);
 }
 
 DWORD WINAPI Thread::stub(LPVOID param)
