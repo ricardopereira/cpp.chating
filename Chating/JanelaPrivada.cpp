@@ -3,10 +3,11 @@
 
 #include "JanelaPrivada.h"
 
-JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t& username) : controller(&controller), username(username)
+JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t& username, AssyncThread* assyncThread) : controller(&controller), username(username)
 {
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
+	this->assyncThread = assyncThread;
 }
 
 JanelaPrivada::~JanelaPrivada()
@@ -264,6 +265,8 @@ void JanelaPrivada::MostrarElementos(HWND hWnd)
 	this->BotaoBaixo->setTextoBotao(TEXT("\\/"));
 	this->BotaoBaixo->setHwndPai(hWnd);
 	this->BotaoBaixo->Mostra(hWnd);
+
+	this->assyncThread->setPrivateMessageArea(*this->AreaMensagens);
 }
 
 void JanelaPrivada::Redimensionar(HWND hWnd)

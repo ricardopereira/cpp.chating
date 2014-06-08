@@ -2,6 +2,7 @@
 
 #include "Thread.h"
 #include "Controller.h"
+#include "AssyncThread.h"
 
 class ThreadPrivateChat : public Thread
 {
@@ -11,10 +12,11 @@ private:
 
 	Controller* controller;
 	const TCHAR* username;
+	AssyncThread* assyncThread;
 
 	ThreadPrivateChat();
 public:
-	ThreadPrivateChat(Controller& controller, const TCHAR* username);
+	ThreadPrivateChat(Controller& controller, const TCHAR* username, AssyncThread *assyncThread);
 	~ThreadPrivateChat();
 
 	virtual DWORD WINAPI funcaoThread();
