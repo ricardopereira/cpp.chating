@@ -8,7 +8,7 @@
 #include "Button.h"
 #include "EditBox.h"
 #include "ChatBox.h"
-#include "Server.h"
+#include "Controller.h"
 
 using namespace std;
 
@@ -28,15 +28,15 @@ private:
 	vector<Layout*> layoutVertical;
 	vector<Layout*> layoutHorizontal;
 
-	Server* servidor;
+	Controller* controller;
 	sTchar_t username;
 
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;
 
-	JanelaPrivada() { servidor = new Server; /* Memory leak mas é privado :) */ };
+	JanelaPrivada() { controller = new Controller; /* Memory leak mas é privado :) */ };
 public:
-	JanelaPrivada(Server& servidor, const sTchar_t& username);
+	JanelaPrivada(Controller& servidor, const sTchar_t& username);
 	~JanelaPrivada();
 
 	void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,

@@ -9,10 +9,10 @@ class AssyncThread :
 {
 private:
 	sTchar_t pipeName;
-	Server& server;
+	Controller& controller;
 	ChatBox& messageArea;
 public:
-	AssyncThread(sTchar_t username, Server& server, ChatBox& messageArea);
+	AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea);
 	~AssyncThread();
 	virtual DWORD WINAPI funcaoThread();
 };

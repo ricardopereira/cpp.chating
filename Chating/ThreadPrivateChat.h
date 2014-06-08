@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Thread.h"
-#include "Server.h"
+#include "Controller.h"
 
 class ThreadPrivateChat : public Thread
 {
@@ -9,12 +9,12 @@ private:
 	HINSTANCE hInstance;
 	HWND hWndPai;
 
-	Server* servidor;
+	Controller* controller;
 	const TCHAR* username;
 
 	ThreadPrivateChat();
 public:
-	ThreadPrivateChat(Server& servidor, const TCHAR* username);
+	ThreadPrivateChat(Controller& controller, const TCHAR* username);
 	~ThreadPrivateChat();
 
 	virtual DWORD WINAPI funcaoThread();

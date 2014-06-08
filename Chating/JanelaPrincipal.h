@@ -30,7 +30,7 @@ private:
 	ListBox*			ListaUtilizadores;
 	vector<Layout*>		layoutVertical;
 	vector<Layout*>		layoutHorizontal;
-	Server				servidor;
+	Controller			controller;
 
 	AssyncThread*		assyncThread;
 	ThreadPrivateChat*	privateChat;

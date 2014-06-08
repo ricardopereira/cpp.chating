@@ -3,7 +3,7 @@
 
 #include "JanelaPrivada.h"
 
-JanelaPrivada::JanelaPrivada(Server& servidor, const sTchar_t& username) : servidor(&servidor), username(username)
+JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t& username) : controller(&controller), username(username)
 {
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
@@ -49,7 +49,7 @@ void JanelaPrivada::sendMessage(HWND hWnd, const TCHAR* msg)
 	// ToDo: funcao Trim
 	if (_tcscmp(msg, TEXT("")))
 	{
-		if (!this->servidor->getIsAutenticado()) {
+		if (!this->controller->getIsAutenticado()) {
 			// ToDo: criar método
 			sTchar_t text;
 			text = TEXT("Tem que estar ligado.");
@@ -58,7 +58,7 @@ void JanelaPrivada::sendMessage(HWND hWnd, const TCHAR* msg)
 		}
 
 		// Envia mensagem
-		this->servidor->cEnviarMensagemPrivada(msg);
+		this->controller->cEnviarMensagemPrivada(msg);
 	}
 }
 
@@ -73,7 +73,7 @@ void JanelaPrivada::sendCurrentMessage(HWND hWnd)
 
 void JanelaPrivada::reset(HWND hWnd)
 {
-	this->servidor->reset();
+	this->controller->reset();
 	this->txtEnviar->clear();
 	this->AreaMensagens->clear();
 	refresh(hWnd);
@@ -101,12 +101,12 @@ void JanelaPrivada::onShow(HWND hWnd)
 {
 	// ToDo: cLerInformacaoInicial, cIniciarConversa, cDesligarConversa
 
-	this->servidor->cIniciarConversa(username.c_str());
+	this->controller->cIniciarConversa(username.c_str());
 }
 
 bool JanelaPrivada::onClose(HWND hWnd)
 {
-	this->servidor->cDesligarConversa();
+	this->controller->cDesligarConversa();
 	return true;
 }
 

@@ -2,8 +2,8 @@
 #include "../ChatingDll/Dll.h"
 #include "../Logic/ChatComunication.h"
 
-AssyncThread::AssyncThread(sTchar_t username, Server& server, ChatBox& messageArea)
-: server(server), messageArea(messageArea)
+AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea)
+: controller(controller), messageArea(messageArea)
 {
 	this->ptrClasse = this;
 	oTcharStream_t tempText;
@@ -61,13 +61,13 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 		switch (buffer[0].messageType){
 		case LIST_ALL_USERS:
 			for (DWORD i = 0; i < buffer[0].nMessages; i++){
-				this->server.addUtilizador(buffer[i].utilizador);
+				this->controller.addUtilizador(buffer[i].utilizador);
 			}
 			break;
 		case LIST_USERS_ONLINE:
-			this->server.clearUtilizadoresOnline();
+			this->controller.clearUtilizadoresOnline();
 			for (DWORD i = 0; i < buffer[0].nMessages; i++){
-				this->server.addUtilizadorOnline(buffer[i].utilizador);
+				this->controller.addUtilizadorOnline(buffer[i].utilizador);
 			}
 			break;
 		case PRIVATE_MESSAGE:
@@ -78,10 +78,10 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			}
 			break;
 		case USER_ONLINE:
-			this->server.addUtilizadorOnline(buffer[0].utilizador);
+			this->controller.addUtilizadorOnline(buffer[0].utilizador);
 			break;
 		case USER_OFFLINE:
-			this->server.removeUtilizadorOnline(buffer[0].utilizador);
+			this->controller.removeUtilizadorOnline(buffer[0].utilizador);
 			break;
 		}
 	}

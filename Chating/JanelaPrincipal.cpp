@@ -7,7 +7,7 @@
 #include "resource.h"
 
 // ToDo: Verificar com a professora se é possível passar uma instância para uma DialogBox
-Server *ptrServidor;
+Controller *ptrController;
 
 JanelaPrincipal::JanelaPrincipal()
 {
@@ -17,7 +17,7 @@ JanelaPrincipal::JanelaPrincipal()
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
 
-	ptrServidor = &this->servidor;
+	ptrController = &this->controller;
 }
 
 JanelaPrincipal::~JanelaPrincipal()
@@ -68,7 +68,7 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetDlgItemText(hWnd, IDC_USERNAME, TEXT(""));
 		SetDlgItemText(hWnd, IDC_PASSWORD, TEXT(""));
 		// Verificar se tem ponteiro da instância do Server
-		_ASSERT(ptrServidor);
+		_ASSERT(ptrController);
 		return 1;
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
@@ -79,8 +79,8 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
 				break;
 
-			if (ptrServidor)
-				res = ptrServidor->login(login, password);
+			if (ptrController)
+				res = ptrController->login(login, password);
 
 			// Administrador
 			if (res == 2) {
@@ -111,7 +111,7 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
 				break;
 
-			res = ptrServidor->signUp(login, password);
+			res = ptrController->signUp(login, password);
 			if (res == SUCCESS ){
 				sTchar_t text;
 				text = TEXT("Utilizador registado com sucesso. Pode proceder com a operação de login.");
@@ -138,10 +138,10 @@ BOOL CALLBACK DialogUtilizadores(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 	case WM_INITDIALOG:
 		// Verificar se tem ponteiro da instância do Server
-		_ASSERT(ptrServidor);
+		_ASSERT(ptrController);
 
-		for (int i = 0; i < ptrServidor->getTotalUtilizadores(); i++) {
-			SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_ADDSTRING, 0, (LPARAM)ptrServidor->getUtilizador(i)->getUsername().c_str());
+		for (int i = 0; i < ptrController->getTotalUtilizadores(); i++) {
+			SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_ADDSTRING, 0, (LPARAM)ptrController->getUtilizador(i)->getUsername().c_str());
 		}
 		return 1;
 	case WM_COMMAND:
@@ -161,7 +161,7 @@ BOOL CALLBACK DialogUtilizadores(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			{
 				TCHAR utilizador[TAMLOGIN];
 				SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETTEXT, i, (LPARAM)utilizador);
-				ptrServidor->deleteUtilizador(utilizador);
+				ptrController->deleteUtilizador(utilizador);
 			}
 			break;
 		}
@@ -180,7 +180,7 @@ void JanelaPrincipal::startPrivateChat(HWND hWnd, const sTchar_t& username)
 	if (privateChat)
 		delete privateChat;
 
-	privateChat = new ThreadPrivateChat(this->servidor, username.c_str());
+	privateChat = new ThreadPrivateChat(this->controller, username.c_str());
 	privateChat->setHwndPai(hWnd);
 	privateChat->sethInstance(this->hInst);
 	privateChat->LancarThread();
@@ -190,20 +190,20 @@ void JanelaPrincipal::login(HWND hWnd)
 {
 	DWORD result = DialogBox(hInst, (LPCWSTR)IDD_LOGIN, hWnd, (DLGPROC)DialogLogin);
 
-	if (result == IDOK && this->servidor.getIsAutenticado())
+	if (result == IDOK && this->controller.getIsAutenticado())
 	{
-		this->AreaMensagens->setUsername(servidor.getLoginAutenticado().getUsername().c_str());
+		this->AreaMensagens->setUsername(controller.getLoginAutenticado().getUsername().c_str());
 
 		refresh(hWnd);
 
 		// Cria thread para receber mensagens
-		assyncThread = new AssyncThread(servidor.getLoginAutenticado().getUsername().c_str(), this->servidor, *this->AreaMensagens);
+		assyncThread = new AssyncThread(controller.getLoginAutenticado().getUsername().c_str(), this->controller, *this->AreaMensagens);
 		assyncThread->LancarThread();
 
 		// Esperar que a assyncThread fique pronta a receber dados
 		Sleep(200);
 
-		this->servidor.loadPublicInformation();
+		this->controller.loadPublicInformation();
 	}
 	else if (result == IDCANCEL)
 	{
@@ -216,7 +216,7 @@ void JanelaPrincipal::logout(HWND hWnd)
 	oTcharStream_t res;
 	LRESULT opt = MessageBox(hWnd, TEXT("Deseja fazer logout?"), TEXT("Logout"), MB_YESNO | MB_ICONQUESTION);
 	if (opt == IDYES) {
-		res << this->servidor.logout(); //Teste: res.str().c_str()
+		res << this->controller.logout(); //Teste: res.str().c_str()
 		reset(hWnd);
 		//MessageBox(0, TEXT("Logout com sucesso"), TEXT("Logout"), MB_OK | MB_ICONINFORMATION);
 	}
@@ -228,7 +228,7 @@ void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 	// ToDo: funcao Trim
 	if (_tcscmp(msg, TEXT("")))
 	{
-		if (!this->servidor.getIsAutenticado()) {
+		if (!this->controller.getIsAutenticado()) {
 			// ToDo: criar método
 			sTchar_t text;
 			text = TEXT("Tem que estar ligado.");
@@ -237,7 +237,7 @@ void JanelaPrincipal::sendMessage(HWND hWnd, const TCHAR* msg)
 		}
 
 		// Envia mensagem
-		this->servidor.cEnviarMensagemPublica(msg);
+		this->controller.cEnviarMensagemPublica(msg);
 	}
 }
 
@@ -252,7 +252,7 @@ void JanelaPrincipal::sendCurrentMessage(HWND hWnd)
 
 void JanelaPrincipal::reset(HWND hWnd)
 {
-	this->servidor.reset();
+	this->controller.reset();
 	this->ListaUtilizadores->clear();
 	this->txtEnviar->clear();
 	this->AreaMensagens->clear();
@@ -263,13 +263,13 @@ void JanelaPrincipal::refresh(HWND hWnd)
 {
 	HMENU menu = GetMenu(hWnd);
 
-	if (this->servidor.getIsAutenticado())
+	if (this->controller.getIsAutenticado())
 	{
 		// Login com sucesso
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_DISABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_ENABLED);
 
-		if (this->servidor.getIsAdministrador())
+		if (this->controller.getIsAdministrador())
 		{
 			EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_ENABLED);
 		}
@@ -291,8 +291,8 @@ void JanelaPrincipal::refreshData()
 	this->ListaUtilizadores->clear();
 
 	// Lista de utilizadores
-	for (int i = 0; i < this->servidor.getTotalUtilizadoresOnline(); i++)
-		this->ListaUtilizadores->addString(this->servidor.getUtilizadorOnline(i)->getUsername().c_str());
+	for (int i = 0; i < this->controller.getTotalUtilizadoresOnline(); i++)
+		this->ListaUtilizadores->addString(this->controller.getUtilizadorOnline(i)->getUsername().c_str());
 }
 
 // Eventos
@@ -316,7 +316,7 @@ bool JanelaPrincipal::onClose(HWND hWnd)
 {
 	delete assyncThread;
 	assyncThread = NULL;
-	this->servidor.logout();
+	this->controller.logout();
 	return true;
 }
 

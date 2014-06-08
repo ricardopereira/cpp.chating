@@ -5,11 +5,11 @@
 
 ThreadPrivateChat::ThreadPrivateChat()
 {
-	servidor = NULL;
+	controller = NULL;
 	username = NULL;
 }
 
-ThreadPrivateChat::ThreadPrivateChat(Server& servidor, const TCHAR* username) : servidor(&servidor), username(username)
+ThreadPrivateChat::ThreadPrivateChat(Controller& controller, const TCHAR* username) : controller(&controller), username(username)
 {
 	ptrClasse = this;
 }
@@ -20,14 +20,14 @@ ThreadPrivateChat::~ThreadPrivateChat()
 
 DWORD WINAPI ThreadPrivateChat::funcaoThread()
 {
-	if (!this->servidor) return 0;
+	if (!this->controller) return 0;
 
 	// MSG é uma estrutura definida no Windows para as mensagens
 	MSG lpMsg;
 
 	hInstance = GetModuleHandle(NULL);
 	
-	JanelaPrivada prvChat(*this->servidor,this->username);
+	JanelaPrivada prvChat(*this->controller,this->username);
 	prvChat.Inicializar(hInstance, TEXT("JanelaPrivada"), sizeof(JanelaPrivada*), NULL);
 	prvChat.Registar();
 	prvChat.Criar(hInstance, TEXT("Chat Privado"));

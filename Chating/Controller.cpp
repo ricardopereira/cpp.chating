@@ -1,13 +1,13 @@
-#include "Server.h"
+#include "Controller.h"
 
 int pipeAberto = 0;
 
-Server::Server()
+Controller::Controller()
 {
 	reset();
 }
 
-Server::~Server()
+Controller::~Controller()
 {
 	for (unsigned int i = 0; i < utilizadores.size(); i++)
 	{
@@ -15,39 +15,39 @@ Server::~Server()
 	}
 }
 
-bool Server::getIsAutenticado()
+bool Controller::getIsAutenticado()
 {
 	return this->autenticado;
 }
 
-bool Server::getIsAdministrador()
+bool Controller::getIsAdministrador()
 {
 	return this->privilegiosAdmin;
 }
 
-const ChatUser& Server::getLoginAutenticado()
+const ChatUser& Controller::getLoginAutenticado()
 {
 	return *this->loginAutenticado;
 }
 
-void Server::reset()
+void Controller::reset()
 {
 	this->autenticado = false;
 	this->privilegiosAdmin = false;
 	this->loginAutenticado = NULL;
 }
 
-int Server::getTotalUtilizadores()
+int Controller::getTotalUtilizadores()
 {
 	return this->utilizadores.size();
 }
 
-int Server::getTotalUtilizadoresOnline()
+int Controller::getTotalUtilizadoresOnline()
 {
 	return this->utilizadoresOnline.size();
 }
 
-ChatUser* Server::getUtilizador(unsigned int index)
+ChatUser* Controller::getUtilizador(unsigned int index)
 {
 	if (index >= 0 && index < this->utilizadores.size())
 		return utilizadores.at(index);
@@ -55,7 +55,7 @@ ChatUser* Server::getUtilizador(unsigned int index)
 		return NULL;
 }
 
-ChatUser* Server::getUtilizador(const TCHAR *username)
+ChatUser* Controller::getUtilizador(const TCHAR *username)
 {
 	for (unsigned int i = 0; i < utilizadores.size(); i++)
 	{
@@ -65,7 +65,7 @@ ChatUser* Server::getUtilizador(const TCHAR *username)
 	return NULL;
 }
 
-ChatUser* Server::getUtilizadorOnline(unsigned int index)
+ChatUser* Controller::getUtilizadorOnline(unsigned int index)
 {
 	if (index >= 0 && index < this->utilizadoresOnline.size())
 		return utilizadoresOnline.at(index);
@@ -73,7 +73,7 @@ ChatUser* Server::getUtilizadorOnline(unsigned int index)
 		return NULL;
 }
 
-void Server::deleteUtilizador(const TCHAR *username)
+void Controller::deleteUtilizador(const TCHAR *username)
 {
 	if (_tcscmp(username,TEXT("")) == 0)
 		return;
@@ -83,7 +83,7 @@ void Server::deleteUtilizador(const TCHAR *username)
 	int res = RemoverUtilizador(username);
 }
 
-ChatUser* Server::addUtilizador(const TCHAR *username)
+ChatUser* Controller::addUtilizador(const TCHAR *username)
 {
 	if (_tcscmp(username,TEXT("")) == 0)
 		return NULL;
@@ -96,7 +96,7 @@ ChatUser* Server::addUtilizador(const TCHAR *username)
 	return user;
 }
 
-ChatUser* Server::addUtilizadorOnline(const TCHAR *username)
+ChatUser* Controller::addUtilizadorOnline(const TCHAR *username)
 {
 	if (_tcscmp(username,TEXT("")) == 0)
 		return NULL;
@@ -111,7 +111,7 @@ ChatUser* Server::addUtilizadorOnline(const TCHAR *username)
 	return user;
 }
 
-void Server::removeUtilizadorOnline(const TCHAR *username)
+void Controller::removeUtilizadorOnline(const TCHAR *username)
 {
 	ChatUser* user = getUtilizador(username);
 	if (!user)
@@ -127,12 +127,12 @@ void Server::removeUtilizadorOnline(const TCHAR *username)
 	}
 }
 
-void Server::clearUtilizadoresOnline()
+void Controller::clearUtilizadoresOnline()
 {
 	utilizadoresOnline.clear();
 }
 
-int Server::login(const TCHAR* login, const TCHAR *pass)
+int Controller::login(const TCHAR* login, const TCHAR *pass)
 {
 	if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(pass,TEXT("")) == 0)
 		return 0;
@@ -167,7 +167,7 @@ int Server::login(const TCHAR* login, const TCHAR *pass)
 	return 0;
 }
 
-int Server::signUp(const TCHAR* login, const TCHAR *pass)
+int Controller::signUp(const TCHAR* login, const TCHAR *pass)
 {
 	if (_tcscmp(login,TEXT("")) == 0)
 		return 0;
@@ -178,7 +178,7 @@ int Server::signUp(const TCHAR* login, const TCHAR *pass)
 	return res;
 }
 
-void Server::loggedIn(const TCHAR* username, bool isAdmin)
+void Controller::loggedIn(const TCHAR* username, bool isAdmin)
 {
 	ChatUser* user = addUtilizadorOnline(username);
 	user->setOnline();
@@ -189,43 +189,43 @@ void Server::loggedIn(const TCHAR* username, bool isAdmin)
 	this->loginAutenticado = user;
 }
 
-void Server::loggedOut(const TCHAR* username)
+void Controller::loggedOut(const TCHAR* username)
 {
 	// ToDo
 	this->loginAutenticado = NULL;
 }
 
-void Server::loadPublicInformation()
+void Controller::loadPublicInformation()
 {
 	LerListaUtilizadores();
 	LerListaUtilizadoresRegistados();
 	LerInformacaoInicial();
 }
 
-int Server::cIniciarConversa(const TCHAR *utilizador)
+int Controller::cIniciarConversa(const TCHAR *utilizador)
 {
 	if (_tcscmp(utilizador,TEXT("")) == 0)
 		return 0;
 	return IniciarConversa(utilizador);
 }
 
-int Server::cDesligarConversa()
+int Controller::cDesligarConversa()
 { 
 	return DesligarConversa();
 }
 
-int Server::cEnviarMensagemPrivada(const TCHAR *texto)
+int Controller::cEnviarMensagemPrivada(const TCHAR *texto)
 {
 	return EnviarMensagemPrivada(texto);
 }
 
-void Server::cEnviarMensagemPublica(const TCHAR *texto)
+void Controller::cEnviarMensagemPublica(const TCHAR *texto)
 {
 	EnviarMensagemPublica(texto, this->getLoginAutenticado().getUsername().c_str());
 	return;
 }
 
-int Server::logout()
+int Controller::logout()
 { 
 	if (!this->getIsAutenticado())
 		return 0;
@@ -237,7 +237,7 @@ int Server::logout()
 	return res;
 }
 
-int Server::shutdown()
+int Controller::shutdown()
 { 
 	return 1;
 }

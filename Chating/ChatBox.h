@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Control.h"
-#include "Server.h"
+#include "Controller.h"
 
 class ChatBoxItem;
 

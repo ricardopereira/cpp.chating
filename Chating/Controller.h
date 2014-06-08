@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 
-class Server
+class Controller
 {
 private:
 	bool autenticado;
@@ -19,8 +19,8 @@ private:
 	void loggedIn(const TCHAR* username, bool isAdmin=false);
 	void loggedOut(const TCHAR* username);
 public:
-	Server();
-	~Server();
+	Controller();
+	~Controller();
 
 	int login(const TCHAR* login, const TCHAR* pass);
 	int logout();

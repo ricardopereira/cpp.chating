@@ -86,7 +86,7 @@
     <ClCompile Include="EditBox.cpp" />
     <ClCompile Include="ChatBox.cpp" />
     <ClCompile Include="ChatBoxItem.cpp" />
-    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="CustomWindow.cpp" />
     <ClCompile Include="JanelaPrincipal.cpp" />
@@ -103,7 +103,7 @@
     <ClInclude Include="EditBox.h" />
     <ClInclude Include="ChatBox.h" />
     <ClInclude Include="ChatBoxItem.h" />
-    <ClInclude Include="Server.h" />
+    <ClInclude Include="Controller.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="CustomWindow.h" />
     <ClInclude Include="JanelaPrincipal.h" />
