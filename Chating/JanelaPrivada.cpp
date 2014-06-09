@@ -105,14 +105,26 @@ void JanelaPrivada::onShow(HWND hWnd)
 	// ToDo: cLerInformacaoInicial, cIniciarConversa, cDesligarConversa
 	int result;
 	result = this->controller->cIniciarConversa(username.c_str(), this->flag);
-
-	if (result == USER_BUSY){ //Utilizador ocupado, fechar janela e terminar thread
-		MessageBox(hWnd, TEXT("Utilizador Ocupado"), TEXT("Informação"), MB_OK | MB_ICONINFORMATION);
-		SendMessage(hWnd, WM_DESTROY, 0, 0);
-		
-
-		//TODO: Destroy allocated memory
-		ExitThread(1);
+	if (this->flag == 0){
+		if (result == USER_BUSY){ //Utilizador ocupado, fechar janela e terminar thread
+			MessageBox(hWnd, TEXT("Utilizador Ocupado"), TEXT("Informação"), MB_OK | MB_ICONINFORMATION);
+			SendMessage(hWnd, WM_DESTROY, 0, 0);
+			//TODO: Destroy allocated memory
+			ExitThread(1);
+		}
+	}
+	else {
+		sTchar_t msg = TEXT("Deseja iniciar conversa com ");
+		msg.append(this->username.c_str());
+		msg.append(TEXT("?"));
+		DWORD result;
+		result = MessageBox(hWnd, msg.c_str(), TEXT("Informação"), MB_OKCANCEL | MB_ICONQUESTION);
+		if (result == IDCANCEL){
+			this->controller->cCancelarConversa();
+			SendMessage(hWnd, WM_DESTROY, 0, 0);
+			//TODO: Destroy allocated memory
+			ExitThread(1);
+		}
 	}
 }
 
@@ -163,11 +175,7 @@ void JanelaPrivada::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	case ID_CHAT_SAIR:
 		DestroyWindow(hWnd);
 		break;
-	case WM_USER: //Exclusivo para a janela privada
-		MessageBox(hWnd, TEXT("O seu parceiro de conversação abandonou a conversa. Esta janela vai fechar"), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
-		//Desalocar objectos dinâmicos da janela privada.
-		SendMessage(hWnd, WM_DESTROY, 0, 0); //Enviar uma mensagem a si própria para se destruir.
-		break;
+
 
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {
@@ -185,6 +193,26 @@ void JanelaPrivada::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		else if (wParam == this->BotaoBaixo->getId()) {
 			this->AreaMensagens->scrollDown();
 		}
+	}
+}
+
+void JanelaPrivada::onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message){
+
+	case WM_USER: //Exclusivo para a janela privada
+		//MessageBox(hWnd, TEXT("O seu parceiro de conversação abandonou a conversa. Esta janela vai fechar"), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
+		////Desalocar objectos dinâmicos da janela privada.
+		//SendMessage(hWnd, WM_DESTROY, 0, 0); //Enviar uma mensagem a si própria para se destruir.
+		break;
+	case WM_USER + 2: //CANCELAR CHAT
+		this->controller->cCancelarConversa();
+		//this->controller->c
+		MessageBox(hWnd, TEXT("O seu parceiro de conversação não quis iniciar a conversa."), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
+		SendMessage(hWnd, WM_DESTROY, 0, 0);
+		//TODO: Destroy allocated memory
+		ExitThread(1);
+		break;
 	}
 }
 

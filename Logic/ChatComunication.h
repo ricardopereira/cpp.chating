@@ -21,7 +21,8 @@ enum commands_t {
 	//LER_MENSAGEM_PRIVADA,
 	//LER_MENSAGEM_PUBLICA,
 	ELIMINAR_UTILIZADOR,
-	LOGOUT
+	LOGOUT,
+	CANCELAR_CONVERSA
 };
 
 // Dedicado aos comandos de comunicação com o servidor

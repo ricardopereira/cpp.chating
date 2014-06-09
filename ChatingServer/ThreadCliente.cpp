@@ -122,6 +122,9 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 		case commands_t::ELIMINAR_UTILIZADOR:
 			server->RemoveUser(usrnametoremove);
 			break;
+		case commands_t::CANCELAR_CONVERSA:
+			server->CancelarConversa(this->currentClient, this->currentPartner);
+			break;
 		}
 
 		leituraEscritaSucesso = WriteFile(hPipe,

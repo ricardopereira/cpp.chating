@@ -36,9 +36,9 @@ public:
 	int cIniciarConversa(const TCHAR *utilizador, int flag=0);
 	int cDesligarConversa();
 	int cEnviarMensagemPrivada(const TCHAR *texto);
+	void cCancelarConversa();
 
 	void reset();
-
 	void deleteUtilizador(const TCHAR *username); // Só para admin
 	int getTotalUtilizadores();
 	int getTotalUtilizadoresOnline();

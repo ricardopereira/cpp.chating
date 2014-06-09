@@ -233,3 +233,8 @@ int Desligar()
 	CloseHandle(hPipe);
 	return 0;
 }
+
+void CancelarConversa(){
+	doSimpleRequest(commands_t::CANCELAR_CONVERSA);
+	return;
+}

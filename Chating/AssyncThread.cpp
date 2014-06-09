@@ -102,6 +102,10 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			this->controller.SetPrivatePartner(buffer[0].utilizador);
 			SendMessage(this->publicWindowHandle, (WM_USER+1), 0,0);
 			break;
+		case _CANCELAR_CONVERSA:
+		
+			SendMessage(this->privateWindowHandle, WM_USER+2, 0, 0);
+			break;
 		}
 	}
 }

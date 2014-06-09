@@ -41,7 +41,8 @@ extern "C"
 		USER_ONLINE,
 		USER_OFFLINE,
 		CLOSE_CHAT,
-		_LANCARCHAT
+		_LANCARCHAT,
+		_CANCELAR_CONVERSA
 	};
 
 	typedef struct {
@@ -90,6 +91,7 @@ extern "C"
 	//DLL_IMP_API MENSAGEM LerMensagensPrivadas();
 	DLL_IMP_API int Sair();
 	DLL_IMP_API int Desligar();
+	DLL_IMP_API void CancelarConversa();
 }
 
 #endif

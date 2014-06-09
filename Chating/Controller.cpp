@@ -230,6 +230,10 @@ int Controller::cEnviarMensagemPrivada(const TCHAR *texto)
 {
 	return EnviarMensagemPrivada(texto);
 }
+void Controller::cCancelarConversa(){
+	CancelarConversa();
+}
+
 
 void Controller::cEnviarMensagemPublica(const TCHAR *texto)
 {

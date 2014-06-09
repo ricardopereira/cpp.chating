@@ -50,6 +50,7 @@ public:
 	rMsg SendUserGoOffline(ClienteDados* cliente);
 	rMsg CloseChat(ClienteDados* partner, ClienteDados* currentUser);
 	rMsg RetrieveInformation(ClienteDados* currentClient);
+	void CancelarConversa(ClienteDados* currentClient, ClienteDados* currentPartner);
 	ClienteDados* getClientData(int& pos);
 
 	int getUserCount();

@@ -444,6 +444,22 @@ int Servidor::SendToClient(MSG_T* buffer, HANDLE hPipe){
 }
 
 ClienteDados* Servidor::getClientData(int& pos){
-
 	return this->clientes.at(pos);
+}
+
+void Servidor::CancelarConversa(ClienteDados* currentClient, ClienteDados* currentPartner){
+	MSG_T buffer[BUFFER_RECORDS];
+	this->mut_ServerData.Wait();
+	this->sem_ServerData.Wait();
+	
+	currentClient->SetIsBusy(false);
+	currentPartner->SetIsBusy(false);
+	buffer[0].nMessages = 1;
+	buffer[0].messageType = _CANCELAR_CONVERSA;
+	
+	this->SendToClient(buffer, currentPartner->GetPipe());
+	
+	currentPartner = nullptr;
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
 }

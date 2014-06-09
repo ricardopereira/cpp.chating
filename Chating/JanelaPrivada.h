@@ -69,4 +69,6 @@ public:
 	virtual void onMouseWheelDown(HWND hWnd);
 	virtual void onPaint(HWND hWnd, HDC &hdc, RECT &rect);
 	virtual void onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
+	virtual void onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 };
