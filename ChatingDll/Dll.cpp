@@ -141,7 +141,7 @@ int IniciarConversa(const TCHAR *utilizador)
 {
 	chatbuffer_t buffer;
 	_tcscpy_s(buffer.args[0], _tcslen(utilizador)*sizeof(TCHAR), utilizador);
-	buffer.command = commands_t::;
+	buffer.command = commands_t::LANCAR_CHAT;
 
 	PTCHAR msg = TEXT("Ligacao com sucesso");
 	//DWORD msgBytes;
@@ -168,7 +168,6 @@ int IniciarConversa(const TCHAR *utilizador)
 		return -1;
 
 	return buffer.arg_num;
-	
 }
 
 int DesligarConversa()
