@@ -191,7 +191,8 @@ Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados &partner) {
 	dataActual.hora = hora.wHour;
 	dataActual.minuto = hora.wMinute;
 	dataActual.segundo = hora.wSecond;
-	salada
+	
+	//Finish here
 	// Guarda mensagem
 	this->msgs.push_back(new Mensagens(dataActual, cliente->GetId(), -1, message));
 
