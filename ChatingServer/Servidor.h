@@ -39,14 +39,14 @@ public:
 	rMsg Logout(sTchar_t username);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
 	rMsg RemoveUser(sTchar_t username);
-	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
+	rMsg LancarChat(sTchar_t username, int& pos);
 	rMsg SendPrivateMessage(ClienteDados &partner);
 	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
 	rMsg SendUsers(ClienteDados* currentClient);
 	rMsg SendUsersOnline(ClienteDados* currentClient);
 	rMsg SendUserGoOnline(ClienteDados* cliente);
 	rMsg SendUserGoOffline(ClienteDados* cliente);
-	rMsg CloseChat();
+	rMsg CloseChat(ClienteDados* partner, ClienteDados* currentUser);
 	rMsg RetrieveInformation(ClienteDados* currentClient);
 	ClienteDados* getClientData(int& pos);
 

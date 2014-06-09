@@ -21,6 +21,10 @@ void AssyncThread::setPrivateMessageArea(ChatBox &privateMessageArea){
 	this->privateMessageArea = &privateMessageArea;
 }
 
+void AssyncThread::setPrivateWindowHandle(HWND hWnd){
+	this->privateWindowHandle = hWnd;
+}
+
 DWORD WINAPI AssyncThread::funcaoThread(){
 	
 	HANDLE hPipe = INVALID_HANDLE_VALUE;
@@ -87,6 +91,9 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 		case USER_OFFLINE:
 			this->controller.removeUtilizadorOnline(buffer[0].utilizador);
 			forceRefresh();
+			break;
+		case CLOSE_CHAT:
+			//SendMessage(this->privateWindowHandle, WM_USER, 0, 0);
 			break;
 		}
 	}

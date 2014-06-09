@@ -35,10 +35,11 @@ private:
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;
 	AssyncThread* assyncThread;
+	HANDLE privateThread;
 
 	JanelaPrivada() { controller = new Controller; /* Memory leak mas é privado :) */ };
 public:
-	JanelaPrivada(Controller& controller, const sTchar_t& username, AssyncThread* assyncThread);
+	JanelaPrivada(Controller& controller, sTchar_t username, AssyncThread* assyncThread, HANDLE privateThread);
 	~JanelaPrivada();
 
 	void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,

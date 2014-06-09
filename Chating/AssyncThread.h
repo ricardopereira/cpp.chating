@@ -14,10 +14,12 @@ private:
 	ListBox& listUserOnline;
 
 	ChatBox* privateMessageArea;
+	HWND privateWindowHandle;
 	void forceRefresh();
 public:
 	AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea, ListBox& listUserOnline);
 	void setPrivateMessageArea(ChatBox &privateMessageArea);
+	void setPrivateWindowHandle(HWND hWnd);
 	~AssyncThread();
 	virtual DWORD WINAPI funcaoThread();
 };

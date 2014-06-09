@@ -11,6 +11,7 @@ ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int
 	this->tipo = tipo; // ToDo: talvez seja melhor criar enumerado
 	this->online = false;
 	this->id = id;
+	this->isBusy = false;
 }
 
 ClienteDados::~ClienteDados()
@@ -71,4 +72,12 @@ HANDLE ClienteDados::GetPipe()const{
 
 bool ClienteDados::GetIsOnline()const{
 	return this->online;
+}
+
+bool ClienteDados::GetIsBusy() const{
+	return this->isBusy;
+}
+
+void ClienteDados::SetIsBusy(const bool isbusy){
+	this->isBusy = isbusy;
 }

@@ -3,11 +3,13 @@
 
 #include "JanelaPrivada.h"
 
-JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t& username, AssyncThread* assyncThread) : controller(&controller), username(username)
+JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t username, AssyncThread* assyncThread, HANDLE privateThread) : controller(&controller), username(username)
 {
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
 	this->assyncThread = assyncThread;
+	this->privateThread = privateThread;
+	
 }
 
 JanelaPrivada::~JanelaPrivada()
@@ -101,8 +103,17 @@ void JanelaPrivada::onCreate(HWND hWnd, HDC &hdc)
 void JanelaPrivada::onShow(HWND hWnd)
 {
 	// ToDo: cLerInformacaoInicial, cIniciarConversa, cDesligarConversa
+	int result;
+	result = this->controller->cIniciarConversa(username.c_str());
 
-	this->controller->cIniciarConversa(username.c_str());
+	if (result == USER_BUSY){ //Utilizador ocupado, fechar janela e terminar thread
+		MessageBox(hWnd, TEXT("Utilizador Ocupado"), TEXT("Informação"), MB_OK | MB_ICONINFORMATION);
+		SendMessage(hWnd, WM_DESTROY, 0, 0);
+		
+
+		//TODO: Destroy allocated memory
+		ExitThread(1);
+	}
 }
 
 bool JanelaPrivada::onClose(HWND hWnd)
@@ -267,6 +278,7 @@ void JanelaPrivada::MostrarElementos(HWND hWnd)
 	this->BotaoBaixo->Mostra(hWnd);
 
 	this->assyncThread->setPrivateMessageArea(*this->AreaMensagens);
+	this->assyncThread->setPrivateWindowHandle(hWnd);
 }
 
 void JanelaPrivada::Redimensionar(HWND hWnd)

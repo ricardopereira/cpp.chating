@@ -26,6 +26,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	sTchar_t usrname = TEXT(""); //temp
 	sTchar_t usrnametoremove = TEXT(""); //temp
 	int result;
+	int pos;
 	
 	while (!powerOff) {
 		
@@ -55,7 +56,6 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			buffer.arg_num = server->RegisterUser(buffer.args[0], buffer.args[1], /*tipo*/1);
 			break;
 		case commands_t::LOGIN:
-			int pos;
 			result = server->Login(buffer.args[0], buffer.args[1], &pos);
 
 			// Login com sucesso
@@ -92,7 +92,16 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->SendUsersOnline(this->currentClient);
 			break;
 		case commands_t::LANCAR_CHAT:
-			server->LancarChat(usrname, this->currentPartner);
+			this->currentClient->SetIsBusy(true);
+			result = server->LancarChat(buffer.args[0], pos);
+
+			if (result == Servidor::SUCCESS){
+				this->currentPartner = server->getClientData(pos);
+			}
+			else{
+				this->currentClient->SetIsBusy(false);
+			}
+			buffer.arg_num = result;
 			break;
 		case commands_t::ENVIAR_MSG_PRIVADA:
 			server->SendPrivateMessage(*this->currentPartner);
@@ -102,7 +111,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->SendPublicMessage(buffer.args[0], buffer.args[1], this->currentClient);
 			break;
 		case commands_t::FECHAR_CHAT:
-			server->CloseChat();
+			server->CloseChat(this->currentPartner, this->currentClient);
 			break;
 		case commands_t::LER_INFO_INICIAL:
 			server->RetrieveInformation(this->currentClient);

@@ -39,7 +39,9 @@ extern "C"
 		LIST_USERS_ONLINE,
 		LIST_ALL_USERS,
 		USER_ONLINE,
-		USER_OFFLINE
+		USER_OFFLINE,
+		CLOSE_CHAT,
+		_LANCARCHAT
 	};
 
 	typedef struct {

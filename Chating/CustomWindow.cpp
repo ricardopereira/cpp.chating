@@ -71,6 +71,11 @@ LRESULT CALLBACK internalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	case WM_COMMAND:
 		ptr->onCommand(hWnd,wParam,lParam);
 		break;
+	case WM_USER: //Exclusivo para a janela privada
+		MessageBox(hWnd, TEXT("O seu parceiro de conversação abandonou a conversa. Esta janela vai fechar"), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
+		//Desalocar objectos dinâmicos da janela privada.
+		SendMessage(hWnd, WM_DESTROY, 0, 0); //Enviar uma mensagem a si própria para se destruir.
+		break;
 
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

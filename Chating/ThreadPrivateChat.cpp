@@ -3,16 +3,16 @@
 #include "resource.h"
 #include "JanelaPrivada.h"
 
-ThreadPrivateChat::ThreadPrivateChat()
+ThreadPrivateChat::ThreadPrivateChat() : username(*(new sTchar_t(TEXT(""))))
 {
 	controller = NULL;
-	username = NULL;
 }
 
-ThreadPrivateChat::ThreadPrivateChat(Controller& controller, const TCHAR* username, AssyncThread* assyncThread) : controller(&controller), username(username)
+ThreadPrivateChat::ThreadPrivateChat(Controller& controller, sTchar_t username, AssyncThread* assyncThread) : controller(&controller), username(username)
 {
 	ptrClasse = this;
 	this->assyncThread = assyncThread;
+	
 }
 
 ThreadPrivateChat::~ThreadPrivateChat()
@@ -28,7 +28,7 @@ DWORD WINAPI ThreadPrivateChat::funcaoThread()
 
 	hInstance = GetModuleHandle(NULL);
 	
-	JanelaPrivada prvChat(*this->controller,this->username, this->assyncThread);
+	JanelaPrivada prvChat(*this->controller,this->username, this->assyncThread, this->handleThread);
 	prvChat.Inicializar(hInstance, TEXT("JanelaPrivada"), sizeof(JanelaPrivada*), NULL);
 	prvChat.Registar();
 	prvChat.Criar(hInstance, TEXT("Chat Privado"));

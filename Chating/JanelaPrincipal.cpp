@@ -174,13 +174,13 @@ void JanelaPrincipal::showUtilizadores(HWND hWnd)
 	DialogBox(hInst, (LPCWSTR)IDD_UTILIZADORES, hWnd, (DLGPROC)DialogUtilizadores);
 }
 
-void JanelaPrincipal::startPrivateChat(HWND hWnd, const sTchar_t& username)
+void JanelaPrincipal::startPrivateChat(HWND hWnd, sTchar_t username)
 {
 	// ToDo: só pode existir uma janela
 	if (privateChat)
 		delete privateChat;
 
-	privateChat = new ThreadPrivateChat(this->controller, username.c_str(), this->assyncThread);
+	privateChat = new ThreadPrivateChat(this->controller, username, this->assyncThread);
 
 
 	privateChat->setHwndPai(hWnd);
@@ -398,11 +398,11 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 			// Verificar duplo-clique
 			if (HIWORD(wParam) == LBN_DBLCLK) {
 				//Preencher caixa de texto com o texto selecionado da listbox
-				int i = SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETCURSEL, 0, 0);
+				int i = SendDlgItemMessage(hWnd, this->ListaUtilizadores->getId(), LB_GETCURSEL, 0, 0);
 				TCHAR usernameAux[30];
 				SendDlgItemMessage(hWnd, this->ListaUtilizadores->getId(), LB_GETTEXT, i, (LPARAM)usernameAux);
 				// Abre chat privado
-				startPrivateChat(hWnd,usernameAux);
+				startPrivateChat(hWnd, usernameAux);
 			}
 		}
 	}
