@@ -8,7 +8,10 @@ AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& m
 	this->ptrClasse = this;
 	oTcharStream_t tempText;
 
-	tempText << TEXT("\\\\.\\pipe\\") << username << TEXT('\0');
+	TCHAR ip[TAMIP];
+	controller.loadConfig(ip);
+
+	tempText << TEXT("\\\\") << ip << TEXT("\\pipe\\") << username << TEXT('\0');
 
 	this->pipeName = tempText.str();
 }

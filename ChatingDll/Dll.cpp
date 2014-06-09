@@ -6,9 +6,15 @@
 
 HANDLE hPipe;
 
-DLL_IMP_API int AbrirPipe() {
+DLL_IMP_API int AbrirPipe(const TCHAR* ip) {
+
+	TCHAR ipserver[TAMIP];
+
+	// "\\\\.\\pipe\\pipeserver"
+	_stprintf_s(ipserver, TAMIP, TEXT("\\\\%s\\pipe\\%s"), ip, PIPENAME_SERVER);
+
 	hPipe = CreateFile(
-		PIPENAME_SERVER,
+		ipserver,
 		GENERIC_READ | GENERIC_WRITE,
 		0, //no sharing
 		NULL, //default security attributes

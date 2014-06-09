@@ -68,6 +68,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../Core;../Logic;../TUI</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -89,6 +90,7 @@
     <ClCompile Include="Mensagens.cpp" />
     <ClCompile Include="Mutex_t.cpp" />
     <ClCompile Include="Registry.cpp" />
+    <ClCompile Include="Security.cpp" />
     <ClCompile Include="Semaforo.cpp" />
     <ClCompile Include="Servidor.cpp" />
     <ClCompile Include="Shell.cpp" />
@@ -109,6 +111,7 @@
     <ClInclude Include="Mensagens.h" />
     <ClInclude Include="Mutex_t.h" />
     <ClInclude Include="Registry.h" />
+    <ClInclude Include="Security.h" />
     <ClInclude Include="Semaforo.h" />
     <ClInclude Include="Servidor.h" />
     <ClInclude Include="Shell.h" />

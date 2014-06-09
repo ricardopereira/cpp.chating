@@ -2,7 +2,7 @@
 #include "../ChatingDll/Dll.h"
 #include <string>
 #include "Shell.h"
-
+#include "Security.h"
 
 ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int tipo, int id)
 {
@@ -11,6 +11,7 @@ ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int
 	this->tipo = tipo; // 1-Normal, 2-Admin
 	this->online = false;
 	this->id = id;
+	this->sa = security::Seguranca();
 }
 
 ClienteDados::~ClienteDados()
@@ -42,7 +43,7 @@ bool ClienteDados::getIsAdmin() const {
 	return this->tipo == 2;
 }
 
-void ClienteDados::CreatePrivatePipe(){
+void ClienteDados::CreatePrivatePipe() {
 	oTcharStream_t pipeName;
 	pipeName << TEXT("\\\\.\\pipe\\") << this->username << TEXT('\0');
 
@@ -55,10 +56,14 @@ void ClienteDados::CreatePrivatePipe(){
 		sizeof(MSG_T)* 50,
 		sizeof(MSG_T)* 50,
 		0,
-		NULL);
+		this->getSecurity());
 
 	if (this->privatePipe == INVALID_HANDLE_VALUE)
 		_tprintf(TEXT("\nErro na criacao do pipe: %d\n"), GetLastError());
+}
+
+SECURITY_ATTRIBUTES* ClienteDados::getSecurity() {
+	return &this->sa;
 }
 
 int ClienteDados::GetId()const{

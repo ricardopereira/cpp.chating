@@ -11,6 +11,7 @@ class ClienteDados
 	bool hasPrivateChat;
 	HANDLE privatePipe;
 	int id;
+	SECURITY_ATTRIBUTES sa;
 public:
 	ClienteDados(const sTchar_t username, const sTchar_t password, int tipo, int id);
 	~ClienteDados();
@@ -21,6 +22,7 @@ public:
 	int GetTipo() const;
 	bool GetIsOnline() const;
 	bool getIsAdmin() const;
+	SECURITY_ATTRIBUTES* getSecurity();
 	void CreatePrivatePipe();
 	int GetId() const;
 	HANDLE GetPipe() const;

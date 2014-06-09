@@ -168,7 +168,6 @@ BOOL CALLBACK DialogUtilizadores(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				if (opt == IDYES) {
 					ptrController->deleteUtilizador(utilizador);
 					EndDialog(hWnd,IDCANCEL);
-					break;
 				}
 			}
 			break;
@@ -318,6 +317,7 @@ void JanelaPrincipal::refresh(HWND hWnd)
 		// Login com sucesso
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_DISABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_ENABLED);
+		EnableMenuItem(menu, ID_CHAT_CONFIG, MF_DISABLED);
 
 		if (this->controller.getIsAdministrador())
 		{
@@ -335,6 +335,7 @@ void JanelaPrincipal::refresh(HWND hWnd)
 		HMENU menu = GetMenu(hWnd);
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
+		EnableMenuItem(menu, ID_CHAT_CONFIG, MF_ENABLED);
 		EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_DISABLED);
 		EnableMenuItem(menu, ID_ADMINISTRADOR_DESLIGARSERVIDOR, MF_DISABLED);
 	}

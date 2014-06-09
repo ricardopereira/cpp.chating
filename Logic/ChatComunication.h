@@ -1,6 +1,8 @@
 #ifndef CHATCOMUNICATION_H
 #define CHATCOMUNICATION_H
-#define PIPENAME_SERVER _T("\\\\.\\pipe\\pipeserver") //PTCHAR LPTSTR PCTSTR
+
+#define PIPENAME_SERVER _T("pipeserver") 
+#define PIPE_SERVER _T("\\\\.\\pipe\\pipeserver") //PTCHAR LPTSTR PCTSTR
 
 /*Comunicacao*/
 

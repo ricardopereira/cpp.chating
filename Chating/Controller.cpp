@@ -165,10 +165,9 @@ int Controller::login(const TCHAR* login, const TCHAR *pass)
 		return 0;
 
 	if (!pipeAberto) {
-		// ToDo: Não seria melhor a DLL gerir o pipe?!
-		//afinal, o recurso é da DLL, não da interface que apenas abusa da DLL
-
-		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
+		TCHAR ip[TAMIP];
+		loadConfig(ip);
+		pipeAberto = AbrirPipe(ip); //Abre o pipe para a comunicacao
 	}
 	int res = Autenticar(login, pass);
 
@@ -190,8 +189,11 @@ int Controller::signUp(const TCHAR* login, const TCHAR *pass)
 {
 	if (_tcscmp(login,TEXT("")) == 0)
 		return 0;
-	if (!pipeAberto){
-		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
+	if (!pipeAberto) {
+		TCHAR ip[TAMIP];
+		loadConfig(ip);
+		//Abre o pipe para a comunicacao
+		pipeAberto = AbrirPipe(ip);
 	}
 	int res = Registar(login, pass);
 	return res;
