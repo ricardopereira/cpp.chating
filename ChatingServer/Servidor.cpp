@@ -121,11 +121,11 @@ Servidor::rMsg Servidor::RemoveUser(sTchar_t username) {
 	return Servidor::USER_NOT_FOUND;
 }
 
-Servidor::rMsg Servidor::LancarChat(sTchar_t username, int& pos) {
+Servidor::rMsg Servidor::LancarChat(sTchar_t username, int& pos, ClienteDados* currentUser) {
 	MSG_T buffer[BUFFER_RECORDS];
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
-
+	currentUser->SetIsBusy(true);
 	for (unsigned int i = 0; i < clientes.size(); i++) {
 		if (clientes.at(i)->GetUsername() == username) {
 			
@@ -133,7 +133,11 @@ Servidor::rMsg Servidor::LancarChat(sTchar_t username, int& pos) {
 				pos = i;
 				clientes.at(i)->SetIsBusy(true);
 				
-				buffer->messageType = typeMessages::_LANCARCHAT; okdoky 
+				buffer->messageType = typeMessages::_LANCARCHAT;
+				buffer->nMessages = 1;
+				_tcscpy_s(buffer[0].utilizador, currentUser->GetUsername().size()*sizeof(TCHAR), currentUser->GetUsername().c_str());
+
+
 				this->SendToClient(buffer, clientes.at(i)->GetPipe());
 				this->mut_ServerData.Release();
 				this->sem_ServerData.Release();
@@ -153,6 +157,25 @@ Servidor::rMsg Servidor::LancarChat(sTchar_t username, int& pos) {
 	this->sem_ServerData.Release();
 	return Servidor::USER_NOT_FOUND;
 }
+
+Servidor::rMsg Servidor::JoinChat(sTchar_t username, int& pos){
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+	for (unsigned int i = 0; i < clientes.size(); i++) {
+		if (clientes.at(i)->GetUsername() == username) {
+
+			pos = i;
+			this->mut_ServerData.Release();
+			this->sem_ServerData.Release();
+			//
+			return Servidor::SUCCESS;
+		}
+	}
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+	return Servidor::ERROR_SRV;
+}
+
 
 Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados &partner) {
 	this->sem_ServerData.Wait();

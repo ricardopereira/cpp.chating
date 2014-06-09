@@ -174,13 +174,13 @@ void JanelaPrincipal::showUtilizadores(HWND hWnd)
 	DialogBox(hInst, (LPCWSTR)IDD_UTILIZADORES, hWnd, (DLGPROC)DialogUtilizadores);
 }
 
-void JanelaPrincipal::startPrivateChat(HWND hWnd, sTchar_t username)
+void JanelaPrincipal::startPrivateChat(HWND hWnd, sTchar_t username, int flag)
 {
 	// ToDo: só pode existir uma janela
 	if (privateChat)
 		delete privateChat;
 
-	privateChat = new ThreadPrivateChat(this->controller, username, this->assyncThread);
+	privateChat = new ThreadPrivateChat(this->controller, username, this->assyncThread, flag);
 
 
 	privateChat->setHwndPai(hWnd);
@@ -200,7 +200,7 @@ void JanelaPrincipal::login(HWND hWnd)
 
 		// Cria thread para receber mensagens
 		assyncThread = new AssyncThread(controller.getLoginAutenticado().getUsername().c_str(), 
-			this->controller, *this->AreaMensagens, *this->ListaUtilizadores);
+			this->controller, *this->AreaMensagens, *this->ListaUtilizadores, this->GetHwnd());
 		assyncThread->LancarThread();
 
 		// Esperar que a assyncThread fique pronta a receber dados
@@ -377,6 +377,8 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	case ID_ADMINISTRADOR_UTILIZADORES:
 		showUtilizadores(hWnd);
 		break;
+	
+
 
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {
@@ -408,6 +410,17 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	}
 }
 
+void JanelaPrincipal::onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message){
+	
+	case WM_USER +1:
+
+		startPrivateChat(hWnd, controller.GetPrivatePartner(), 1);
+		break;
+
+	}
+}
 void JanelaPrincipal::MostrarElementos(HWND hWnd)
 {
 	layoutVertical.push_back(new Layout(0.10f));

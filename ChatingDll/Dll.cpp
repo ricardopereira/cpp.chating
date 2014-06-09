@@ -137,11 +137,12 @@ int LerListaUtilizadoresRegistados()
 	return doSimpleRequest(commands_t::LISTA_UTILIZADORES_TODOS);
 }
 
-int IniciarConversa(const TCHAR *utilizador)
+int IniciarConversa(const TCHAR *utilizador, int flag)
 {
 	chatbuffer_t buffer;
 	_tcscpy_s(buffer.args[0], _tcslen(utilizador)*sizeof(TCHAR), utilizador);
 	buffer.command = commands_t::LANCAR_CHAT;
+	buffer.arg_num = flag;
 
 	PTCHAR msg = TEXT("Ligacao com sucesso");
 	//DWORD msgBytes;

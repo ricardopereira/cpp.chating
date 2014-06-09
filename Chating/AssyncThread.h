@@ -15,9 +15,10 @@ private:
 
 	ChatBox* privateMessageArea;
 	HWND privateWindowHandle;
+	HWND publicWindowHandle;
 	void forceRefresh();
 public:
-	AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea, ListBox& listUserOnline);
+	AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea, ListBox& listUserOnline, HWND publicWindowHandle);
 	void setPrivateMessageArea(ChatBox &privateMessageArea);
 	void setPrivateWindowHandle(HWND hWnd);
 	~AssyncThread();

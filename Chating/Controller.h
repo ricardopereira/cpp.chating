@@ -15,7 +15,7 @@ private:
 
 	std::vector<ChatUser*> utilizadores;
 	std::vector<ChatUser*> utilizadoresOnline;
-
+	sTchar_t privatePartner;
 	void loggedIn(const TCHAR* username, bool isAdmin=false);
 protected:
 	void destroyUtilizadores();
@@ -33,7 +33,7 @@ public:
 	void cEnviarMensagemPublica(const TCHAR *texto);
 
 	// Chat Privado
-	int cIniciarConversa(const TCHAR *utilizador);
+	int cIniciarConversa(const TCHAR *utilizador, int flag=0);
 	int cDesligarConversa();
 	int cEnviarMensagemPrivada(const TCHAR *texto);
 
@@ -50,7 +50,8 @@ public:
 	ChatUser* getUtilizador(const TCHAR *username);
 	ChatUser* getUtilizadorOnline(unsigned int index);
 	void clearUtilizadoresOnline();
-
+	sTchar_t GetPrivatePartner()const;
+	void SetPrivatePartner(const sTchar_t privatePartner);
 	bool getIsAutenticado();
 	bool getIsAdministrador();
 	const ChatUser& getLoginAutenticado();

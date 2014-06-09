@@ -27,7 +27,8 @@ public:
 		PIPE_ERROR,
 		REGEDIT_OK,
 		REGEDIT_FIRST_TIME, 
-		REGEDIT_NOT_OK
+		REGEDIT_NOT_OK,
+		ERROR_SRV
 	};
 
 	Servidor();
@@ -39,7 +40,8 @@ public:
 	rMsg Logout(sTchar_t username);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
 	rMsg RemoveUser(sTchar_t username);
-	rMsg LancarChat(sTchar_t username, int& pos);
+	rMsg LancarChat(sTchar_t username, int& pos, ClienteDados* currentUser);
+	rMsg JoinChat(sTchar_t username, int& pos);
 	rMsg SendPrivateMessage(ClienteDados &partner);
 	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
 	rMsg SendUsers(ClienteDados* currentClient);

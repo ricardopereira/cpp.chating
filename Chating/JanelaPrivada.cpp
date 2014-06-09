@@ -3,13 +3,13 @@
 
 #include "JanelaPrivada.h"
 
-JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t username, AssyncThread* assyncThread, HANDLE privateThread) : controller(&controller), username(username)
+JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t username, AssyncThread* assyncThread, HANDLE privateThread, int& flag) : controller(&controller), username(username)
 {
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
 	this->assyncThread = assyncThread;
 	this->privateThread = privateThread;
-	
+	this->flag = flag;
 }
 
 JanelaPrivada::~JanelaPrivada()
@@ -104,7 +104,7 @@ void JanelaPrivada::onShow(HWND hWnd)
 {
 	// ToDo: cLerInformacaoInicial, cIniciarConversa, cDesligarConversa
 	int result;
-	result = this->controller->cIniciarConversa(username.c_str());
+	result = this->controller->cIniciarConversa(username.c_str(), this->flag);
 
 	if (result == USER_BUSY){ //Utilizador ocupado, fechar janela e terminar thread
 		MessageBox(hWnd, TEXT("Utilizador Ocupado"), TEXT("Informação"), MB_OK | MB_ICONINFORMATION);
@@ -162,6 +162,11 @@ void JanelaPrivada::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	switch (LOWORD(wParam)) {
 	case ID_CHAT_SAIR:
 		DestroyWindow(hWnd);
+		break;
+	case WM_USER: //Exclusivo para a janela privada
+		MessageBox(hWnd, TEXT("O seu parceiro de conversação abandonou a conversa. Esta janela vai fechar"), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
+		//Desalocar objectos dinâmicos da janela privada.
+		SendMessage(hWnd, WM_DESTROY, 0, 0); //Enviar uma mensagem a si própria para se destruir.
 		break;
 
 	default:

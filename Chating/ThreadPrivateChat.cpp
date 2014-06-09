@@ -8,11 +8,11 @@ ThreadPrivateChat::ThreadPrivateChat() : username(*(new sTchar_t(TEXT(""))))
 	controller = NULL;
 }
 
-ThreadPrivateChat::ThreadPrivateChat(Controller& controller, sTchar_t username, AssyncThread* assyncThread) : controller(&controller), username(username)
+ThreadPrivateChat::ThreadPrivateChat(Controller& controller, sTchar_t username, AssyncThread* assyncThread, int& flag) : controller(&controller), username(username)
 {
 	ptrClasse = this;
 	this->assyncThread = assyncThread;
-	
+	this->flag = flag;
 }
 
 ThreadPrivateChat::~ThreadPrivateChat()
@@ -28,7 +28,7 @@ DWORD WINAPI ThreadPrivateChat::funcaoThread()
 
 	hInstance = GetModuleHandle(NULL);
 	
-	JanelaPrivada prvChat(*this->controller,this->username, this->assyncThread, this->handleThread);
+	JanelaPrivada prvChat(*this->controller,this->username, this->assyncThread, this->handleThread, this->flag);
 	prvChat.Inicializar(hInstance, TEXT("JanelaPrivada"), sizeof(JanelaPrivada*), NULL);
 	prvChat.Registar();
 	prvChat.Criar(hInstance, TEXT("Chat Privado"));

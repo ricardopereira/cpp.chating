@@ -81,7 +81,7 @@ extern "C"
 	DLL_IMP_API int RemoverUtilizador(const TCHAR *login);
 	DLL_IMP_API int LerListaUtilizadores();
 	DLL_IMP_API int LerListaUtilizadoresRegistados();
-	DLL_IMP_API int IniciarConversa(const TCHAR *utilizador);
+	DLL_IMP_API int IniciarConversa(const TCHAR *utilizador, int flag);
 	DLL_IMP_API int DesligarConversa();
 	DLL_IMP_API int EnviarMensagemPrivada(const TCHAR *msg);
 	DLL_IMP_API void EnviarMensagemPublica(const TCHAR *msg, const TCHAR *owner);

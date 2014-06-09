@@ -21,7 +21,6 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	BOOL leituraEscritaSucesso = false;
 	DWORD bytesLidos = 0;
 	DWORD bytesEscritos = 0;
-	int temp_command; //substituir pelo campo correspondente conforme a estrutura.
 	sTchar_t pass = TEXT(""); //temp
 	sTchar_t usrname = TEXT(""); //temp
 	sTchar_t usrnametoremove = TEXT(""); //temp
@@ -92,9 +91,13 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->SendUsersOnline(this->currentClient);
 			break;
 		case commands_t::LANCAR_CHAT:
-			this->currentClient->SetIsBusy(true);
-			result = server->LancarChat(buffer.args[0], pos);
-
+			result = Servidor::ERROR_SRV;
+			if (buffer.arg_num == 0)  {//cliente 1
+				result = server->LancarChat(buffer.args[0], pos, this->currentClient);	
+			}
+			else {
+				result = server->JoinChat(buffer.args[0], pos);
+			}
 			if (result == Servidor::SUCCESS){
 				this->currentPartner = server->getClientData(pos);
 			}

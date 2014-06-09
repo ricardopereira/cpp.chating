@@ -54,7 +54,7 @@ public:
 	void reset(HWND hWnd);
 	void refresh(HWND hWnd);
 	void showUtilizadores(HWND hWnd);
-	void startPrivateChat(HWND hWnd, sTchar_t username);
+	void startPrivateChat(HWND hWnd, sTchar_t username, int flag=0);
 
 	// Eventos
 	virtual void onCreate(HWND hWnd, HDC &hdc);
@@ -67,4 +67,6 @@ public:
 	virtual void onMouseWheelDown(HWND hWnd);
 	virtual void onPaint(HWND hWnd, HDC &hdc, RECT &rect);
 	virtual void onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
+	virtual void onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 };

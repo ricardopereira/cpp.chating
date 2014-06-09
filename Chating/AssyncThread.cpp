@@ -2,7 +2,7 @@
 #include "../ChatingDll/Dll.h"
 #include "../Logic/ChatComunication.h"
 
-AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea, ListBox& listUserOnline)
+AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea, ListBox& listUserOnline, HWND publicWindowHandle)
 : controller(controller), messageArea(messageArea), listUserOnline(listUserOnline)
 {
 	this->ptrClasse = this;
@@ -11,6 +11,8 @@ AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& m
 	tempText << TEXT("\\\\.\\pipe\\") << username << TEXT('\0');
 
 	this->pipeName = tempText.str();
+
+	this->publicWindowHandle = publicWindowHandle;
 }
 
 AssyncThread::~AssyncThread()
@@ -93,7 +95,12 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			forceRefresh();
 			break;
 		case CLOSE_CHAT:
-			//SendMessage(this->privateWindowHandle, WM_USER, 0, 0);
+			SendMessage(this->privateWindowHandle, WM_USER, 0, 0);
+			break;
+		case _LANCARCHAT:
+			
+			this->controller.SetPrivatePartner(buffer[0].utilizador);
+			SendMessage(this->publicWindowHandle, (WM_USER+1), 0,0);
 			break;
 		}
 	}
