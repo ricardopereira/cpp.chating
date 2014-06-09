@@ -155,13 +155,21 @@ BOOL CALLBACK DialogUtilizadores(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		case IDC_ELIMINARUTILIZADOR:
 			// Obter item da lista de utilizadores
 			int i = SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETCURSEL, 0, 0);
-
 			// Existe um item seleccionado
 			if (i >= 0)
 			{
 				TCHAR utilizador[TAMLOGIN];
 				SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETTEXT, i, (LPARAM)utilizador);
-				ptrController->deleteUtilizador(utilizador);
+
+				oTcharStream_t msg;
+				msg << _T("Deseja remover o utilizador ") << utilizador << _T("?");
+
+				LRESULT opt = MessageBox(hWnd, msg.str().c_str(), TEXT("Remover utilizador"), MB_YESNO | MB_ICONQUESTION);
+				if (opt == IDYES) {
+					ptrController->deleteUtilizador(utilizador);
+					EndDialog(hWnd,IDCANCEL);
+					break;
+				}
 			}
 			break;
 		}
@@ -181,8 +189,6 @@ void JanelaPrincipal::startPrivateChat(HWND hWnd, const sTchar_t& username)
 		delete privateChat;
 
 	privateChat = new ThreadPrivateChat(this->controller, username.c_str(), this->assyncThread);
-
-
 	privateChat->setHwndPai(hWnd);
 	privateChat->sethInstance(this->hInst);
 	privateChat->LancarThread();
@@ -194,12 +200,12 @@ void JanelaPrincipal::login(HWND hWnd)
 
 	if (result == IDOK && this->controller.getIsAutenticado())
 	{
-		this->AreaMensagens->setUsername(controller.getLoginAutenticado().getUsername().c_str());
+		this->AreaMensagens->setUsername(controller.getUserAutenticado().getUsername().c_str());
 
 		refresh(hWnd);
 
 		// Cria thread para receber mensagens
-		assyncThread = new AssyncThread(controller.getLoginAutenticado().getUsername().c_str(), 
+		assyncThread = new AssyncThread(controller.getUserAutenticado().getUsername().c_str(), 
 			this->controller, *this->AreaMensagens, *this->ListaUtilizadores);
 		assyncThread->LancarThread();
 
@@ -221,7 +227,6 @@ void JanelaPrincipal::logout(HWND hWnd)
 	if (opt == IDYES) {
 		res << this->controller.logout(); //Teste: res.str().c_str()
 		reset(hWnd);
-		//MessageBox(0, TEXT("Logout com sucesso"), TEXT("Logout"), MB_OK | MB_ICONINFORMATION);
 	}
 }
 

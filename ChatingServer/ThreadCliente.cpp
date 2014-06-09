@@ -21,10 +21,6 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	BOOL leituraEscritaSucesso = false;
 	DWORD bytesLidos = 0;
 	DWORD bytesEscritos = 0;
-	int temp_command; //substituir pelo campo correspondente conforme a estrutura.
-	sTchar_t pass = TEXT(""); //temp
-	sTchar_t usrname = TEXT(""); //temp
-	sTchar_t usrnametoremove = TEXT(""); //temp
 	int result;
 	
 	while (!powerOff) {
@@ -51,8 +47,11 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 
 		switch (buffer.command){
 			//Cada accção deve devolver um código de (in)sucesso
-		case commands_t::REGISTER_NEW_USER:
+		case commands_t::CRIAR_UTILIZADOR:
 			buffer.arg_num = server->RegisterUser(buffer.args[0], buffer.args[1], /*tipo*/1);
+			break;
+		case commands_t::ELIMINAR_UTILIZADOR:
+			buffer.arg_num = server->RemoveUser(buffer.args[0]);
 			break;
 		case commands_t::LOGIN:
 			int pos;
@@ -62,7 +61,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			if (result == Servidor::SUCCESS || result == Servidor::SUCCESS_ADMIN)
 			{
 				this->currentClient = server->getClientData(pos);
-				server->SendUserGoOnline(this->currentClient);
+				server->UserGoOnline(this->currentClient);
 				tcout << getInfo() << TEXT("logged in - ") << buffer.args[0] << endl;
 			}
 			else if (result == Servidor::USER_NOT_FOUND && server->getUserCount() == 0)
@@ -76,7 +75,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			// Logout com sucesso
 			if (result == Servidor::SUCCESS)
 			{
-				server->SendUserGoOffline(this->currentClient);
+				server->UserGoOffline(this->currentClient);
 				tcout << getInfo() << TEXT("logged out - ") << this->currentClient->GetUsername() << endl;
 				this->currentClient = NULL;
 			}
@@ -92,7 +91,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->SendUsersOnline(this->currentClient);
 			break;
 		case commands_t::LANCAR_CHAT:
-			server->LancarChat(usrname, this->currentPartner);
+			server->LancarChat(buffer.args[0], this->currentPartner);
 			break;
 		case commands_t::ENVIAR_MSG_PRIVADA:
 			server->SendPrivateMessage(*this->currentPartner);
@@ -106,9 +105,6 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			break;
 		case commands_t::LER_INFO_INICIAL:
 			server->RetrieveInformation(this->currentClient);
-			break;
-		case commands_t::ELIMINAR_UTILIZADOR:
-			server->RemoveUser(usrnametoremove);
 			break;
 		}
 

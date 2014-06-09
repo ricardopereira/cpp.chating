@@ -35,6 +35,7 @@ public:
 
 	void LoadRegistry();
 	void SaveRegistry();
+	void Shutdown();
 	rMsg Login(sTchar_t username, sTchar_t password, int* pos);
 	rMsg Logout(sTchar_t username);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
@@ -44,8 +45,9 @@ public:
 	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
 	rMsg SendUsers(ClienteDados* currentClient);
 	rMsg SendUsersOnline(ClienteDados* currentClient);
-	rMsg SendUserGoOnline(ClienteDados* cliente);
-	rMsg SendUserGoOffline(ClienteDados* cliente);
+	rMsg UserGoOnline(ClienteDados* cliente);
+	rMsg UserGoOffline(ClienteDados* cliente);
+	rMsg ShutdownUser(ClienteDados* cliente);
 	rMsg CloseChat();
 	rMsg RetrieveInformation(ClienteDados* currentClient);
 	ClienteDados* getClientData(int& pos);

@@ -22,26 +22,24 @@ void Controller::destroyUtilizadores()
 
 bool Controller::getIsAutenticado()
 {
-	// ToDo
-	return this->autenticado;
+	return this->userAutenticado != NULL;
 }
 
 bool Controller::getIsAdministrador()
 {
-	// ToDo
-	return this->privilegiosAdmin;
+	if (!getIsAutenticado())
+		return false;
+	return this->userAutenticado->getIsAdmin();
 }
 
-const ChatUser& Controller::getLoginAutenticado()
+const ChatUser& Controller::getUserAutenticado()
 {
-	return *this->loginAutenticado;
+	return *this->userAutenticado;
 }
 
 void Controller::reset()
 {
-	this->autenticado = false;
-	this->privilegiosAdmin = false;
-	this->loginAutenticado = NULL;
+	this->userAutenticado = NULL;
 
 	utilizadoresOnline.clear();
 	utilizadores.clear();
@@ -89,9 +87,29 @@ void Controller::deleteUtilizador(const TCHAR *username)
 	if (_tcscmp(username,TEXT("")) == 0)
 		return;
 
-	// ToDo: delete
+	ChatUser* user = getUtilizador(username);
+	// Nao e permitido eliminar o administrador
+	if (!user)
+		return;
+	if (user->getIsAdmin())
+		return;
 
-	int res = RemoverUtilizador(username);
+	if (!RemoverUtilizador(username))
+		return;
+
+	user->setOffline();
+	// Remove da memória
+	for (unsigned int i = 0; i < utilizadores.size(); i++)
+	{
+		if (utilizadores.at(i) == user) {
+			delete user;
+			utilizadores.erase(utilizadores.begin()+i);
+			break;
+		}
+	}
+
+	// ToDo: Utilizador terá que ser desligado
+
 }
 
 ChatUser* Controller::addUtilizador(const TCHAR *username)
@@ -158,22 +176,14 @@ int Controller::login(const TCHAR* login, const TCHAR *pass)
 
 	if (res == SUCCESS) {
 		loggedIn(login);
-		// ToDo - Redundante!
-		this->autenticado = true;
-		this->privilegiosAdmin = false;
 		return 1;
 	}
 	else if (res == SUCCESS_ADMIN) {
 		loggedIn(login,true);
-		// ToDo - Redundante!
-		this->autenticado = true;
-		this->privilegiosAdmin = true;
 		return 2;
 	}
 	else {
-		this->autenticado = false;
-		this->privilegiosAdmin = false;
-		this->loginAutenticado = NULL;
+		this->userAutenticado = NULL;
 	}
 	return 0;
 }
@@ -197,7 +207,7 @@ void Controller::loggedIn(const TCHAR* username, bool isAdmin)
 	if (isAdmin)
 		user->setAdmin();
 	
-	this->loginAutenticado = user;
+	this->userAutenticado = user;
 }
 
 void Controller::loadPublicInformation()
@@ -226,7 +236,7 @@ int Controller::cEnviarMensagemPrivada(const TCHAR *texto)
 
 void Controller::cEnviarMensagemPublica(const TCHAR *texto)
 {
-	EnviarMensagemPublica(texto, this->getLoginAutenticado().getUsername().c_str());
+	EnviarMensagemPublica(texto, this->getUserAutenticado().getUsername().c_str());
 	return;
 }
 

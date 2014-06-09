@@ -63,8 +63,11 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			
 		switch (buffer[0].messageType){
 		case LIST_ALL_USERS:
+			ChatUser* user;
 			for (DWORD i = 0; i < buffer[0].nMessages; i++){
-				this->controller.addUtilizador(buffer[i].utilizador);
+				user = this->controller.addUtilizador(buffer[i].utilizador);
+				if (_tcscmp(buffer[i].mensagem.texto,_T("1")) == 0)
+					user->setAdmin();
 			}
 			break;
 		case LIST_USERS_ONLINE:

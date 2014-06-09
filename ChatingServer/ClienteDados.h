@@ -8,7 +8,6 @@ class ClienteDados
 	sTchar_t password;
 	int tipo;
 	bool online;
-	bool isAdmin;
 	bool hasPrivateChat;
 	HANDLE privatePipe;
 	int id;

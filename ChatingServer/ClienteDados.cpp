@@ -8,7 +8,7 @@ ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int
 {
 	this->username = username;
 	this->password = password;
-	this->tipo = tipo; // ToDo: talvez seja melhor criar enumerado
+	this->tipo = tipo; // 1-Normal, 2-Admin
 	this->online = false;
 	this->id = id;
 }
@@ -39,7 +39,7 @@ int ClienteDados::GetTipo() const {
 }
 
 bool ClienteDados::getIsAdmin() const {
-	return this->isAdmin;
+	return this->tipo == 2;
 }
 
 void ClienteDados::CreatePrivatePipe(){

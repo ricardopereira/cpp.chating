@@ -142,7 +142,6 @@ Servidor::rMsg Registry::SaveData(
 		_tcscpy_s(users[i].login, username_temp.size()*sizeof(TCHAR), username_temp.c_str());
 		_tcscpy_s(users[i].password, password_temp.size()*sizeof(TCHAR), password_temp.c_str());
 		users[i].tipo = clientdata.at(i)->GetTipo();
-	
 	}
 
 	/////TERMINAR ABAIXO

@@ -19,6 +19,7 @@
 
 extern "C"
 {
+	// Atencao: duplicado no Servidor::rMsg
 	enum returnMessages {
 		USER_NOT_REGISTERED,
 		USER_NOT_FOUND,
@@ -76,7 +77,7 @@ extern "C"
 
 	DLL_IMP_API int Autenticar(const TCHAR *login, const TCHAR *pass);
 	DLL_IMP_API int Registar(const TCHAR *login, const TCHAR *pass);
-	DLL_IMP_API int RemoverUtilizador(const TCHAR *login);
+	DLL_IMP_API bool RemoverUtilizador(const TCHAR *login);
 	DLL_IMP_API int LerListaUtilizadores();
 	DLL_IMP_API int LerListaUtilizadoresRegistados();
 	DLL_IMP_API int IniciarConversa(const TCHAR *utilizador);

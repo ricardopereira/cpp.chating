@@ -9,9 +9,7 @@
 class Controller
 {
 private:
-	bool autenticado;
-	bool privilegiosAdmin;
-	ChatUser* loginAutenticado;
+	ChatUser* userAutenticado;
 
 	std::vector<ChatUser*> utilizadores;
 	std::vector<ChatUser*> utilizadoresOnline;
@@ -53,5 +51,5 @@ public:
 
 	bool getIsAutenticado();
 	bool getIsAdministrador();
-	const ChatUser& getLoginAutenticado();
+	const ChatUser& getUserAutenticado();
 };
