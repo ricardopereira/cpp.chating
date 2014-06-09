@@ -60,7 +60,7 @@ void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class
 
 BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	TCHAR login[TAMLOGIN], password[TAMPASS];
+	TCHAR username[TAMLOGIN], password[TAMPASS];
 	int res = 0;
 
 	switch (message) {
@@ -73,14 +73,14 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDOK:
-			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
+			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), username, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
 
-			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
+			if (_tcscmp(username,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
 				break;
 
 			if (ptrController)
-				res = ptrController->login(login, password);
+				res = ptrController->login(username, password);
 
 			// Administrador
 			if (res == 2) {
@@ -90,7 +90,7 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Normal
 			else if (res == 1) {
 				TCHAR text[TAMTEXTO];
-				_stprintf_s(text, TAMTEXTO, _T("Login com sucesso: %s"), login);
+				_stprintf_s(text, TAMTEXTO, _T("Login com sucesso: %s"), username);
 				MessageBox(hWnd, text, TEXT("Login"), MB_OK | MB_ICONINFORMATION);
 				EndDialog(hWnd,IDOK);
 			}
@@ -105,13 +105,13 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDC_NEWUSER:
 			// Registar utilizador
-			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
+			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), username, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
 
-			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
+			if (_tcscmp(username,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
 				break;
 
-			res = ptrController->signUp(login, password);
+			res = ptrController->signUp(username, password);
 			if (res == SUCCESS ){
 				sTchar_t text;
 				text = TEXT("Utilizador registado com sucesso. Pode proceder com a operação de login.");

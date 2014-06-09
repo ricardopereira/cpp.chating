@@ -281,7 +281,7 @@ Servidor::rMsg Servidor::SendPublicMessage(sTchar_t message, sTchar_t owner, Cli
 
 	// Instante atual
 	SYSTEMTIME hora;
-	GetSystemTime(&hora);
+	GetLocalTime(&hora); //GetSystemTime
 	DATA dataActual;
 	dataActual.ano = hora.wYear;
 	dataActual.dia = hora.wDay;

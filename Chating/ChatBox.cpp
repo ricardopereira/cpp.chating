@@ -104,35 +104,35 @@ void ChatBox::addChat(const sTchar_t& userOwner, CHAT chat)
 
 void ChatBox::addMessage(const sTchar_t& userOwner, MENSAGEM msg)
 {
+	oTcharStream_t info;
+
+	info << msg.instante.dia << _T("-") << msg.instante.mes << _T("-") << msg.instante.ano << _T(" ");
+	info << msg.instante.hora << _T(":") << msg.instante.minuto << _T(":") << msg.instante.segundo;
+	info << _T(" - ") << userOwner;
+
 	if (this->username == userOwner)
 		// Mensagem do próprio
-		addMessageOnRight(userOwner,msg.texto);
+		addMessageOnRight(userOwner,msg.texto,info.str());
 	else
 		// Mensagem de outro
-		addMessageOnLeft(userOwner,msg.texto);
-
-	// ToDo: adicionar o Instante no item da mensagem
-
-	//_stprintf_s(str, 2 * TAMTEXTO, TEXT("(%02d/%02d/%d-%02d:%02d:%02d) %s"), chatInit.publicas[linha].instante.dia,
-	//	mychat.publicas[linha].instante.mes, mychat.publicas[linha].instante.ano, mychat.publicas[linha].instante.hora,
-	//	mychat.publicas[linha].instante.minuto, mychat.publicas[linha].instante.segundo, );
+		addMessageOnLeft(userOwner,msg.texto,info.str());
 }
 
 void ChatBox::addMessagePrivate(const sTchar_t& userOwner, MENSAGEM msg)
 {
 	// Mensagem do próprio
-	addMessageOnRight(userOwner,msg.texto);
+	addMessageOnRight(userOwner,msg.texto,_T(""));
 }
 
-void ChatBox::addMessageOnRight(const sTchar_t& username, sTchar_t message)
+void ChatBox::addMessageOnRight(const sTchar_t& username, sTchar_t message, sTchar_t info)
 {
-	messages.push_back(new ChatBoxItem(username,message,_T(""),1));
+	messages.push_back(new ChatBoxItem(username,message,info,1));
 	refresh();
 }
 
-void ChatBox::addMessageOnLeft(const sTchar_t& username, sTchar_t message)
+void ChatBox::addMessageOnLeft(const sTchar_t& username, sTchar_t message, sTchar_t info)
 {
-	messages.push_back(new ChatBoxItem(username,message,_T(""),0));
+	messages.push_back(new ChatBoxItem(username,message,info,0));
 	refresh();
 }
 

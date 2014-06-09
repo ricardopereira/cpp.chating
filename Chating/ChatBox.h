@@ -19,8 +19,8 @@ private:
 
 	vector<ChatBoxItem*> messages;
 protected:
-	void addMessageOnRight(const sTchar_t& username, sTchar_t message);
-	void addMessageOnLeft(const sTchar_t& username, sTchar_t message);
+	void addMessageOnRight(const sTchar_t& username, sTchar_t message, sTchar_t info);
+	void addMessageOnLeft(const sTchar_t& username, sTchar_t message, sTchar_t info);
 	void destroyMessages();
 public:
 	ChatBox(HINSTANCE hInstance, long px, long py, long comprimento, long largura);
