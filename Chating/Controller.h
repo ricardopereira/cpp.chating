@@ -30,7 +30,7 @@ public:
 	void shutdownServer();
 
 	void loadConfig(TCHAR* ipserver);
-	void saveConfig(TCHAR* ipserver);
+	bool saveConfig(TCHAR* ipserver);
 	void loadPublicInformation();
 
 	void cEnviarMensagemPublica(const TCHAR *texto);

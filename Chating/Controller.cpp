@@ -270,12 +270,47 @@ void Controller::addObserver(HWND hWnd)
 
 void Controller::loadConfig(TCHAR* ipserver)
 {
+	HKEY key;
+	DWORD res;
+	DWORD size = TAMIP;
+
+	// Default
 	oTcharStream_t ip;
-	ip << TEXT("192.168.32.19");
-	_tcscpy_s(ipserver, _tcslen(ip.str().c_str())*sizeof(TCHAR), ip.str().c_str());
+	ip << TEXT("127.0.0.1");
+
+	if (RegCreateKeyEx(HKEY_LOCAL_MACHINE,TEXT("Software\\Chating"),0, NULL, REG_OPTION_VOLATILE,
+		KEY_ALL_ACCESS, NULL, &key, &res) != ERROR_SUCCESS)
+	{
+		_tcscpy_s(ipserver, _tcslen(ip.str().c_str())*sizeof(TCHAR), ip.str().c_str());
+		return;
+	}
+	//Se a chave foi criada, inicializar os valores
+	else if (res == REG_CREATED_NEW_KEY) {
+		_tcscpy_s(ipserver, _tcslen(ip.str().c_str())*sizeof(TCHAR), ip.str().c_str());
+	}
+	//Se a chave foi aberta, ler os valores lá guardados
+	else if (res == REG_OPENED_EXISTING_KEY) {
+		RegQueryValueEx(key, TEXT("IPServer"), NULL, NULL, (LPBYTE)ipserver, &size);
+		ipserver[size/sizeof(TCHAR)]='\0';
+	}
+	RegCloseKey(key);
 }
 
-void Controller::saveConfig(TCHAR* ipserver)
+bool Controller::saveConfig(TCHAR* ipserver)
 {
+	HKEY key;
+	DWORD res;
+	DWORD size = TAMIP;
 
+	if (RegCreateKeyEx(HKEY_LOCAL_MACHINE,TEXT("Software\\Chating"),0, NULL, REG_OPTION_VOLATILE,
+		KEY_ALL_ACCESS, NULL, &key, &res) != ERROR_SUCCESS)
+	{
+		return false;
+	}
+	else if (res == REG_CREATED_NEW_KEY || res == REG_OPENED_EXISTING_KEY)
+	{
+		RegSetValueEx(key, TEXT("IPServer"), 0, REG_SZ, (LPBYTE)ipserver, _tcslen(ipserver)*sizeof(TCHAR));
+	}
+	RegCloseKey(key);
+	return true;
 }
