@@ -177,9 +177,51 @@ BOOL CALLBACK DialogUtilizadores(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	return 0;
 }
 
+BOOL CALLBACK DialogConfig(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	TCHAR ipserver[TAMIP];
+
+	switch (message) {
+	case WM_CLOSE:
+		EndDialog(hWnd,0);
+		return 1;
+
+	case WM_INITDIALOG:
+		// Verificar se tem ponteiro da instância do Server
+		_ASSERT(ptrController);
+
+		ptrController->loadConfig(ipserver);
+
+		SetDlgItemText(hWnd, IDC_IPSERVER, ipserver);
+		return 1;
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case IDOK:
+			GetWindowText(GetDlgItem(hWnd, IDC_IPSERVER), ipserver, TAMIP);
+
+			if (_tcscmp(ipserver,TEXT("")) == 0)
+				break;
+
+			ptrController->saveConfig(ipserver);
+
+			EndDialog(hWnd,IDOK);
+			break;
+		case IDCANCEL:
+			EndDialog(hWnd,IDCANCEL);
+			break;
+		}
+	}
+	return 0;
+}
+
 void JanelaPrincipal::showUtilizadores(HWND hWnd)
 {
 	DialogBox(hInst, (LPCWSTR)IDD_UTILIZADORES, hWnd, (DLGPROC)DialogUtilizadores);
+}
+
+void JanelaPrincipal::showConfig(HWND hWnd)
+{
+	DialogBox(hInst, (LPCWSTR)IDD_CONFIG, hWnd, (DLGPROC)DialogConfig);
 }
 
 void JanelaPrincipal::startPrivateChat(HWND hWnd, const sTchar_t& username)
@@ -216,7 +258,7 @@ void JanelaPrincipal::login(HWND hWnd)
 	}
 	else if (result == IDCANCEL)
 	{
-		DestroyWindow(hWnd);
+		//PostMessage(WM_CLOSE);
 	}
 }
 
@@ -280,15 +322,21 @@ void JanelaPrincipal::refresh(HWND hWnd)
 		if (this->controller.getIsAdministrador())
 		{
 			EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_ENABLED);
+			EnableMenuItem(menu, ID_ADMINISTRADOR_DESLIGARSERVIDOR, MF_ENABLED);
 		}
 		else
+		{
 			EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_DISABLED);
+			EnableMenuItem(menu, ID_ADMINISTRADOR_DESLIGARSERVIDOR, MF_DISABLED);
+		}
 	}
 	else {
 		// Sem login
 		HMENU menu = GetMenu(hWnd);
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
+		EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_DISABLED);
+		EnableMenuItem(menu, ID_ADMINISTRADOR_DESLIGARSERVIDOR, MF_DISABLED);
 	}
 
 	refreshData();
@@ -386,8 +434,16 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		login(hWnd);
 		break;
 
+	case ID_CHAT_CONFIG:
+		showConfig(hWnd);
+		break;
+
 	case ID_ADMINISTRADOR_UTILIZADORES:
 		showUtilizadores(hWnd);
+		break;
+
+	case ID_ADMINISTRADOR_DESLIGARSERVIDOR:
+		this->controller.shutdownServer();
 		break;
 
 	default:

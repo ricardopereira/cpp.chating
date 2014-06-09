@@ -3,11 +3,20 @@
 
 Servidor::Servidor()
 {
+	isShutingDown = false;
 }
 
 Servidor::~Servidor()
 {
-//apagar memoria alocada dinamicamente
+	for (unsigned int i = 0; i < msgs.size(); i++)
+	{
+		delete msgs.at(i);
+	}
+
+	for (unsigned int i = 0; i < clientes.size(); i++)
+	{
+		delete clientes.at(i);
+	}
 }
 
 void Servidor::LoadRegistry() {
@@ -168,6 +177,14 @@ Servidor::rMsg Servidor::ShutdownUser(sTchar_t username)
 	this->sem_ServerData.Release();
 
 	return Servidor::USER_NOT_FOUND;
+}
+
+void Servidor::ShutdownClients()
+{
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		ShutdownUser(clientes.at(i)->GetUsername());
+	}
 }
 
 bool Servidor::ExistUser(sTchar_t username)
@@ -476,5 +493,11 @@ ClienteDados* Servidor::getClientData(int& pos){
 
 void Servidor::Shutdown()
 {
+	ShutdownClients();
+	isShutingDown = true;
+}
 
+bool Servidor::getIsShutingDown()
+{
+	return isShutingDown;
 }

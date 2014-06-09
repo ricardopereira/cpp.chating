@@ -6,6 +6,7 @@
 #define TAMLOGIN 15
 #define TAMPASS 15
 #define TAMTEXTO 100
+#define TAMIP 150
 
 #define NUMMSGSPUBLICAS 30
 #define NUMMSGSPRIVADAS 30

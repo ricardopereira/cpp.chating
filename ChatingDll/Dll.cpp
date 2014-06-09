@@ -5,7 +5,6 @@
 #include "ChatComunication.h"
 
 HANDLE hPipe;
-HANDLE assyncPipe;
 
 DLL_IMP_API int AbrirPipe() {
 	hPipe = CreateFile(
@@ -281,6 +280,7 @@ int Sair(const TCHAR* utilizador)
 
 int Desligar()
 {
+	doSimpleRequest(commands_t::DESLIGAR_SERVIDOR);
 	// Fecha o pipe
 	CloseHandle(hPipe);
 	return 0;

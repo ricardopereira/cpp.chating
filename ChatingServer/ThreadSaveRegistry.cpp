@@ -15,9 +15,9 @@ ThreadSaveRegistry::~ThreadSaveRegistry()
 }
 
 DWORD WINAPI ThreadSaveRegistry::funcaoThread() {
-	DWORD time = 5000;
+	DWORD time = 2000;
 	
-	while (1){
+	while (1) {
 		Sleep(time);
 		this->server->SaveRegistry();
 	}

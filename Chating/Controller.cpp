@@ -258,7 +258,24 @@ void Controller::shutdown()
 	}
 }
 
+void Controller::shutdownServer()
+{
+	Desligar();
+}
+
 void Controller::addObserver(HWND hWnd)
 {
 	observers.push_back(hWnd);
+}
+
+void Controller::loadConfig(TCHAR* ipserver)
+{
+	oTcharStream_t ip;
+	ip << TEXT("192.168.32.19");
+	_tcscpy_s(ipserver, _tcslen(ip.str().c_str())*sizeof(TCHAR), ip.str().c_str());
+}
+
+void Controller::saveConfig(TCHAR* ipserver)
+{
+
 }

@@ -25,8 +25,12 @@ public:
 	int login(const TCHAR* login, const TCHAR* pass);
 	int logout();
 	int signUp(const TCHAR* login, const TCHAR* pass);
-	void shutdown();
 
+	void shutdown();
+	void shutdownServer();
+
+	void loadConfig(TCHAR* ipserver);
+	void saveConfig(TCHAR* ipserver);
 	void loadPublicInformation();
 
 	void cEnviarMensagemPublica(const TCHAR *texto);

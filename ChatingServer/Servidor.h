@@ -10,11 +10,15 @@
 class Servidor
 {
 private:
+	bool						isShutingDown;
 	Semaforo					sem_ServerData;
 	Mutex_t						mut_ServerData;
 	std::vector<Mensagens*>		msgs;
 	std::vector<ClienteDados*>	clientes;
+
 	int SendToClient(MSG_T* buffer , HANDLE hPipe);
+protected:
+	void ShutdownClients();
 public:
 	enum rMsg {
 		USER_NOT_REGISTERED,
@@ -55,4 +59,5 @@ public:
 
 	int getUserCount();
 	int getUserOnlineCount();
+	bool getIsShutingDown();
 };

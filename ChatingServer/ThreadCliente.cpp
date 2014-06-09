@@ -114,6 +114,10 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 		case commands_t::LER_INFO_INICIAL:
 			server->RetrieveInformation(this->currentClient);
 			break;
+		case commands_t::DESLIGAR_SERVIDOR:
+			server->Shutdown();
+			powerOff = true;
+			break;
 		}
 
 		leituraEscritaSucesso = WriteFile(hPipe,
