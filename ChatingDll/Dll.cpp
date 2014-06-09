@@ -62,11 +62,10 @@ int Autenticar(const TCHAR *login, const TCHAR *pass)
 	_tcscpy_s(buffer.args[1], _tcslen(pass)*sizeof(TCHAR), pass);
 	buffer.command = commands_t::LOGIN;
 	
-	PTCHAR msg = TEXT("Ligacao com sucesso");
-	//DWORD msgBytes;
 	DWORD bytesSent;
 	DWORD bytesRead;
 	BOOL success = 0;
+
 	// Envio de pedido
 	success = WriteFile(hPipe,
 		&buffer, //message
@@ -248,9 +247,36 @@ void LerInformacaoInicial()
 	doSimpleRequest(commands_t::LER_INFO_INICIAL);
 }
 
-int Sair()
+int Sair(const TCHAR* utilizador)
 {
-	return doSimpleRequest(commands_t::LOGOUT);
+	// Escrever no pipe
+	chatbuffer_t buffer;
+	buffer.command = commands_t::LOGOUT;
+	_tcscpy_s(buffer.args[0], _tcslen(utilizador)*sizeof(TCHAR), utilizador);
+	
+	DWORD bytesSent;
+	DWORD bytesRead;
+	BOOL success = 0;
+
+	// Envio de pedido
+	success = WriteFile(hPipe,
+		&buffer, //message
+		sizeof(chatbuffer_t), //message length
+		&bytesSent, //bytes written
+		NULL); //not overlapped
+
+	if (!success)
+		return -1;
+
+	// Recebe a resposta
+	success = ReadFile(
+		hPipe,
+		&buffer,
+		sizeof(chatbuffer_t),
+		&bytesRead,
+		NULL);
+
+	return success;
 }
 
 int Desligar()

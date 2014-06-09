@@ -40,6 +40,8 @@ public:
 	rMsg Logout(sTchar_t username);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
 	rMsg RemoveUser(sTchar_t username);
+	bool ExistUser(sTchar_t username);
+	rMsg ShutdownUser(sTchar_t username);
 	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
 	rMsg SendPrivateMessage(ClienteDados &partner);
 	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
@@ -47,7 +49,6 @@ public:
 	rMsg SendUsersOnline(ClienteDados* currentClient);
 	rMsg UserGoOnline(ClienteDados* cliente);
 	rMsg UserGoOffline(ClienteDados* cliente);
-	rMsg ShutdownUser(ClienteDados* cliente);
 	rMsg CloseChat();
 	rMsg RetrieveInformation(ClienteDados* currentClient);
 	ClienteDados* getClientData(int& pos);

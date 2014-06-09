@@ -116,8 +116,6 @@ Servidor::rMsg Servidor::RemoveUser(sTchar_t username) {
 			// Não é possível remover o Administrador
 			if (itemCliente->getIsAdmin())
 				return Servidor::NO_PRIVILEDGES;
-
-			//ToDo: ShutdownUser(itemCliente);
 			
 			delete itemCliente;
 			clientes.erase(clientes.begin()+i);
@@ -136,6 +134,48 @@ Servidor::rMsg Servidor::RemoveUser(sTchar_t username) {
 	this->sem_ServerData.Release();
 
 	return Servidor::USER_NOT_FOUND;
+}
+
+Servidor::rMsg Servidor::ShutdownUser(sTchar_t username)
+{
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+
+	MSG_T buffer[BUFFER_RECORDS];
+	buffer[0].nMessages = 1;
+	buffer[0].messageType = typeMessages::DISCONNECT;
+
+	ClienteDados* itemClient = NULL;
+
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		itemClient = clientes.at(i);
+		if (itemClient->GetUsername() == username)
+			break;
+	}
+
+	if (itemClient && itemClient->GetIsOnline())
+	{
+		this->SendToClient(buffer, itemClient->GetPipe());
+
+		this->mut_ServerData.Release();
+		this->sem_ServerData.Release();
+
+		return Servidor::SUCCESS;
+	}
+
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
+	return Servidor::USER_NOT_FOUND;
+}
+
+bool Servidor::ExistUser(sTchar_t username)
+{
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+		if (clientes.at(i)->GetUsername() == username)
+			return true;
+	return false;
 }
 
 Servidor::rMsg Servidor::LancarChat(sTchar_t username, ClienteDados* partner) {
@@ -395,22 +435,6 @@ Servidor::rMsg Servidor::RetrieveInformation(ClienteDados* currentClient) {
 
 	this->SendToClient(buffer, currentClient->GetPipe());
 	
-	this->mut_ServerData.Release();
-	this->sem_ServerData.Release();
-
-	return Servidor::SUCCESS;
-}
-
-Servidor::rMsg Servidor::ShutdownUser(ClienteDados* cliente)
-{
-	if (!cliente) 
-		return Servidor::NO_PRIVILEDGES;
-
-	this->sem_ServerData.Wait();
-	this->mut_ServerData.Wait();
-
-	// ToDo
-
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
 

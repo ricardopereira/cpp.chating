@@ -8,6 +8,7 @@ ThreadCliente::ThreadCliente(HANDLE hPipe, Servidor* server)
 	this->ptrClasse = this;
 	this->hPipe = hPipe;
 	this->server = server;
+	this->currentClient = NULL;
 }
 
 ThreadCliente::~ThreadCliente()
@@ -51,6 +52,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			buffer.arg_num = server->RegisterUser(buffer.args[0], buffer.args[1], /*tipo*/1);
 			break;
 		case commands_t::ELIMINAR_UTILIZADOR:
+			server->ShutdownUser(buffer.args[0]);
 			buffer.arg_num = server->RemoveUser(buffer.args[0]);
 			break;
 		case commands_t::LOGIN:
@@ -70,7 +72,13 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			buffer.arg_num = result;
 			break;
 		case commands_t::LOGOUT:
-			result = server->Logout(this->currentClient->GetUsername());
+
+			if (server->ExistUser(buffer.args[0]))
+			{
+				result = server->Logout(this->currentClient->GetUsername());
+			}
+			else 
+				this->currentClient = new ClienteDados(buffer.args[0],TEXT(""),1,-1); // Removido pelo Admin
 			
 			// Logout com sucesso
 			if (result == Servidor::SUCCESS)

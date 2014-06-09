@@ -22,6 +22,6 @@ public:
 	bool GetIsOnline() const;
 	bool getIsAdmin() const;
 	void CreatePrivatePipe();
-	int GetId()const;
-	HANDLE GetPipe()const;
+	int GetId() const;
+	HANDLE GetPipe() const;
 };

@@ -55,7 +55,7 @@ void comandStart()
 	HANDLE hPipe, lastPipe;
 	BOOL connected = 1;
 	BOOL success = 0;
-	vector<ThreadCliente*> clients;	
+	vector<ThreadCliente*> threads;	
 	Servidor server;
 
 	// Registo
@@ -89,17 +89,17 @@ void comandStart()
 		if (connected)
 		{
 			// Cliente conectado
-			tcout << TEXT("New thread ") << clients.size() << TEXT(": client connected") << endl;
-			clients.push_back(new ThreadCliente(hPipe, &server));
-			clients.back()->LancarThread();
+			tcout << TEXT("New thread ") << threads.size() << TEXT(": client connected") << endl;
+			threads.push_back(new ThreadCliente(hPipe, &server));
+			threads.back()->LancarThread();
 		}
 		else{ //Não consegue conexão -> fechar handle.
 			CloseHandle(hPipe);
 		}
 	}
 
-	for (unsigned int i = 0; i < clients.size(); i++)
+	for (unsigned int i = 0; i < threads.size(); i++)
 	{
-		delete clients.at(i);
+		delete threads.at(i);
 	}
 }

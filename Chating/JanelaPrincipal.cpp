@@ -225,7 +225,7 @@ void JanelaPrincipal::logout(HWND hWnd)
 	oTcharStream_t res;
 	LRESULT opt = MessageBox(hWnd, TEXT("Deseja fazer logout?"), TEXT("Logout"), MB_YESNO | MB_ICONQUESTION);
 	if (opt == IDYES) {
-		res << this->controller.logout(); //Teste: res.str().c_str()
+		res << this->controller.logout();
 		reset(hWnd);
 	}
 }
@@ -313,6 +313,8 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 	// ToDo: Validar isto
 	hdc = GetDC(hWnd);
 	this->memdc = CreateCompatibleDC(hdc);
+
+	this->controller.addObserver(hWnd);
 }
 
 void JanelaPrincipal::onShow(HWND hWnd)
@@ -322,8 +324,12 @@ void JanelaPrincipal::onShow(HWND hWnd)
 
 bool JanelaPrincipal::onClose(HWND hWnd)
 {
-	delete assyncThread;
-	assyncThread = NULL;
+	if (assyncThread)
+	{
+		WaitForSingleObject(assyncThread,INFINITE);
+		delete assyncThread;
+		assyncThread = NULL;
+	}
 	this->controller.logout();
 	return true;
 }
@@ -367,7 +373,8 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	// Um comando
 	switch (LOWORD(wParam)) {
 	case ID_CHAT_SAIR:
-		DestroyWindow(hWnd);
+		//DestroyWindow(hWnd);
+		PostMessage(hWnd, WM_CLOSE, 0, 0);
 		break;
 
 	case ID_CHAT_LOGIN:

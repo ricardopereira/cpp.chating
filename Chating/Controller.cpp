@@ -99,6 +99,7 @@ void Controller::deleteUtilizador(const TCHAR *username)
 
 	user->setOffline();
 	// Remove da memória
+	removeUtilizadorOnline(username);
 	for (unsigned int i = 0; i < utilizadores.size(); i++)
 	{
 		if (utilizadores.at(i) == user) {
@@ -107,9 +108,6 @@ void Controller::deleteUtilizador(const TCHAR *username)
 			break;
 		}
 	}
-
-	// ToDo: Utilizador terá que ser desligado
-
 }
 
 ChatUser* Controller::addUtilizador(const TCHAR *username)
@@ -245,14 +243,22 @@ int Controller::logout()
 	if (!this->getIsAutenticado())
 		return 0;
 
-	int res = Sair();
+	int res = Sair(this->getUserAutenticado().getUsername().c_str());
 	
 	//if (res) ?
 	reset();
 	return res;
 }
 
-int Controller::shutdown()
+void Controller::shutdown()
 { 
-	return 1;
+	for (unsigned int i = 0; i < observers.size(); i++)
+	{
+		PostMessage(observers.at(0), WM_CLOSE, 0, 0);
+	}
+}
+
+void Controller::addObserver(HWND hWnd)
+{
+	observers.push_back(hWnd);
 }

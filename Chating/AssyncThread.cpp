@@ -27,6 +27,7 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 	//pointer to server class handles, and other stuff
 	MSG_T buffer[BUFFER_RECORDS];
 	DWORD bytesRead;
+	bool online = true;
 
 	if (!WaitNamedPipe(this->pipeName.c_str(), NMPWAIT_WAIT_FOREVER)){
 		MessageBox(0, TEXT("AssyncThread: Erro conexão ao pipe"), TEXT("Erro"), MB_OK | MB_ICONERROR);
@@ -47,7 +48,7 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 	if (hPipe == INVALID_HANDLE_VALUE)
 		MessageBox(0, TEXT("AssyncThread: Pipe inválido"), TEXT("Erro"), MB_OK | MB_ICONERROR);
 
-	while (1)
+	while (online)
 	{
 		// Espera que o pipe fique disponível do lado do Servidor
 
@@ -91,8 +92,14 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			this->controller.removeUtilizadorOnline(buffer[0].utilizador);
 			forceRefresh();
 			break;
+		case DISCONNECT:
+			online = false;
+			this->controller.shutdown();
+			break;
 		}
 	}
+
+	return 1;
 }
 
 void AssyncThread::forceRefresh()

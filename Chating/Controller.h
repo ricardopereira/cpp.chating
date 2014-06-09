@@ -11,6 +11,7 @@ class Controller
 private:
 	ChatUser* userAutenticado;
 
+	std::vector<HWND> observers;
 	std::vector<ChatUser*> utilizadores;
 	std::vector<ChatUser*> utilizadoresOnline;
 
@@ -24,7 +25,7 @@ public:
 	int login(const TCHAR* login, const TCHAR* pass);
 	int logout();
 	int signUp(const TCHAR* login, const TCHAR* pass);
-	int shutdown();
+	void shutdown();
 
 	void loadPublicInformation();
 
@@ -52,4 +53,6 @@ public:
 	bool getIsAutenticado();
 	bool getIsAdministrador();
 	const ChatUser& getUserAutenticado();
+
+	void addObserver(HWND hWnd);
 };

@@ -40,7 +40,8 @@ extern "C"
 		LIST_USERS_ONLINE,
 		LIST_ALL_USERS,
 		USER_ONLINE,
-		USER_OFFLINE
+		USER_OFFLINE,
+		DISCONNECT
 	};
 
 	typedef struct {
@@ -87,7 +88,7 @@ extern "C"
 	DLL_IMP_API void LerInformacaoInicial();
 	//DLL_IMP_API MENSAGEM LerMensagensPublicas();
 	//DLL_IMP_API MENSAGEM LerMensagensPrivadas();
-	DLL_IMP_API int Sair();
+	DLL_IMP_API int Sair(const TCHAR *utilizador);
 	DLL_IMP_API int Desligar();
 }
 

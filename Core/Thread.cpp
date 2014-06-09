@@ -8,9 +8,7 @@ Thread::Thread()
 
 Thread::~Thread()
 {
-	//Fora do ciclo de criação das threads
 	//Esperar threads terminarem
-
 	//if (this->handleThread)
 	//	WaitForSingleObject(this->handleThread,INFINITE);
 }
