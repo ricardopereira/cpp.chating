@@ -2,7 +2,7 @@
 #include "resource.h"
 
 #include "JanelaPrivada.h"
-
+sTchar_t titulo_p;
 JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t username, AssyncThread* assyncThread, HANDLE privateThread, int& flag) : controller(&controller), username(username)
 {
 	this->podeRedimensionar = false;
@@ -52,13 +52,6 @@ void JanelaPrivada::sendMessage(HWND hWnd, const TCHAR* msg)
 	// ToDo: funcao Trim
 	if (_tcscmp(msg, TEXT("")))
 	{
-		if (!this->controller->getIsAutenticado()) {
-			// ToDo: criar método
-			sTchar_t text;
-			text = TEXT("Tem que estar ligado.");
-			MessageBox(hWnd, text.c_str(), TEXT("Erro"), MB_OK | MB_ICONERROR);
-			return;
-		}
 
 		// Envia mensagem
 		this->controller->cEnviarMensagemPrivada(msg);
@@ -118,7 +111,7 @@ void JanelaPrivada::onShow(HWND hWnd)
 		msg.append(this->username.c_str());
 		msg.append(TEXT("?"));
 		DWORD result;
-		result = MessageBox(hWnd, msg.c_str(), TEXT("Informação"), MB_OKCANCEL | MB_ICONQUESTION);
+		result = MessageBox(hWnd, msg.c_str(), TEXT("Informação"), MB_OKCANCEL | MB_ICONQUESTION | MB_APPLMODAL);
 		if (result == IDCANCEL){
 			this->controller->cCancelarConversa();
 			SendMessage(hWnd, WM_DESTROY, 0, 0);
@@ -126,6 +119,14 @@ void JanelaPrivada::onShow(HWND hWnd)
 			ExitThread(1);
 		}
 	}
+	oTcharStream_t temp;
+	temp << TEXT("Chat Privado: ") << this->controller->getLoginAutenticado().getUsername()
+		<< TEXT(" - ") << this->username;
+
+	titulo_p = temp.str();
+
+	SetWindowText(hWnd, titulo_p.c_str());
+	this->AreaMensagens->setUsername(this->controller->getLoginAutenticado().getUsername());
 }
 
 bool JanelaPrivada::onClose(HWND hWnd)
@@ -208,7 +209,7 @@ void JanelaPrivada::onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	case WM_USER + 2: //CANCELAR CHAT
 		this->controller->cCancelarConversa();
 		//this->controller->c
-		MessageBox(hWnd, TEXT("O seu parceiro de conversação não quis iniciar a conversa."), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
+		MessageBox(hWnd, TEXT("O destinatário não quis iniciar a conversa."), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
 		SendMessage(hWnd, WM_DESTROY, 0, 0);
 		//TODO: Destroy allocated memory
 		ExitThread(1);

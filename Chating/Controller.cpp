@@ -228,7 +228,7 @@ int Controller::cDesligarConversa()
 
 int Controller::cEnviarMensagemPrivada(const TCHAR *texto)
 {
-	return EnviarMensagemPrivada(texto);
+	return EnviarMensagemPrivada(texto, this->getLoginAutenticado().getUsername().c_str());
 }
 void Controller::cCancelarConversa(){
 	CancelarConversa();

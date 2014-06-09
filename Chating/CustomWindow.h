@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <tchar.h>
 
+
 class CustomWindow
 {
 private:
@@ -50,4 +51,5 @@ public:
 	virtual void onPaint(HWND hWnd, HDC &hdc, RECT &rect);
 	virtual void onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
 	virtual void onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 };

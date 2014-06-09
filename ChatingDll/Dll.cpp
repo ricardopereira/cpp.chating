@@ -178,9 +178,37 @@ int DesligarConversa()
 	return doSimpleRequest(commands_t::FECHAR_CHAT);
 }
 
-int EnviarMensagemPrivada(const TCHAR *msg)
+int EnviarMensagemPrivada(const TCHAR *msg, const TCHAR *owner)
 {
 	// Escrever no pipe
+	chatbuffer_t buffer;
+	buffer.command = commands_t::ENVIAR_MSG_PRIVADA;
+	_tcscpy_s(buffer.args[0], _tcslen(msg)*sizeof(TCHAR), msg);
+	_tcscpy_s(buffer.args[1], _tcslen(owner)*sizeof(TCHAR), owner);
+	// ToDo: convém saber o login na mensagem
+
+	//DWORD msgBytes;
+	DWORD bytesSent;
+	DWORD bytesRead;
+	BOOL success = 0;
+
+	// Envio de pedido
+	success = WriteFile(hPipe,
+		&buffer, //message
+		sizeof(chatbuffer_t), //message length
+		&bytesSent, //bytes written
+		NULL); //not overlapped
+
+	if (!success)
+		return 0;
+
+	// Recebe a resposta
+	success = ReadFile(
+		hPipe,
+		&buffer,
+		sizeof(chatbuffer_t),
+		&bytesRead,
+		NULL);
 	return 0;
 }
 

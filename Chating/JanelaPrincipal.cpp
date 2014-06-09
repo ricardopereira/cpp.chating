@@ -6,6 +6,7 @@
 #include "JanelaPrincipal.h"
 #include "resource.h"
 
+sTchar_t titulo; // var global neste cpp
 // ToDo: Verificar com a professora se é possível passar uma instância para uma DialogBox
 Controller *ptrController;
 
@@ -85,13 +86,21 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Administrador
 			if (res == 2) {
 				MessageBox(hWnd, TEXT("Login com sucesso: Administrador"), TEXT("Login"), MB_OK | MB_ICONWARNING);
+				oTcharStream_t titulo_temp;
+				titulo_temp << TEXT("Chat Público - ") << login;
+				titulo = titulo_temp.str();
+				
 				EndDialog(hWnd,IDOK);
+
 			}
 			// Normal
 			else if (res == 1) {
 				TCHAR text[TAMTEXTO];
 				_stprintf_s(text, TAMTEXTO, _T("Login com sucesso: %s"), login);
 				MessageBox(hWnd, text, TEXT("Login"), MB_OK | MB_ICONINFORMATION);
+				oTcharStream_t titulo_temp;
+				titulo_temp << TEXT("Chat Público - ") << login;
+				titulo = titulo_temp.str();
 				EndDialog(hWnd,IDOK);
 			}
 			else {
@@ -308,11 +317,14 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 	// ToDo: Validar isto
 	hdc = GetDC(hWnd);
 	this->memdc = CreateCompatibleDC(hdc);
+
 }
 
 void JanelaPrincipal::onShow(HWND hWnd)
 {
 	login(hWnd);
+	SetWindowText(hWnd, titulo.c_str());
+
 }
 
 bool JanelaPrincipal::onClose(HWND hWnd)

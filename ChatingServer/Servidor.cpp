@@ -180,7 +180,36 @@ Servidor::rMsg Servidor::JoinChat(sTchar_t username, int& pos){
 Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados &partner) {
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
+	
+	// Instante atual
+	SYSTEMTIME hora;
+	GetSystemTime(&hora);
+	DATA dataActual;
+	dataActual.ano = hora.wYear;
+	dataActual.dia = hora.wDay;
+	dataActual.mes = hora.wMonth;
+	dataActual.hora = hora.wHour;
+	dataActual.minuto = hora.wMinute;
+	dataActual.segundo = hora.wSecond;
+	salada
+	// Guarda mensagem
+	this->msgs.push_back(new Mensagens(dataActual, cliente->GetId(), -1, message));
 
+	// Prepara mensagem
+	MSG_T buffer[BUFFER_RECORDS];
+	buffer[0].mensagem.instante = dataActual;
+	_tcscpy_s(buffer[0].mensagem.texto, message.size() *sizeof(TCHAR), message.c_str());
+	buffer[0].messageType = PUBLIC_MESSAGE;
+	buffer[0].nMessages = 1;
+	_tcscpy_s(buffer[0].utilizador, owner.size()*sizeof(TCHAR), owner.c_str());
+
+	// Broadcast
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		if (this->clientes.at(i)->GetIsOnline()){
+			this->SendToClient(buffer, clientes.at(i)->GetPipe());
+		}
+	}
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
 
