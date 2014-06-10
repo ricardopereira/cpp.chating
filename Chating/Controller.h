@@ -9,13 +9,13 @@
 class Controller
 {
 private:
-	bool autenticado;
-	bool privilegiosAdmin;
-	ChatUser* loginAutenticado;
+	ChatUser* userAutenticado;
+	sTchar_t privatePartner;
 
+	std::vector<HWND> observers;
 	std::vector<ChatUser*> utilizadores;
 	std::vector<ChatUser*> utilizadoresOnline;
-	sTchar_t privatePartner;
+
 	void loggedIn(const TCHAR* username, bool isAdmin=false);
 protected:
 	void destroyUtilizadores();
@@ -26,11 +26,17 @@ public:
 	int login(const TCHAR* login, const TCHAR* pass);
 	int logout();
 	int signUp(const TCHAR* login, const TCHAR* pass);
-	int shutdown();
 
-	void loadPublicInformation();
+	void shutdown();
+	void shutdownServer();
+	void reset();
 
+	void loadConfig(TCHAR* ipserver);
+	bool saveConfig(TCHAR* ipserver);
+
+	// Chat Publico
 	void cEnviarMensagemPublica(const TCHAR *texto);
+	void loadPublicInformation();
 
 	// Chat Privado
 	int cIniciarConversa(const TCHAR *utilizador, int flag=0);
@@ -38,7 +44,6 @@ public:
 	int cEnviarMensagemPrivada(const TCHAR *texto);
 	void cCancelarConversa();
 
-	void reset();
 	void deleteUtilizador(const TCHAR *username); // Só para admin
 	int getTotalUtilizadores();
 	int getTotalUtilizadoresOnline();
@@ -54,5 +59,7 @@ public:
 	void SetPrivatePartner(const sTchar_t privatePartner);
 	bool getIsAutenticado();
 	bool getIsAdministrador();
-	const ChatUser& getLoginAutenticado();
+	const ChatUser& getUserAutenticado();
+
+	void addObserver(HWND hWnd);
 };

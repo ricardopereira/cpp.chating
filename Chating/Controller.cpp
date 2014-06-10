@@ -22,26 +22,24 @@ void Controller::destroyUtilizadores()
 
 bool Controller::getIsAutenticado()
 {
-	// ToDo
-	return this->autenticado;
+	return this->userAutenticado != NULL;
 }
 
 bool Controller::getIsAdministrador()
 {
-	// ToDo
-	return this->privilegiosAdmin;
+	if (!getIsAutenticado())
+		return false;
+	return this->userAutenticado->getIsAdmin();
 }
 
-const ChatUser& Controller::getLoginAutenticado()
+const ChatUser& Controller::getUserAutenticado()
 {
-	return *this->loginAutenticado;
+	return *this->userAutenticado;
 }
 
 void Controller::reset()
 {
-	this->autenticado = false;
-	this->privilegiosAdmin = false;
-	this->loginAutenticado = NULL;
+	this->userAutenticado = NULL;
 
 	utilizadoresOnline.clear();
 	utilizadores.clear();
@@ -89,9 +87,27 @@ void Controller::deleteUtilizador(const TCHAR *username)
 	if (_tcscmp(username,TEXT("")) == 0)
 		return;
 
-	// ToDo: delete
+	ChatUser* user = getUtilizador(username);
+	// Nao e permitido eliminar o administrador
+	if (!user)
+		return;
+	if (user->getIsAdmin())
+		return;
 
-	int res = RemoverUtilizador(username);
+	if (!RemoverUtilizador(username))
+		return;
+
+	user->setOffline();
+	// Remove da memória
+	removeUtilizadorOnline(username);
+	for (unsigned int i = 0; i < utilizadores.size(); i++)
+	{
+		if (utilizadores.at(i) == user) {
+			delete user;
+			utilizadores.erase(utilizadores.begin()+i);
+			break;
+		}
+	}
 }
 
 ChatUser* Controller::addUtilizador(const TCHAR *username)
@@ -156,31 +172,22 @@ int Controller::login(const TCHAR* login, const TCHAR *pass)
 		return 0;
 
 	if (!pipeAberto) {
-		// ToDo: Não seria melhor a DLL gerir o pipe?!
-		//afinal, o recurso é da DLL, não da interface que apenas abusa da DLL
-
-		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
+		TCHAR ip[TAMIP];
+		loadConfig(ip);
+		pipeAberto = AbrirPipe(ip); //Abre o pipe para a comunicacao
 	}
 	int res = Autenticar(login, pass);
 
 	if (res == SUCCESS) {
 		loggedIn(login);
-		// ToDo - Redundante!
-		this->autenticado = true;
-		this->privilegiosAdmin = false;
 		return 1;
 	}
 	else if (res == SUCCESS_ADMIN) {
 		loggedIn(login,true);
-		// ToDo - Redundante!
-		this->autenticado = true;
-		this->privilegiosAdmin = true;
 		return 2;
 	}
 	else {
-		this->autenticado = false;
-		this->privilegiosAdmin = false;
-		this->loginAutenticado = NULL;
+		this->userAutenticado = NULL;
 	}
 	return 0;
 }
@@ -189,8 +196,11 @@ int Controller::signUp(const TCHAR* login, const TCHAR *pass)
 {
 	if (_tcscmp(login,TEXT("")) == 0)
 		return 0;
-	if (!pipeAberto){
-		pipeAberto = AbrirPipe(); //Abre o pipe para a comunicacao
+	if (!pipeAberto) {
+		TCHAR ip[TAMIP];
+		loadConfig(ip);
+		//Abre o pipe para a comunicacao
+		pipeAberto = AbrirPipe(ip);
 	}
 	int res = Registar(login, pass);
 	return res;
@@ -204,7 +214,7 @@ void Controller::loggedIn(const TCHAR* username, bool isAdmin)
 	if (isAdmin)
 		user->setAdmin();
 	
-	this->loginAutenticado = user;
+	this->userAutenticado = user;
 }
 
 void Controller::loadPublicInformation()
@@ -228,17 +238,17 @@ int Controller::cDesligarConversa()
 
 int Controller::cEnviarMensagemPrivada(const TCHAR *texto)
 {
-	return EnviarMensagemPrivada(texto, this->getLoginAutenticado().getUsername().c_str());
+	return EnviarMensagemPrivada(texto, this->getUserAutenticado().getUsername().c_str());
 }
-void Controller::cCancelarConversa(){
+
+void Controller::cCancelarConversa()
+{
 	CancelarConversa();
 }
 
-
 void Controller::cEnviarMensagemPublica(const TCHAR *texto)
 {
-	EnviarMensagemPublica(texto, this->getLoginAutenticado().getUsername().c_str());
-	return;
+	EnviarMensagemPublica(texto, this->getUserAutenticado().getUsername().c_str());
 }
 
 int Controller::logout()
@@ -246,14 +256,74 @@ int Controller::logout()
 	if (!this->getIsAutenticado())
 		return 0;
 
-	int res = Sair();
+	int res = Sair(this->getUserAutenticado().getUsername().c_str());
 	
 	//if (res) ?
 	reset();
 	return res;
 }
 
-int Controller::shutdown()
+void Controller::shutdown()
 { 
-	return 1;
+	for (unsigned int i = 0; i < observers.size(); i++)
+	{
+		PostMessage(observers.at(0), WM_CLOSE, 0, 0);
+	}
+}
+
+void Controller::shutdownServer()
+{
+	Desligar();
+}
+
+void Controller::addObserver(HWND hWnd)
+{
+	observers.push_back(hWnd);
+}
+
+void Controller::loadConfig(TCHAR* ipserver)
+{
+	HKEY key;
+	DWORD res;
+	DWORD size = TAMIP;
+
+	// Default
+	oTcharStream_t ip;
+	ip << TEXT("127.0.0.1");
+
+	if (RegCreateKeyEx(HKEY_LOCAL_MACHINE,TEXT("Software\\Chating"),0, NULL, REG_OPTION_VOLATILE,
+		KEY_ALL_ACCESS, NULL, &key, &res) != ERROR_SUCCESS)
+	{
+		_tcscpy_s(ipserver, _tcslen(ip.str().c_str())*sizeof(TCHAR), ip.str().c_str());
+		return;
+	}
+	//Se a chave foi criada, inicializar os valores
+	else if (res == REG_CREATED_NEW_KEY) {
+		_tcscpy_s(ipserver, _tcslen(ip.str().c_str())*sizeof(TCHAR), ip.str().c_str());
+	}
+	//Se a chave foi aberta, ler os valores lá guardados
+	else if (res == REG_OPENED_EXISTING_KEY) {
+		RegQueryValueEx(key, TEXT("IPServer"), NULL, NULL, (LPBYTE)ipserver, &size);
+		ipserver[size/sizeof(TCHAR)]='\0';
+	}
+	RegCloseKey(key);
+}
+
+bool Controller::saveConfig(TCHAR* ipserver)
+{
+	HKEY key;
+	DWORD res;
+	DWORD size = TAMIP;
+
+	if (RegCreateKeyEx(HKEY_LOCAL_MACHINE,TEXT("Software\\Chating"),0, NULL, REG_OPTION_VOLATILE,
+		KEY_ALL_ACCESS, NULL, &key, &res) != ERROR_SUCCESS)
+	{
+		return false;
+	}
+	else if (res == REG_CREATED_NEW_KEY || res == REG_OPENED_EXISTING_KEY)
+	{
+		RegSetValueEx(key, TEXT("IPServer"), 0, REG_SZ, (LPBYTE)ipserver, _tcslen(ipserver)*sizeof(TCHAR));
+	}
+	RegCloseKey(key);
+	return true;
 }

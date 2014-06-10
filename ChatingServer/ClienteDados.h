@@ -12,6 +12,7 @@ class ClienteDados
 	bool isBusy;
 	HANDLE privatePipe;
 	int id;
+	SECURITY_ATTRIBUTES sa;
 public:
 	ClienteDados(const sTchar_t username, const sTchar_t password, int tipo, int id);
 	~ClienteDados();
@@ -24,7 +25,8 @@ public:
 	bool GetIsOnline() const;
 	bool getIsAdmin() const;
 	bool GetIsBusy() const;
+	SECURITY_ATTRIBUTES* getSecurity();
 	void CreatePrivatePipe();
-	int GetId()const;
-	HANDLE GetPipe()const;
+	int GetId() const;
+	HANDLE GetPipe() const;
 };

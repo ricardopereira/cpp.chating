@@ -8,6 +8,7 @@ ThreadCliente::ThreadCliente(HANDLE hPipe, Servidor* server)
 	this->ptrClasse = this;
 	this->hPipe = hPipe;
 	this->server = server;
+	this->currentClient = NULL;
 }
 
 ThreadCliente::~ThreadCliente()
@@ -21,9 +22,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	BOOL leituraEscritaSucesso = false;
 	DWORD bytesLidos = 0;
 	DWORD bytesEscritos = 0;
-	sTchar_t pass = TEXT(""); //temp
-	sTchar_t usrname = TEXT(""); //temp
-	sTchar_t usrnametoremove = TEXT(""); //temp
+
 	int result;
 	int pos;
 	bool firstTime = true;
@@ -52,8 +51,12 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 
 		switch (buffer.command){
 			//Cada accção deve devolver um código de (in)sucesso
-		case commands_t::REGISTER_NEW_USER:
+		case commands_t::CRIAR_UTILIZADOR:
 			buffer.arg_num = server->RegisterUser(buffer.args[0], buffer.args[1], /*tipo*/1);
+			break;
+		case commands_t::ELIMINAR_UTILIZADOR:
+			server->ShutdownUser(buffer.args[0]);
+			buffer.arg_num = server->RemoveUser(buffer.args[0]);
 			break;
 		case commands_t::LOGIN:
 			result = server->Login(buffer.args[0], buffer.args[1], &pos);
@@ -62,7 +65,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			if (result == Servidor::SUCCESS || result == Servidor::SUCCESS_ADMIN)
 			{
 				this->currentClient = server->getClientData(pos);
-				server->SendUserGoOnline(this->currentClient);
+				server->UserGoOnline(this->currentClient);
 				tcout << getInfo() << TEXT("logged in - ") << buffer.args[0] << endl;
 			}
 			else if (result == Servidor::USER_NOT_FOUND && server->getUserCount() == 0)
@@ -71,12 +74,18 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			buffer.arg_num = result;
 			break;
 		case commands_t::LOGOUT:
-			result = server->Logout(this->currentClient->GetUsername());
+
+			if (server->ExistUser(buffer.args[0]))
+			{
+				result = server->Logout(this->currentClient->GetUsername());
+			}
+			else 
+				this->currentClient = new ClienteDados(buffer.args[0],TEXT(""),1,-1); // Removido pelo Admin
 			
 			// Logout com sucesso
 			if (result == Servidor::SUCCESS)
 			{
-				server->SendUserGoOffline(this->currentClient);
+				server->UserGoOffline(this->currentClient);
 				tcout << getInfo() << TEXT("logged out - ") << this->currentClient->GetUsername() << endl;
 				this->currentClient = NULL;
 			}
@@ -93,18 +102,21 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			break;
 		case commands_t::LANCAR_CHAT:
 			result = Servidor::ERROR_SRV;
-			if (buffer.arg_num == 0)  {//cliente 1
+
+			if (buffer.arg_num == 0)  { //cliente 1
 				result = server->LancarChat(buffer.args[0], pos, this->currentClient);	
 			}
 			else {
 				result = server->JoinChat(buffer.args[0], pos);
 			}
+
 			if (result == Servidor::SUCCESS){
 				this->currentPartner = server->getClientData(pos);
 			}
-			else{
+			else {
 				this->currentClient->SetIsBusy(false);
 			}
+
 			buffer.arg_num = result;
 			break;
 		case commands_t::ENVIAR_MSG_PRIVADA:
@@ -126,8 +138,9 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 				server->RetrieveInformation(this->currentClient, this->currentPartner);
 			}
 			break;
-		case commands_t::ELIMINAR_UTILIZADOR:
-			server->RemoveUser(usrnametoremove);
+		case commands_t::DESLIGAR_SERVIDOR:
+			server->Shutdown();
+			powerOff = true;
 			break;
 		case commands_t::CANCELAR_CONVERSA:
 			server->CancelarConversa(this->currentClient, this->currentPartner);

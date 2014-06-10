@@ -61,7 +61,7 @@ void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class
 
 BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	TCHAR login[TAMLOGIN], password[TAMPASS];
+	TCHAR username[TAMLOGIN], password[TAMPASS];
 	int res = 0;
 
 	switch (message) {
@@ -74,33 +74,33 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDOK:
-			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
+			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), username, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
 
-			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
+			if (_tcscmp(username,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
 				break;
 
 			if (ptrController)
-				res = ptrController->login(login, password);
+				res = ptrController->login(username, password);
 
 			// Administrador
 			if (res == 2) {
 				MessageBox(hWnd, TEXT("Login com sucesso: Administrador"), TEXT("Login"), MB_OK | MB_ICONWARNING);
 				oTcharStream_t titulo_temp;
-				titulo_temp << TEXT("Chat Público - ") << login;
+				titulo_temp << TEXT("Chat Público - ") << username;
 				titulo = titulo_temp.str();
 				
 				EndDialog(hWnd,IDOK);
-
 			}
 			// Normal
 			else if (res == 1) {
 				TCHAR text[TAMTEXTO];
-				_stprintf_s(text, TAMTEXTO, _T("Login com sucesso: %s"), login);
+				_stprintf_s(text, TAMTEXTO, _T("Login com sucesso: %s"), username);
 				MessageBox(hWnd, text, TEXT("Login"), MB_OK | MB_ICONINFORMATION);
 				oTcharStream_t titulo_temp;
-				titulo_temp << TEXT("Chat Público - ") << login;
+				titulo_temp << TEXT("Chat Público - ") << username;
 				titulo = titulo_temp.str();
+
 				EndDialog(hWnd,IDOK);
 			}
 			else {
@@ -114,13 +114,13 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDC_NEWUSER:
 			// Registar utilizador
-			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), login, TAMLOGIN);
+			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), username, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
 
-			if (_tcscmp(login,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
+			if (_tcscmp(username,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
 				break;
 
-			res = ptrController->signUp(login, password);
+			res = ptrController->signUp(username, password);
 			if (res == SUCCESS ){
 				sTchar_t text;
 				text = TEXT("Utilizador registado com sucesso. Pode proceder com a operação de login.");
@@ -164,14 +164,58 @@ BOOL CALLBACK DialogUtilizadores(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		case IDC_ELIMINARUTILIZADOR:
 			// Obter item da lista de utilizadores
 			int i = SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETCURSEL, 0, 0);
-
 			// Existe um item seleccionado
 			if (i >= 0)
 			{
 				TCHAR utilizador[TAMLOGIN];
 				SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETTEXT, i, (LPARAM)utilizador);
-				ptrController->deleteUtilizador(utilizador);
+
+				oTcharStream_t msg;
+				msg << _T("Deseja remover o utilizador ") << utilizador << _T("?");
+
+				LRESULT opt = MessageBox(hWnd, msg.str().c_str(), TEXT("Remover utilizador"), MB_YESNO | MB_ICONQUESTION);
+				if (opt == IDYES) {
+					ptrController->deleteUtilizador(utilizador);
+					EndDialog(hWnd,IDCANCEL);
+				}
 			}
+			break;
+		}
+	}
+	return 0;
+}
+
+BOOL CALLBACK DialogConfig(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	TCHAR ipserver[TAMIP];
+
+	switch (message) {
+	case WM_CLOSE:
+		EndDialog(hWnd,0);
+		return 1;
+
+	case WM_INITDIALOG:
+		// Verificar se tem ponteiro da instância do Server
+		_ASSERT(ptrController);
+
+		ptrController->loadConfig(ipserver);
+
+		SetDlgItemText(hWnd, IDC_IPSERVER, ipserver);
+		return 1;
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case IDOK:
+			GetWindowText(GetDlgItem(hWnd, IDC_IPSERVER), ipserver, TAMIP);
+
+			if (_tcscmp(ipserver,TEXT("")) == 0)
+				break;
+
+			ptrController->saveConfig(ipserver);
+
+			EndDialog(hWnd,IDOK);
+			break;
+		case IDCANCEL:
+			EndDialog(hWnd,IDCANCEL);
 			break;
 		}
 	}
@@ -183,6 +227,11 @@ void JanelaPrincipal::showUtilizadores(HWND hWnd)
 	DialogBox(hInst, (LPCWSTR)IDD_UTILIZADORES, hWnd, (DLGPROC)DialogUtilizadores);
 }
 
+void JanelaPrincipal::showConfig(HWND hWnd)
+{
+	DialogBox(hInst, (LPCWSTR)IDD_CONFIG, hWnd, (DLGPROC)DialogConfig);
+}
+
 void JanelaPrincipal::startPrivateChat(HWND hWnd, sTchar_t username, int flag)
 {
 	// ToDo: só pode existir uma janela
@@ -190,8 +239,6 @@ void JanelaPrincipal::startPrivateChat(HWND hWnd, sTchar_t username, int flag)
 		delete privateChat;
 
 	privateChat = new ThreadPrivateChat(this->controller, username, this->assyncThread, flag, this->GetHwnd());
-
-
 	privateChat->setHwndPai(hWnd);
 	privateChat->sethInstance(this->hInst);
 	privateChat->LancarThread();
@@ -203,12 +250,12 @@ void JanelaPrincipal::login(HWND hWnd)
 
 	if (result == IDOK && this->controller.getIsAutenticado())
 	{
-		this->AreaMensagens->setUsername(controller.getLoginAutenticado().getUsername().c_str());
+		this->AreaMensagens->setUsername(controller.getUserAutenticado().getUsername().c_str());
 
 		refresh(hWnd);
 
 		// Cria thread para receber mensagens
-		assyncThread = new AssyncThread(controller.getLoginAutenticado().getUsername().c_str(), 
+		assyncThread = new AssyncThread(controller.getUserAutenticado().getUsername().c_str(), 
 			this->controller, *this->AreaMensagens, *this->ListaUtilizadores, this->GetHwnd());
 		assyncThread->LancarThread();
 
@@ -219,7 +266,7 @@ void JanelaPrincipal::login(HWND hWnd)
 	}
 	else if (result == IDCANCEL)
 	{
-		DestroyWindow(hWnd);
+		//PostMessage(WM_CLOSE);
 	}
 }
 
@@ -228,9 +275,8 @@ void JanelaPrincipal::logout(HWND hWnd)
 	oTcharStream_t res;
 	LRESULT opt = MessageBox(hWnd, TEXT("Deseja fazer logout?"), TEXT("Logout"), MB_YESNO | MB_ICONQUESTION);
 	if (opt == IDYES) {
-		res << this->controller.logout(); //Teste: res.str().c_str()
+		res << this->controller.logout();
 		reset(hWnd);
-		//MessageBox(0, TEXT("Logout com sucesso"), TEXT("Logout"), MB_OK | MB_ICONINFORMATION);
 	}
 }
 
@@ -280,19 +326,27 @@ void JanelaPrincipal::refresh(HWND hWnd)
 		// Login com sucesso
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_DISABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_ENABLED);
+		EnableMenuItem(menu, ID_CHAT_CONFIG, MF_DISABLED);
 
 		if (this->controller.getIsAdministrador())
 		{
 			EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_ENABLED);
+			EnableMenuItem(menu, ID_ADMINISTRADOR_DESLIGARSERVIDOR, MF_ENABLED);
 		}
 		else
+		{
 			EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_DISABLED);
+			EnableMenuItem(menu, ID_ADMINISTRADOR_DESLIGARSERVIDOR, MF_DISABLED);
+		}
 	}
 	else {
 		// Sem login
 		HMENU menu = GetMenu(hWnd);
 		EnableMenuItem(menu, ID_CHAT_LOGIN, MF_ENABLED);
 		EnableMenuItem(menu, ID_CHAT_LOGOUT, MF_DISABLED);
+		EnableMenuItem(menu, ID_CHAT_CONFIG, MF_ENABLED);
+		EnableMenuItem(menu, ID_ADMINISTRADOR_UTILIZADORES, MF_DISABLED);
+		EnableMenuItem(menu, ID_ADMINISTRADOR_DESLIGARSERVIDOR, MF_DISABLED);
 	}
 
 	refreshData();
@@ -317,7 +371,7 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 	// ToDo: Validar isto
 	hdc = GetDC(hWnd);
 	this->memdc = CreateCompatibleDC(hdc);
-
+	this->controller.addObserver(hWnd);
 }
 
 void JanelaPrincipal::onShow(HWND hWnd)
@@ -329,8 +383,12 @@ void JanelaPrincipal::onShow(HWND hWnd)
 
 bool JanelaPrincipal::onClose(HWND hWnd)
 {
-	delete assyncThread;
-	assyncThread = NULL;
+	if (assyncThread)
+	{
+		WaitForSingleObject(assyncThread,INFINITE);
+		delete assyncThread;
+		assyncThread = NULL;
+	}
 	this->controller.logout();
 	return true;
 }
@@ -374,7 +432,8 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	// Um comando
 	switch (LOWORD(wParam)) {
 	case ID_CHAT_SAIR:
-		DestroyWindow(hWnd);
+		//DestroyWindow(hWnd);
+		PostMessage(hWnd, WM_CLOSE, 0, 0);
 		break;
 
 	case ID_CHAT_LOGIN:
@@ -386,11 +445,19 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		login(hWnd);
 		break;
 
+	case ID_CHAT_CONFIG:
+		showConfig(hWnd);
+		break;
+
 	case ID_ADMINISTRADOR_UTILIZADORES:
 		showUtilizadores(hWnd);
 		break;
 	
 
+
+	case ID_ADMINISTRADOR_DESLIGARSERVIDOR:
+		this->controller.shutdownServer();
+		break;
 
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {

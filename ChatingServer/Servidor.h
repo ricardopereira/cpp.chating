@@ -10,11 +10,15 @@
 class Servidor
 {
 private:
+	bool						isShutingDown;
 	Semaforo					sem_ServerData;
 	Mutex_t						mut_ServerData;
 	std::vector<Mensagens*>		msgs;
 	std::vector<ClienteDados*>	clientes;
+
 	int SendToClient(MSG_T* buffer , HANDLE hPipe);
+protected:
+	void ShutdownClients();
 public:
 	enum rMsg {
 		USER_NOT_REGISTERED,
@@ -36,18 +40,21 @@ public:
 
 	void LoadRegistry();
 	void SaveRegistry();
+	void Shutdown();
 	rMsg Login(sTchar_t username, sTchar_t password, int* pos);
 	rMsg Logout(sTchar_t username);
 	rMsg RegisterUser(sTchar_t username, sTchar_t password, int type);
 	rMsg RemoveUser(sTchar_t username);
+	bool ExistUser(sTchar_t username);
+	rMsg ShutdownUser(sTchar_t username);
 	rMsg LancarChat(sTchar_t username, int& pos, ClienteDados* currentUser);
 	rMsg JoinChat(sTchar_t username, int& pos);
 	rMsg SendPrivateMessage(ClienteDados& currentCliente, ClienteDados &partner, sTchar_t message);
 	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
 	rMsg SendUsers(ClienteDados* currentClient);
 	rMsg SendUsersOnline(ClienteDados* currentClient);
-	rMsg SendUserGoOnline(ClienteDados* cliente);
-	rMsg SendUserGoOffline(ClienteDados* cliente);
+	rMsg UserGoOnline(ClienteDados* cliente);
+	rMsg UserGoOffline(ClienteDados* cliente);
 	rMsg CloseChat(ClienteDados* partner, ClienteDados* currentUser);
 	rMsg RetrieveInformation(ClienteDados* currentClient);
 	rMsg RetrieveInformation(ClienteDados* currentClient, ClienteDados* currentPartner);
@@ -56,4 +63,5 @@ public:
 
 	int getUserCount();
 	int getUserOnlineCount();
+	bool getIsShutingDown();
 };

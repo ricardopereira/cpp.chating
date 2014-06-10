@@ -40,7 +40,7 @@ void ChatBoxItem::doPaint(HDC hdc, HWND hWnd, ChatBox &chat, int index)
 	int cellHeight = 60;
 	int margin = 10;
 	int messageMargin = 100;
-	UINT userFormat;
+	UINT infoFormat;
 	UINT messageFormat;
 
 	// Define o posicionamento da mensagem
@@ -73,16 +73,16 @@ void ChatBoxItem::doPaint(HDC hdc, HWND hWnd, ChatBox &chat, int index)
 
 	// Determina o posicionamento do texto
 	if (isOwner) {
-		userFormat = DT_RIGHT | DT_TOP | DT_SINGLELINE;
+		infoFormat = DT_RIGHT | DT_TOP | DT_SINGLELINE;
 		messageFormat = DT_RIGHT | DT_BOTTOM | DT_SINGLELINE;
 	} else {
-		userFormat = DT_LEFT | DT_TOP | DT_SINGLELINE;
+		infoFormat = DT_LEFT | DT_TOP | DT_SINGLELINE;
 		messageFormat = DT_LEFT | DT_BOTTOM | DT_SINGLELINE;
 	}
 
 	// Escrever as linhas de informação
 	SetTextColor(hdc, RGB(255,0,0));
-	DrawText(hdc, username.c_str(), username.length(), &rc, userFormat);
+	DrawText(hdc, info.c_str(), info.length(), &rc, infoFormat);
 	SetTextColor(hdc, RGB(0,0,0));
 	DrawText(hdc, message.c_str(), message.length(), &rc, messageFormat);
 }

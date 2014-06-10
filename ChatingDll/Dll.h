@@ -6,6 +6,7 @@
 #define TAMLOGIN 15
 #define TAMPASS 15
 #define TAMTEXTO 100
+#define TAMIP 150
 
 #define NUMMSGSPUBLICAS 30
 #define NUMMSGSPRIVADAS 30
@@ -19,6 +20,7 @@
 
 extern "C"
 {
+	// Atencao: duplicado no Servidor::rMsg
 	enum returnMessages {
 		USER_NOT_REGISTERED,
 		USER_NOT_FOUND,
@@ -41,6 +43,7 @@ extern "C"
 		USER_ONLINE,
 		USER_OFFLINE,
 		CLOSE_CHAT,
+		DISCONNECT,
 		_LANCARCHAT,
 		_CANCELAR_CONVERSA
 	};
@@ -75,11 +78,11 @@ extern "C"
 	} CHAT;
 
 	//Funções a serem exportadas/importadas
-	DLL_IMP_API int AbrirPipe();
+	DLL_IMP_API int AbrirPipe(const TCHAR* ip);
 
 	DLL_IMP_API int Autenticar(const TCHAR *login, const TCHAR *pass);
 	DLL_IMP_API int Registar(const TCHAR *login, const TCHAR *pass);
-	DLL_IMP_API int RemoverUtilizador(const TCHAR *login);
+	DLL_IMP_API bool RemoverUtilizador(const TCHAR *login);
 	DLL_IMP_API int LerListaUtilizadores();
 	DLL_IMP_API int LerListaUtilizadoresRegistados();
 	DLL_IMP_API int IniciarConversa(const TCHAR *utilizador, int flag);
@@ -89,7 +92,7 @@ extern "C"
 	DLL_IMP_API void LerInformacaoInicial();
 	//DLL_IMP_API MENSAGEM LerMensagensPublicas();
 	//DLL_IMP_API MENSAGEM LerMensagensPrivadas();
-	DLL_IMP_API int Sair();
+	DLL_IMP_API int Sair(const TCHAR *utilizador);
 	DLL_IMP_API int Desligar();
 	DLL_IMP_API void CancelarConversa();
 }

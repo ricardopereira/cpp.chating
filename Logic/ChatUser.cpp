@@ -2,7 +2,10 @@
 
 ChatUser::ChatUser(const TCHAR *username) : username(username)
 {
-
+	this->type = 0;
+	this->online = false;
+	this->admin = false;
+	this->hasPrivateChat = false;
 }
 
 ChatUser::~ChatUser()

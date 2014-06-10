@@ -120,13 +120,13 @@ void JanelaPrivada::onShow(HWND hWnd)
 		}
 	}
 	oTcharStream_t temp;
-	temp << TEXT("Chat Privado: ") << this->controller->getLoginAutenticado().getUsername()
+	temp << TEXT("Chat Privado: ") << this->controller->getUserAutenticado().getUsername()
 		<< TEXT(" - ") << this->username;
 
 	titulo_p = temp.str();
 
 	SetWindowText(hWnd, titulo_p.c_str());
-	this->AreaMensagens->setUsername(this->controller->getLoginAutenticado().getUsername());
+	this->AreaMensagens->setUsername(this->controller->getUserAutenticado().getUsername());
 	LerInformacaoInicial();
 }
 
@@ -203,14 +203,12 @@ void JanelaPrivada::onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	switch (message){
 
 	case WM_USER: //Exclusivo para a janela privada
-		
 		MessageBox(hWnd, TEXT("O seu parceiro de conversação abandonou a conversa. Esta janela vai fechar"), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
-		////Desalocar objectos dinâmicos da janela privada.
+		//Desalocar objectos dinâmicos da janela privada.
 		SendMessage(hWnd, WM_DESTROY, 0, 0); //Enviar uma mensagem a si própria para se destruir.
 		break;
 	case WM_USER + 2: //CANCELAR CHAT
 		this->controller->cCancelarConversa();
-		//this->controller->c
 		MessageBox(hWnd, TEXT("O destinatário não quis iniciar a conversa."), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
 		SendMessage(hWnd, WM_DESTROY, 0, 0);
 		//TODO: Destroy allocated memory

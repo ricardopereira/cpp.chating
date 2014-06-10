@@ -4,12 +4,15 @@
 #include <io.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <aclapi.h>
+#include <strsafe.h>
 
 #include "Shell.h"
 #include "ChatComunication.h"
 #include "ThreadCliente.h"
 #include "ThreadSaveRegistry.h"
 #include "Servidor.h"
+#include "Security.h"
 
 using namespace std;
 
@@ -55,8 +58,9 @@ void comandStart()
 	HANDLE hPipe, lastPipe;
 	BOOL connected = 1;
 	BOOL success = 0;
-	vector<ThreadCliente*> clients;	
+	vector<ThreadCliente*> threads;
 	Servidor server;
+	SECURITY_ATTRIBUTES sa = security::Seguranca();
 
 	// Registo
 	server.LoadRegistry();
@@ -66,14 +70,14 @@ void comandStart()
 
 	while (1) {
 		// Criar instância
-		hPipe = CreateNamedPipe(PIPENAME_SERVER,
+		hPipe = CreateNamedPipe(PIPE_SERVER,
 			PIPE_ACCESS_DUPLEX, //OpenMode
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, //PipeMode
 			PIPE_UNLIMITED_INSTANCES, //MaxInstances
 			sizeof(chatbuffer_t), //Int
 			sizeof(chatbuffer_t), //Out
 			0, //Timeout
-			NULL); //Security
+			&sa); //Security
 
 		// Verificar se pipe foi instanciado
 		if (hPipe == INVALID_HANDLE_VALUE)
@@ -89,17 +93,17 @@ void comandStart()
 		if (connected)
 		{
 			// Cliente conectado
-			tcout << TEXT("New thread ") << clients.size() << TEXT(": client connected") << endl;
-			clients.push_back(new ThreadCliente(hPipe, &server));
-			clients.back()->LancarThread();
+			tcout << TEXT("New thread ") << threads.size() << TEXT(": client connected") << endl;
+			threads.push_back(new ThreadCliente(hPipe, &server));
+			threads.back()->LancarThread();
 		}
 		else{ //Não consegue conexão -> fechar handle.
 			CloseHandle(hPipe);
 		}
 	}
 
-	for (unsigned int i = 0; i < clients.size(); i++)
+	for (unsigned int i = 0; i < threads.size(); i++)
 	{
-		delete clients.at(i);
+		delete threads.at(i);
 	}
 }
