@@ -42,7 +42,10 @@ extern "C"
 		LIST_ALL_USERS,
 		USER_ONLINE,
 		USER_OFFLINE,
-		DISCONNECT
+		CLOSE_CHAT,
+		DISCONNECT,
+		_LANCARCHAT,
+		_CANCELAR_CONVERSA
 	};
 
 	typedef struct {
@@ -82,15 +85,16 @@ extern "C"
 	DLL_IMP_API bool RemoverUtilizador(const TCHAR *login);
 	DLL_IMP_API int LerListaUtilizadores();
 	DLL_IMP_API int LerListaUtilizadoresRegistados();
-	DLL_IMP_API int IniciarConversa(const TCHAR *utilizador);
+	DLL_IMP_API int IniciarConversa(const TCHAR *utilizador, int flag);
 	DLL_IMP_API int DesligarConversa();
-	DLL_IMP_API int EnviarMensagemPrivada(const TCHAR *msg);
+	DLL_IMP_API int EnviarMensagemPrivada(const TCHAR *msg, const TCHAR *owner);
 	DLL_IMP_API void EnviarMensagemPublica(const TCHAR *msg, const TCHAR *owner);
 	DLL_IMP_API void LerInformacaoInicial();
 	//DLL_IMP_API MENSAGEM LerMensagensPublicas();
 	//DLL_IMP_API MENSAGEM LerMensagensPrivadas();
 	DLL_IMP_API int Sair(const TCHAR *utilizador);
 	DLL_IMP_API int Desligar();
+	DLL_IMP_API void CancelarConversa();
 }
 
 #endif

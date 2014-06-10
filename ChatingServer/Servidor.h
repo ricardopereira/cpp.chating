@@ -31,7 +31,8 @@ public:
 		PIPE_ERROR,
 		REGEDIT_OK,
 		REGEDIT_FIRST_TIME, 
-		REGEDIT_NOT_OK
+		REGEDIT_NOT_OK,
+		ERROR_SRV
 	};
 
 	Servidor();
@@ -46,15 +47,18 @@ public:
 	rMsg RemoveUser(sTchar_t username);
 	bool ExistUser(sTchar_t username);
 	rMsg ShutdownUser(sTchar_t username);
-	rMsg LancarChat(sTchar_t username, ClienteDados* partner);
-	rMsg SendPrivateMessage(ClienteDados &partner);
+	rMsg LancarChat(sTchar_t username, int& pos, ClienteDados* currentUser);
+	rMsg JoinChat(sTchar_t username, int& pos);
+	rMsg SendPrivateMessage(ClienteDados& currentCliente, ClienteDados &partner, sTchar_t message);
 	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
 	rMsg SendUsers(ClienteDados* currentClient);
 	rMsg SendUsersOnline(ClienteDados* currentClient);
 	rMsg UserGoOnline(ClienteDados* cliente);
 	rMsg UserGoOffline(ClienteDados* cliente);
-	rMsg CloseChat();
+	rMsg CloseChat(ClienteDados* partner, ClienteDados* currentUser);
 	rMsg RetrieveInformation(ClienteDados* currentClient);
+	rMsg RetrieveInformation(ClienteDados* currentClient, ClienteDados* currentPartner);
+	void CancelarConversa(ClienteDados* currentClient, ClienteDados* currentPartner);
 	ClienteDados* getClientData(int& pos);
 
 	int getUserCount();

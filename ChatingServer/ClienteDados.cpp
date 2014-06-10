@@ -11,6 +11,7 @@ ClienteDados::ClienteDados(const sTchar_t username, const sTchar_t password, int
 	this->tipo = tipo; // 1-Normal, 2-Admin
 	this->online = false;
 	this->id = id;
+	this->isBusy = false;
 	this->sa = security::Seguranca();
 }
 
@@ -76,4 +77,12 @@ HANDLE ClienteDados::GetPipe()const{
 
 bool ClienteDados::GetIsOnline()const{
 	return this->online;
+}
+
+bool ClienteDados::GetIsBusy() const{
+	return this->isBusy;
+}
+
+void ClienteDados::SetIsBusy(const bool isbusy){
+	this->isBusy = isbusy;
 }

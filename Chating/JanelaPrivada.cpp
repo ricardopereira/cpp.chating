@@ -2,12 +2,14 @@
 #include "resource.h"
 
 #include "JanelaPrivada.h"
-
-JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t& username, AssyncThread* assyncThread) : controller(&controller), username(username)
+sTchar_t titulo_p;
+JanelaPrivada::JanelaPrivada(Controller& controller, const sTchar_t username, AssyncThread* assyncThread, HANDLE privateThread, int& flag) : controller(&controller), username(username)
 {
 	this->podeRedimensionar = false;
 	this->BotaoEnviarId = -10;
 	this->assyncThread = assyncThread;
+	this->privateThread = privateThread;
+	this->flag = flag;
 }
 
 JanelaPrivada::~JanelaPrivada()
@@ -50,13 +52,6 @@ void JanelaPrivada::sendMessage(HWND hWnd, const TCHAR* msg)
 	// ToDo: funcao Trim
 	if (_tcscmp(msg, TEXT("")))
 	{
-		if (!this->controller->getIsAutenticado()) {
-			// ToDo: criar método
-			sTchar_t text;
-			text = TEXT("Tem que estar ligado.");
-			MessageBox(hWnd, text.c_str(), TEXT("Erro"), MB_OK | MB_ICONERROR);
-			return;
-		}
 
 		// Envia mensagem
 		this->controller->cEnviarMensagemPrivada(msg);
@@ -101,8 +96,38 @@ void JanelaPrivada::onCreate(HWND hWnd, HDC &hdc)
 void JanelaPrivada::onShow(HWND hWnd)
 {
 	// ToDo: cLerInformacaoInicial, cIniciarConversa, cDesligarConversa
+	int result;
+	result = this->controller->cIniciarConversa(username.c_str(), this->flag);
+	if (this->flag == 0){
+		if (result == USER_BUSY){ //Utilizador ocupado, fechar janela e terminar thread
+			MessageBox(this->parentHWND, TEXT("Utilizador Ocupado"), TEXT("Informação"), MB_OK | MB_ICONINFORMATION);
+			SendMessage(hWnd, WM_DESTROY, 0, 0);
+			//TODO: Destroy allocated memory
+			ExitThread(1);
+		}
+	}
+	else {
+		sTchar_t msg = TEXT("Deseja iniciar conversa com ");
+		msg.append(this->username.c_str());
+		msg.append(TEXT("?"));
+		DWORD result;
+		result = MessageBox(this->parentHWND, msg.c_str(), TEXT("Informação"), MB_OKCANCEL | MB_ICONQUESTION | MB_APPLMODAL);
+		if (result == IDCANCEL){
+			this->controller->cCancelarConversa();
+			SendMessage(hWnd, WM_DESTROY, 0, 0);
+			//TODO: Destroy allocated memory
+			ExitThread(1);
+		}
+	}
+	oTcharStream_t temp;
+	temp << TEXT("Chat Privado: ") << this->controller->getUserAutenticado().getUsername()
+		<< TEXT(" - ") << this->username;
 
-	this->controller->cIniciarConversa(username.c_str());
+	titulo_p = temp.str();
+
+	SetWindowText(hWnd, titulo_p.c_str());
+	this->AreaMensagens->setUsername(this->controller->getUserAutenticado().getUsername());
+	LerInformacaoInicial();
 }
 
 bool JanelaPrivada::onClose(HWND hWnd)
@@ -153,6 +178,7 @@ void JanelaPrivada::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		DestroyWindow(hWnd);
 		break;
 
+
 	default:
 		if (wParam == this->BotaoEnviar->getId()) {
 			sendCurrentMessage(hWnd);
@@ -169,6 +195,25 @@ void JanelaPrivada::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		else if (wParam == this->BotaoBaixo->getId()) {
 			this->AreaMensagens->scrollDown();
 		}
+	}
+}
+
+void JanelaPrivada::onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message){
+
+	case WM_USER: //Exclusivo para a janela privada
+		MessageBox(hWnd, TEXT("O seu parceiro de conversação abandonou a conversa. Esta janela vai fechar"), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
+		//Desalocar objectos dinâmicos da janela privada.
+		SendMessage(hWnd, WM_DESTROY, 0, 0); //Enviar uma mensagem a si própria para se destruir.
+		break;
+	case WM_USER + 2: //CANCELAR CHAT
+		this->controller->cCancelarConversa();
+		MessageBox(hWnd, TEXT("O destinatário não quis iniciar a conversa."), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
+		SendMessage(hWnd, WM_DESTROY, 0, 0);
+		//TODO: Destroy allocated memory
+		ExitThread(1);
+		break;
 	}
 }
 
@@ -267,6 +312,7 @@ void JanelaPrivada::MostrarElementos(HWND hWnd)
 	this->BotaoBaixo->Mostra(hWnd);
 
 	this->assyncThread->setPrivateMessageArea(*this->AreaMensagens);
+	this->assyncThread->setPrivateWindowHandle(hWnd);
 }
 
 void JanelaPrivada::Redimensionar(HWND hWnd)
@@ -343,4 +389,8 @@ void JanelaPrivada::Redimensionar(HWND hWnd)
 
 	// Teste
 	//this->AreaMensagens->doResize();
+}
+
+void JanelaPrivada::SetParentHWND(HWND parentHWND){
+	this->parentHWND = parentHWND;
 }

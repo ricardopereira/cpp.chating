@@ -20,7 +20,9 @@ enum commands_t {
 	ENVIAR_MSG_PRIVADA,
 	ENVIAR_MSG_PUBLICA,
 	LER_INFO_INICIAL,
-	DESLIGAR_SERVIDOR //Admin
+	DESLIGAR,
+	DESLIGAR_SERVIDOR, //Admin
+	CANCELAR_CONVERSA
 };
 
 // Dedicado aos comandos de comunicação com o servidor

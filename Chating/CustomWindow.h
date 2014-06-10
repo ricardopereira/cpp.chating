@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <tchar.h>
 
+
 class CustomWindow
 {
 private:
@@ -23,7 +24,7 @@ public:
 	void Registar();
 	HWND Criar(HINSTANCE hInst, LPCTSTR wndName);
 	BOOL Mostrar(int dCmdShow = SW_SHOWNORMAL);
-
+	HWND GetHwnd();
 	virtual void MostrarElementos(HWND hWnd) = 0;
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
@@ -49,4 +50,6 @@ public:
 	virtual void onMouseWheelDown(HWND hWnd);
 	virtual void onPaint(HWND hWnd, HDC &hdc, RECT &rect);
 	virtual void onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
+	virtual void onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 };

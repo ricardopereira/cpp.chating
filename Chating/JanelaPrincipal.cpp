@@ -6,6 +6,7 @@
 #include "JanelaPrincipal.h"
 #include "resource.h"
 
+sTchar_t titulo; // var global neste cpp
 // ToDo: Verificar com a professora se é possível passar uma instância para uma DialogBox
 Controller *ptrController;
 
@@ -85,6 +86,10 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Administrador
 			if (res == 2) {
 				MessageBox(hWnd, TEXT("Login com sucesso: Administrador"), TEXT("Login"), MB_OK | MB_ICONWARNING);
+				oTcharStream_t titulo_temp;
+				titulo_temp << TEXT("Chat Público - ") << username;
+				titulo = titulo_temp.str();
+				
 				EndDialog(hWnd,IDOK);
 			}
 			// Normal
@@ -92,6 +97,10 @@ BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				TCHAR text[TAMTEXTO];
 				_stprintf_s(text, TAMTEXTO, _T("Login com sucesso: %s"), username);
 				MessageBox(hWnd, text, TEXT("Login"), MB_OK | MB_ICONINFORMATION);
+				oTcharStream_t titulo_temp;
+				titulo_temp << TEXT("Chat Público - ") << username;
+				titulo = titulo_temp.str();
+
 				EndDialog(hWnd,IDOK);
 			}
 			else {
@@ -223,13 +232,13 @@ void JanelaPrincipal::showConfig(HWND hWnd)
 	DialogBox(hInst, (LPCWSTR)IDD_CONFIG, hWnd, (DLGPROC)DialogConfig);
 }
 
-void JanelaPrincipal::startPrivateChat(HWND hWnd, const sTchar_t& username)
+void JanelaPrincipal::startPrivateChat(HWND hWnd, sTchar_t username, int flag)
 {
 	// ToDo: só pode existir uma janela
 	if (privateChat)
 		delete privateChat;
 
-	privateChat = new ThreadPrivateChat(this->controller, username.c_str(), this->assyncThread);
+	privateChat = new ThreadPrivateChat(this->controller, username, this->assyncThread, flag, this->GetHwnd());
 	privateChat->setHwndPai(hWnd);
 	privateChat->sethInstance(this->hInst);
 	privateChat->LancarThread();
@@ -247,7 +256,7 @@ void JanelaPrincipal::login(HWND hWnd)
 
 		// Cria thread para receber mensagens
 		assyncThread = new AssyncThread(controller.getUserAutenticado().getUsername().c_str(), 
-			this->controller, *this->AreaMensagens, *this->ListaUtilizadores);
+			this->controller, *this->AreaMensagens, *this->ListaUtilizadores, this->GetHwnd());
 		assyncThread->LancarThread();
 
 		// Esperar que a assyncThread fique pronta a receber dados
@@ -362,13 +371,14 @@ void JanelaPrincipal::onCreate(HWND hWnd, HDC &hdc)
 	// ToDo: Validar isto
 	hdc = GetDC(hWnd);
 	this->memdc = CreateCompatibleDC(hdc);
-
 	this->controller.addObserver(hWnd);
 }
 
 void JanelaPrincipal::onShow(HWND hWnd)
 {
 	login(hWnd);
+	SetWindowText(hWnd, titulo.c_str());
+
 }
 
 bool JanelaPrincipal::onClose(HWND hWnd)
@@ -442,6 +452,8 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	case ID_ADMINISTRADOR_UTILIZADORES:
 		showUtilizadores(hWnd);
 		break;
+	
+
 
 	case ID_ADMINISTRADOR_DESLIGARSERVIDOR:
 		this->controller.shutdownServer();
@@ -467,16 +479,27 @@ void JanelaPrincipal::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 			// Verificar duplo-clique
 			if (HIWORD(wParam) == LBN_DBLCLK) {
 				//Preencher caixa de texto com o texto selecionado da listbox
-				int i = SendDlgItemMessage(hWnd, IDC_LIST_UTILIZADORES, LB_GETCURSEL, 0, 0);
+				int i = SendDlgItemMessage(hWnd, this->ListaUtilizadores->getId(), LB_GETCURSEL, 0, 0);
 				TCHAR usernameAux[30];
 				SendDlgItemMessage(hWnd, this->ListaUtilizadores->getId(), LB_GETTEXT, i, (LPARAM)usernameAux);
 				// Abre chat privado
-				startPrivateChat(hWnd,usernameAux);
+				startPrivateChat(hWnd, usernameAux);
 			}
 		}
 	}
 }
 
+void JanelaPrincipal::onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message){
+	
+	case WM_USER +1:
+
+		startPrivateChat(hWnd, controller.GetPrivatePartner(), 1);
+		break;
+
+	}
+}
 void JanelaPrincipal::MostrarElementos(HWND hWnd)
 {
 	layoutVertical.push_back(new Layout(0.10f));

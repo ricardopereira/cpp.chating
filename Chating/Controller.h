@@ -10,6 +10,7 @@ class Controller
 {
 private:
 	ChatUser* userAutenticado;
+	sTchar_t privatePartner;
 
 	std::vector<HWND> observers;
 	std::vector<ChatUser*> utilizadores;
@@ -28,19 +29,20 @@ public:
 
 	void shutdown();
 	void shutdownServer();
+	void reset();
 
 	void loadConfig(TCHAR* ipserver);
 	bool saveConfig(TCHAR* ipserver);
+
+	// Chat Publico
+	void cEnviarMensagemPublica(const TCHAR *texto);
 	void loadPublicInformation();
 
-	void cEnviarMensagemPublica(const TCHAR *texto);
-
 	// Chat Privado
-	int cIniciarConversa(const TCHAR *utilizador);
+	int cIniciarConversa(const TCHAR *utilizador, int flag=0);
 	int cDesligarConversa();
 	int cEnviarMensagemPrivada(const TCHAR *texto);
-
-	void reset();
+	void cCancelarConversa();
 
 	void deleteUtilizador(const TCHAR *username); // Só para admin
 	int getTotalUtilizadores();
@@ -53,7 +55,8 @@ public:
 	ChatUser* getUtilizador(const TCHAR *username);
 	ChatUser* getUtilizadorOnline(unsigned int index);
 	void clearUtilizadoresOnline();
-
+	sTchar_t GetPrivatePartner()const;
+	void SetPrivatePartner(const sTchar_t privatePartner);
 	bool getIsAutenticado();
 	bool getIsAdministrador();
 	const ChatUser& getUserAutenticado();

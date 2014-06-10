@@ -2,7 +2,7 @@
 #include "../ChatingDll/Dll.h"
 #include "../Logic/ChatComunication.h"
 
-AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea, ListBox& listUserOnline)
+AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& messageArea, ListBox& listUserOnline, HWND publicWindowHandle)
 : controller(controller), messageArea(messageArea), listUserOnline(listUserOnline)
 {
 	this->ptrClasse = this;
@@ -14,6 +14,8 @@ AssyncThread::AssyncThread(sTchar_t username, Controller& controller, ChatBox& m
 	tempText << TEXT("\\\\") << ip << TEXT("\\pipe\\") << username << TEXT('\0');
 
 	this->pipeName = tempText.str();
+
+	this->publicWindowHandle = publicWindowHandle;
 }
 
 AssyncThread::~AssyncThread()
@@ -22,6 +24,10 @@ AssyncThread::~AssyncThread()
 }
 void AssyncThread::setPrivateMessageArea(ChatBox &privateMessageArea){
 	this->privateMessageArea = &privateMessageArea;
+}
+
+void AssyncThread::setPrivateWindowHandle(HWND hWnd){
+	this->privateWindowHandle = hWnd;
 }
 
 DWORD WINAPI AssyncThread::funcaoThread(){
@@ -81,6 +87,9 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			}
 			break;
 		case PRIVATE_MESSAGE:
+			for (DWORD i = 0; i < buffer[0].nMessages; i++){
+				this->privateMessageArea->addMessage(buffer[i].utilizador, buffer[i].mensagem);
+			}
 			break;
 		case PUBLIC_MESSAGE:
 			for (DWORD i = 0; i < buffer[0].nMessages; i++){
@@ -99,6 +108,15 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			online = false;
 			this->controller.shutdown();
 			break;
+		case CLOSE_CHAT:
+			SendMessage(this->privateWindowHandle, WM_USER, 0, 0);
+			break;
+		case _LANCARCHAT:
+			this->controller.SetPrivatePartner(buffer[0].utilizador);
+			SendMessage(this->publicWindowHandle, (WM_USER+1), 0,0);
+			break;
+		case _CANCELAR_CONVERSA:
+			SendMessage(this->privateWindowHandle, WM_USER+2, 0, 0);
 		}
 	}
 

@@ -11,12 +11,13 @@ private:
 	HWND hWndPai;
 
 	Controller* controller;
-	const TCHAR* username;
+	sTchar_t username;
 	AssyncThread* assyncThread;
-
+	int flag;
+	HWND publicWindowHandle;
 	ThreadPrivateChat();
 public:
-	ThreadPrivateChat(Controller& controller, const TCHAR* username, AssyncThread *assyncThread);
+	ThreadPrivateChat(Controller& controller, sTchar_t username, AssyncThread *assyncThread, int &flag, HWND publicWindowHandle);
 	~ThreadPrivateChat();
 
 	virtual DWORD WINAPI funcaoThread();

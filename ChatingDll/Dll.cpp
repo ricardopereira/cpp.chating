@@ -169,11 +169,12 @@ int LerListaUtilizadoresRegistados()
 	return doSimpleRequest(commands_t::LISTA_UTILIZADORES_TODOS);
 }
 
-int IniciarConversa(const TCHAR *utilizador)
+int IniciarConversa(const TCHAR *utilizador, int flag)
 {
 	chatbuffer_t buffer;
 	_tcscpy_s(buffer.args[0], _tcslen(utilizador)*sizeof(TCHAR), utilizador);
 	buffer.command = commands_t::LANCAR_CHAT;
+	buffer.arg_num = flag;
 
 	PTCHAR msg = TEXT("Ligacao com sucesso");
 	//DWORD msgBytes;
@@ -205,12 +206,40 @@ int IniciarConversa(const TCHAR *utilizador)
 int DesligarConversa()
 {
 	// Escrever no pipe
-	return 0;
+	return doSimpleRequest(commands_t::FECHAR_CHAT);
 }
 
-int EnviarMensagemPrivada(const TCHAR *msg)
+int EnviarMensagemPrivada(const TCHAR *msg, const TCHAR *owner)
 {
 	// Escrever no pipe
+	chatbuffer_t buffer;
+	buffer.command = commands_t::ENVIAR_MSG_PRIVADA;
+	_tcscpy_s(buffer.args[0], _tcslen(msg)*sizeof(TCHAR), msg);
+	_tcscpy_s(buffer.args[1], _tcslen(owner)*sizeof(TCHAR), owner);
+	// ToDo: convém saber o login na mensagem
+
+	//DWORD msgBytes;
+	DWORD bytesSent;
+	DWORD bytesRead;
+	BOOL success = 0;
+
+	// Envio de pedido
+	success = WriteFile(hPipe,
+		&buffer, //message
+		sizeof(chatbuffer_t), //message length
+		&bytesSent, //bytes written
+		NULL); //not overlapped
+
+	if (!success)
+		return 0;
+
+	// Recebe a resposta
+	success = ReadFile(
+		hPipe,
+		&buffer,
+		sizeof(chatbuffer_t),
+		&bytesRead,
+		NULL);
 	return 0;
 }
 
@@ -281,6 +310,8 @@ int Sair(const TCHAR* utilizador)
 		&bytesRead,
 		NULL);
 
+	// Fecha o pipe
+	CloseHandle(hPipe);
 	return success;
 }
 
@@ -290,4 +321,9 @@ int Desligar()
 	// Fecha o pipe
 	CloseHandle(hPipe);
 	return 0;
+}
+
+void CancelarConversa()
+{
+	doSimpleRequest(commands_t::CANCELAR_CONVERSA);
 }

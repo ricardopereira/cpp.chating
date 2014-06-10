@@ -72,7 +72,12 @@ LRESULT CALLBACK internalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		ptr->onCommand(hWnd,wParam,lParam);
 		break;
 
+
 	default:
+
+		if (message >= WM_USER && message < WM_USER + 10){
+			ptr->onCustomMessage(hWnd, message, wParam, lParam);
+		}
 		return DefWindowProc(hWnd, message, wParam, lParam);
 		break;
 	}
@@ -104,6 +109,10 @@ void CustomWindow::Registar()
 	//Registar a classe "_WndClsEx" no Windows
 	RegisterClassEx(&_WndClsEx);
 }
+HWND CustomWindow::GetHwnd(){
+	return this->_hWnd;
+}
+
 
 BOOL CustomWindow::Mostrar(int dCmdShow)
 {
@@ -207,6 +216,11 @@ void CustomWindow::onPaint(HWND hWnd, HDC &hdc, RECT &rect)
 }
 
 void CustomWindow::onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+
+}
+
+void CustomWindow::onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 
 }

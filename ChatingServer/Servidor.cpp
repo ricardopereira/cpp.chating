@@ -81,8 +81,6 @@ Servidor::rMsg Servidor::Logout(sTchar_t username)
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
 
-	// ToDo: utilizar o ponteiro da Thread
-
 	for (unsigned int i = 0; i < clientes.size(); i++) {
 		if (clientes.at(i)->GetUsername() == username) {
 			clientes.at(i)->SetOffline();
@@ -195,27 +193,98 @@ bool Servidor::ExistUser(sTchar_t username)
 	return false;
 }
 
-Servidor::rMsg Servidor::LancarChat(sTchar_t username, ClienteDados* partner) {
+Servidor::rMsg Servidor::LancarChat(sTchar_t username, int& pos, ClienteDados* currentUser) {
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
 
+	MSG_T buffer[BUFFER_RECORDS];
+
+	currentUser->SetIsBusy(true);
+
 	for (unsigned int i = 0; i < clientes.size(); i++) {
 		if (clientes.at(i)->GetUsername() == username) {
-			partner = clientes.at(i);
-			return Servidor::SUCCESS;
+			
+			if (!clientes.at(i)->GetIsBusy()){
+				pos = i;
+				clientes.at(i)->SetIsBusy(true);
+				
+				buffer->messageType = typeMessages::_LANCARCHAT;
+				buffer->nMessages = 1;
+				_tcscpy_s(buffer[0].utilizador, currentUser->GetUsername().size()*sizeof(TCHAR), currentUser->GetUsername().c_str());
+
+
+				this->SendToClient(buffer, clientes.at(i)->GetPipe());
+				this->mut_ServerData.Release();
+				this->sem_ServerData.Release();
+				//
+				return Servidor::SUCCESS;
+			}
+			else{
+				this->mut_ServerData.Release();
+				this->sem_ServerData.Release();
+				return Servidor::USER_BUSY;
+			}
+			
 		}
 	}
 
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
-	partner = nullptr;
 	return Servidor::USER_NOT_FOUND;
 }
 
-Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados &partner) {
+Servidor::rMsg Servidor::JoinChat(sTchar_t username, int& pos){
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
+	for (unsigned int i = 0; i < clientes.size(); i++) {
+		if (clientes.at(i)->GetUsername() == username) {
 
+			pos = i;
+			this->mut_ServerData.Release();
+			this->sem_ServerData.Release();
+			//
+			return Servidor::SUCCESS;
+		}
+	}
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+	return Servidor::ERROR_SRV;
+}
+
+Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados& currentClient, ClienteDados &partner, sTchar_t message) {
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+	
+	// Instante atual
+	SYSTEMTIME hora;
+	GetSystemTime(&hora);
+	DATA dataActual;
+	dataActual.ano = hora.wYear;
+	dataActual.dia = hora.wDay;
+	dataActual.mes = hora.wMonth;
+	dataActual.hora = hora.wHour;
+	dataActual.minuto = hora.wMinute;
+	dataActual.segundo = hora.wSecond;
+	
+	//Finish here
+	// Guarda mensagem
+	this->msgs.push_back(new Mensagens(dataActual, currentClient.GetId(), partner.GetId(), message));
+
+	// Prepara mensagem
+	MSG_T buffer[BUFFER_RECORDS];
+	buffer[0].mensagem.instante = dataActual;
+	_tcscpy_s(buffer[0].mensagem.texto, message.size() *sizeof(TCHAR), message.c_str());
+	buffer[0].messageType = PRIVATE_MESSAGE;
+	buffer[0].nMessages = 1;
+	_tcscpy_s(buffer[0].utilizador, currentClient.GetUsername().size()*sizeof(TCHAR), currentClient.GetUsername().c_str());
+
+	// Broadcast
+	for (unsigned int i = 0; i < this->clientes.size(); i++)
+	{
+		if (this->clientes.at(i)->GetIsOnline()){
+			this->SendToClient(buffer, clientes.at(i)->GetPipe());
+		}
+	}
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
 
@@ -399,9 +468,15 @@ Servidor::rMsg Servidor::SendPublicMessage(sTchar_t message, sTchar_t owner, Cli
 	return Servidor::SUCCESS;
 }
 
-Servidor::rMsg Servidor::CloseChat() {
+Servidor::rMsg Servidor::CloseChat(ClienteDados* partner, ClienteDados* currentUser) {
+	MSG_T buffer[BUFFER_RECORDS];
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
+	partner->SetIsBusy(false);
+	currentUser->SetIsBusy(false);
+
+	buffer[0].messageType = CLOSE_CHAT;
+	this->SendToClient(buffer, partner->GetPipe());
 
 	this->mut_ServerData.Release();
 	this->sem_ServerData.Release();
@@ -458,6 +533,55 @@ Servidor::rMsg Servidor::RetrieveInformation(ClienteDados* currentClient) {
 	return Servidor::SUCCESS;
 }
 
+Servidor::rMsg Servidor::RetrieveInformation(ClienteDados* currentClient, ClienteDados* currentPartner){
+	MSG_T buffer[BUFFER_RECORDS];
+
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+
+	int k = 0;
+	Mensagens* itemMsg = NULL;
+	ClienteDados* itemCliente = NULL;
+	buffer[k].messageType = PRIVATE_MESSAGE;
+
+	for (unsigned int i = 0; i < this->msgs.size(); i++)
+	{
+		itemMsg = this->msgs.at(i);
+		if (
+			(itemMsg->GetReceiver() == currentPartner->GetId() && itemMsg->GetSender() == currentClient->GetId() ) 
+			|| 
+			(itemMsg->GetSender() == currentPartner->GetId() && itemMsg->GetReceiver() == currentClient->GetId())) { 
+			for (unsigned int j = 0; j < this->clientes.size(); j++)
+			{
+				itemCliente = this->clientes.at(j);
+				if (itemMsg->GetSender() == itemCliente->GetId()) {
+					// Utilizador da mensagem
+					_tcscpy_s(buffer[k].utilizador, itemCliente->GetUsername().size()*sizeof(TCHAR), itemCliente->GetUsername().c_str());
+					// Instante da mensagem
+					buffer[k].mensagem.instante = itemMsg->GetDataMensagem();
+					// Texto
+					_tcscpy_s(buffer[k].mensagem.texto, itemMsg->GetMensagem().size()*sizeof(TCHAR), itemMsg->GetMensagem().c_str());
+
+					// Next
+					k++;
+					break;
+				}
+			}
+		}
+	}
+
+	// Total de registos
+	buffer[0].nMessages = k;
+
+	this->SendToClient(buffer, currentClient->GetPipe());
+
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
+	return Servidor::SUCCESS;
+}
+
+
 int Servidor::getUserCount()
 {
 	return clientes.size();
@@ -487,8 +611,26 @@ int Servidor::SendToClient(MSG_T* buffer, HANDLE hPipe){
 }
 
 ClienteDados* Servidor::getClientData(int& pos){
-
 	return this->clientes.at(pos);
+}
+
+void Servidor::CancelarConversa(ClienteDados* currentClient, ClienteDados* currentPartner)
+{
+	this->mut_ServerData.Wait();
+	this->sem_ServerData.Wait();
+
+	MSG_T buffer[BUFFER_RECORDS];
+	
+	currentClient->SetIsBusy(false);
+	currentPartner->SetIsBusy(false);
+	buffer[0].nMessages = 1;
+	buffer[0].messageType = _CANCELAR_CONVERSA;
+	
+	this->SendToClient(buffer, currentPartner->GetPipe());
+	
+	currentPartner = nullptr;
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
 }
 
 void Servidor::Shutdown()

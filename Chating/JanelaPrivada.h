@@ -35,10 +35,13 @@ private:
 	void Redimensionar(HWND hWnd);
 	bool podeRedimensionar;
 	AssyncThread* assyncThread;
+	HANDLE privateThread;
+	int flag;
+	HWND parentHWND;
 
 	JanelaPrivada() { controller = new Controller; /* Memory leak mas é privado :) */ };
 public:
-	JanelaPrivada(Controller& controller, const sTchar_t& username, AssyncThread* assyncThread);
+	JanelaPrivada(Controller& controller, sTchar_t username, AssyncThread* assyncThread, HANDLE privateThread, int& flag);
 	~JanelaPrivada();
 
 	void Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class_size,
@@ -50,6 +53,7 @@ public:
 	void sendCurrentMessage(HWND hWnd);
 	void reset(HWND hWnd);
 	void refresh(HWND hWnd);
+	void SetParentHWND(HWND parentHWND);
 
 	virtual int windowX() { return CW_USEDEFAULT; };
 	virtual int windowY() { return CW_USEDEFAULT; };
@@ -67,4 +71,6 @@ public:
 	virtual void onMouseWheelDown(HWND hWnd);
 	virtual void onPaint(HWND hWnd, HDC &hdc, RECT &rect);
 	virtual void onCommand(HWND hWnd, WPARAM wParam, LPARAM lParam);
+	virtual void onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 };

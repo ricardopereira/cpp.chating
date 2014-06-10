@@ -22,7 +22,10 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	BOOL leituraEscritaSucesso = false;
 	DWORD bytesLidos = 0;
 	DWORD bytesEscritos = 0;
+
 	int result;
+	int pos;
+	bool firstTime = true;
 	
 	while (!powerOff) {
 		
@@ -56,7 +59,6 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			buffer.arg_num = server->RemoveUser(buffer.args[0]);
 			break;
 		case commands_t::LOGIN:
-			int pos;
 			result = server->Login(buffer.args[0], buffer.args[1], &pos);
 
 			// Login com sucesso
@@ -99,24 +101,49 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->SendUsersOnline(this->currentClient);
 			break;
 		case commands_t::LANCAR_CHAT:
-			server->LancarChat(buffer.args[0], this->currentPartner);
+			result = Servidor::ERROR_SRV;
+
+			if (buffer.arg_num == 0)  { //cliente 1
+				result = server->LancarChat(buffer.args[0], pos, this->currentClient);	
+			}
+			else {
+				result = server->JoinChat(buffer.args[0], pos);
+			}
+
+			if (result == Servidor::SUCCESS){
+				this->currentPartner = server->getClientData(pos);
+			}
+			else {
+				this->currentClient->SetIsBusy(false);
+			}
+
+			buffer.arg_num = result;
 			break;
 		case commands_t::ENVIAR_MSG_PRIVADA:
-			server->SendPrivateMessage(*this->currentPartner);
+			server->SendPrivateMessage(*this->currentClient, *this->currentPartner, buffer.args[0]);
 			break;
 		case commands_t::ENVIAR_MSG_PUBLICA:
 			tcout << getInfo() << TEXT("message: ") << buffer.args[0] << endl;
 			server->SendPublicMessage(buffer.args[0], buffer.args[1], this->currentClient);
 			break;
 		case commands_t::FECHAR_CHAT:
-			server->CloseChat();
+			server->CloseChat(this->currentPartner, this->currentClient);
 			break;
 		case commands_t::LER_INFO_INICIAL:
-			server->RetrieveInformation(this->currentClient);
+			if (firstTime){
+				server->RetrieveInformation(this->currentClient);
+				firstTime = false;
+			}
+			else{
+				server->RetrieveInformation(this->currentClient, this->currentPartner);
+			}
 			break;
 		case commands_t::DESLIGAR_SERVIDOR:
 			server->Shutdown();
 			powerOff = true;
+			break;
+		case commands_t::CANCELAR_CONVERSA:
+			server->CancelarConversa(this->currentClient, this->currentPartner);
 			break;
 		}
 

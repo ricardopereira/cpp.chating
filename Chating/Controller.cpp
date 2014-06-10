@@ -154,6 +154,13 @@ void Controller::removeUtilizadorOnline(const TCHAR *username)
 	}
 }
 
+sTchar_t Controller::GetPrivatePartner()const{
+	return this->privatePartner;
+}
+void Controller::SetPrivatePartner(const sTchar_t privatePartner){
+	this->privatePartner = privatePartner;
+}
+
 void Controller::clearUtilizadoresOnline()
 {
 	utilizadoresOnline.clear();
@@ -217,11 +224,11 @@ void Controller::loadPublicInformation()
 	LerInformacaoInicial();
 }
 
-int Controller::cIniciarConversa(const TCHAR *utilizador)
+int Controller::cIniciarConversa(const TCHAR *utilizador, int flag)
 {
 	if (_tcscmp(utilizador,TEXT("")) == 0)
 		return 0;
-	return IniciarConversa(utilizador);
+	return IniciarConversa(utilizador, flag);
 }
 
 int Controller::cDesligarConversa()
@@ -231,13 +238,17 @@ int Controller::cDesligarConversa()
 
 int Controller::cEnviarMensagemPrivada(const TCHAR *texto)
 {
-	return EnviarMensagemPrivada(texto);
+	return EnviarMensagemPrivada(texto, this->getUserAutenticado().getUsername().c_str());
+}
+
+void Controller::cCancelarConversa()
+{
+	CancelarConversa();
 }
 
 void Controller::cEnviarMensagemPublica(const TCHAR *texto)
 {
 	EnviarMensagemPublica(texto, this->getUserAutenticado().getUsername().c_str());
-	return;
 }
 
 int Controller::logout()
