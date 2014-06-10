@@ -61,24 +61,38 @@ void JanelaPrincipal::Inicializar(HINSTANCE hInst, LPCTSTR ClassName, UINT class
 
 BOOL CALLBACK DialogLogin(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	TCHAR username[TAMLOGIN], password[TAMPASS];
+	TCHAR username[TAMLOGIN], password[TAMPASS], ipserver[TAMIP];
 	int res = 0;
 
 	switch (message) {
 	case WM_INITDIALOG:
-		SetDlgItemText(hWnd, IDC_USERNAME, TEXT(""));
-		SetDlgItemText(hWnd, IDC_PASSWORD, TEXT(""));
 		// Verificar se tem ponteiro da instância do Server
 		_ASSERT(ptrController);
+
+		SetDlgItemText(hWnd, IDC_USERNAME, TEXT(""));
+		SetDlgItemText(hWnd, IDC_PASSWORD, TEXT(""));
+
+		ptrController->loadConfig(ipserver);
+		SetDlgItemText(hWnd, IDC_EDIT_IPSERVER, ipserver);
+
 		return 1;
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDOK:
 			GetWindowText(GetDlgItem(hWnd, IDC_USERNAME), username, TAMLOGIN);
 			GetWindowText(GetDlgItem(hWnd, IDC_PASSWORD), password, TAMPASS);
+			GetWindowText(GetDlgItem(hWnd, IDC_EDIT_IPSERVER), ipserver, TAMIP);
 
 			if (_tcscmp(username,TEXT("")) == 0 || _tcscmp(password,TEXT("")) == 0)
 				break;
+
+			if (_tcscmp(ipserver,TEXT("")) == 0) {
+				MessageBox(hWnd, TEXT("Tem que indicar o endereço do servidor."), TEXT("Login"), MB_OK | MB_ICONERROR);
+				break;
+			}
+
+			// Gravar configuração
+			ptrController->loadConfig(ipserver);
 
 			if (ptrController)
 				res = ptrController->login(username, password);
@@ -266,7 +280,7 @@ void JanelaPrincipal::login(HWND hWnd)
 	}
 	else if (result == IDCANCEL)
 	{
-		//PostMessage(WM_CLOSE);
+		DestroyWindow(hWnd); //PostMessage(WM_CLOSE);
 	}
 }
 

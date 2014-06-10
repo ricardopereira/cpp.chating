@@ -300,13 +300,15 @@ void Controller::loadConfig(TCHAR* ipserver)
 	//Se a chave foi criada, inicializar os valores
 	else if (res == REG_CREATED_NEW_KEY) {
 		_tcscpy_s(ipserver, _tcslen(ip.str().c_str())*sizeof(TCHAR), ip.str().c_str());
+		RegCloseKey(key);
+		saveConfig(ipserver);
 	}
 	//Se a chave foi aberta, ler os valores lá guardados
 	else if (res == REG_OPENED_EXISTING_KEY) {
 		RegQueryValueEx(key, TEXT("IPServer"), NULL, NULL, (LPBYTE)ipserver, &size);
 		ipserver[size/sizeof(TCHAR)]='\0';
+		RegCloseKey(key);
 	}
-	RegCloseKey(key);
 }
 
 bool Controller::saveConfig(TCHAR* ipserver)
