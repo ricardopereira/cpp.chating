@@ -80,6 +80,9 @@ DWORD WINAPI AssyncThread::funcaoThread(){
 			}
 			break;
 		case PRIVATE_MESSAGE:
+			for (DWORD i = 0; i < buffer[0].nMessages; i++){
+				this->privateMessageArea->addMessage(buffer[i].utilizador, buffer[i].mensagem);
+			}
 			break;
 		case PUBLIC_MESSAGE:
 			for (DWORD i = 0; i < buffer[0].nMessages; i++){

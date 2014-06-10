@@ -14,9 +14,10 @@ private:
 	sTchar_t username;
 	AssyncThread* assyncThread;
 	int flag;
+	HWND publicWindowHandle;
 	ThreadPrivateChat();
 public:
-	ThreadPrivateChat(Controller& controller, sTchar_t username, AssyncThread *assyncThread, int &flag);
+	ThreadPrivateChat(Controller& controller, sTchar_t username, AssyncThread *assyncThread, int &flag, HWND publicWindowHandle);
 	~ThreadPrivateChat();
 
 	virtual DWORD WINAPI funcaoThread();

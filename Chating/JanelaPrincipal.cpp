@@ -189,7 +189,7 @@ void JanelaPrincipal::startPrivateChat(HWND hWnd, sTchar_t username, int flag)
 	if (privateChat)
 		delete privateChat;
 
-	privateChat = new ThreadPrivateChat(this->controller, username, this->assyncThread, flag);
+	privateChat = new ThreadPrivateChat(this->controller, username, this->assyncThread, flag, this->GetHwnd());
 
 
 	privateChat->setHwndPai(hWnd);

@@ -177,7 +177,7 @@ Servidor::rMsg Servidor::JoinChat(sTchar_t username, int& pos){
 }
 
 
-Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados &partner) {
+Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados& currentClient, ClienteDados &partner, sTchar_t message) {
 	this->sem_ServerData.Wait();
 	this->mut_ServerData.Wait();
 	
@@ -194,15 +194,15 @@ Servidor::rMsg Servidor::SendPrivateMessage(ClienteDados &partner) {
 	
 	//Finish here
 	// Guarda mensagem
-	this->msgs.push_back(new Mensagens(dataActual, cliente->GetId(), -1, message));
+	this->msgs.push_back(new Mensagens(dataActual, currentClient.GetId(), partner.GetId(), message));
 
 	// Prepara mensagem
 	MSG_T buffer[BUFFER_RECORDS];
 	buffer[0].mensagem.instante = dataActual;
 	_tcscpy_s(buffer[0].mensagem.texto, message.size() *sizeof(TCHAR), message.c_str());
-	buffer[0].messageType = PUBLIC_MESSAGE;
+	buffer[0].messageType = PRIVATE_MESSAGE;
 	buffer[0].nMessages = 1;
-	_tcscpy_s(buffer[0].utilizador, owner.size()*sizeof(TCHAR), owner.c_str());
+	_tcscpy_s(buffer[0].utilizador, currentClient.GetUsername().size()*sizeof(TCHAR), currentClient.GetUsername().c_str());
 
 	// Broadcast
 	for (unsigned int i = 0; i < this->clientes.size(); i++)
@@ -444,6 +444,55 @@ Servidor::rMsg Servidor::RetrieveInformation(ClienteDados* currentClient) {
 
 	return Servidor::SUCCESS;
 }
+
+Servidor::rMsg Servidor::RetrieveInformation(ClienteDados* currentClient, ClienteDados* currentPartner){
+	MSG_T buffer[BUFFER_RECORDS];
+
+	this->sem_ServerData.Wait();
+	this->mut_ServerData.Wait();
+
+	int k = 0;
+	Mensagens* itemMsg = NULL;
+	ClienteDados* itemCliente = NULL;
+	buffer[k].messageType = PRIVATE_MESSAGE;
+
+	for (unsigned int i = 0; i < this->msgs.size(); i++)
+	{
+		itemMsg = this->msgs.at(i);
+		if (
+			(itemMsg->GetReceiver() == currentPartner->GetId() && itemMsg->GetSender() == currentClient->GetId() ) 
+			|| 
+			(itemMsg->GetSender() == currentPartner->GetId() && itemMsg->GetReceiver() == currentClient->GetId())) { 
+			for (unsigned int j = 0; j < this->clientes.size(); j++)
+			{
+				itemCliente = this->clientes.at(j);
+				if (itemMsg->GetSender() == itemCliente->GetId()) {
+					// Utilizador da mensagem
+					_tcscpy_s(buffer[k].utilizador, itemCliente->GetUsername().size()*sizeof(TCHAR), itemCliente->GetUsername().c_str());
+					// Instante da mensagem
+					buffer[k].mensagem.instante = itemMsg->GetDataMensagem();
+					// Texto
+					_tcscpy_s(buffer[k].mensagem.texto, itemMsg->GetMensagem().size()*sizeof(TCHAR), itemMsg->GetMensagem().c_str());
+
+					// Next
+					k++;
+					break;
+				}
+			}
+		}
+	}
+
+	// Total de registos
+	buffer[0].nMessages = k;
+
+	this->SendToClient(buffer, currentClient->GetPipe());
+
+	this->mut_ServerData.Release();
+	this->sem_ServerData.Release();
+
+	return Servidor::SUCCESS;
+}
+
 
 int Servidor::getUserCount()
 {

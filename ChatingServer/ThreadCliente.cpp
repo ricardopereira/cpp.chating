@@ -26,6 +26,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 	sTchar_t usrnametoremove = TEXT(""); //temp
 	int result;
 	int pos;
+	bool firstTime = true;
 	
 	while (!powerOff) {
 		
@@ -107,7 +108,7 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			buffer.arg_num = result;
 			break;
 		case commands_t::ENVIAR_MSG_PRIVADA:
-			server->SendPrivateMessage(*this->currentPartner);
+			server->SendPrivateMessage(*this->currentClient, *this->currentPartner, buffer.args[0]);
 			break;
 		case commands_t::ENVIAR_MSG_PUBLICA:
 			tcout << getInfo() << TEXT("message: ") << buffer.args[0] << endl;
@@ -117,7 +118,13 @@ DWORD WINAPI ThreadCliente::funcaoThread() {
 			server->CloseChat(this->currentPartner, this->currentClient);
 			break;
 		case commands_t::LER_INFO_INICIAL:
-			server->RetrieveInformation(this->currentClient);
+			if (firstTime){
+				server->RetrieveInformation(this->currentClient);
+				firstTime = false;
+			}
+			else{
+				server->RetrieveInformation(this->currentClient, this->currentPartner);
+			}
 			break;
 		case commands_t::ELIMINAR_UTILIZADOR:
 			server->RemoveUser(usrnametoremove);

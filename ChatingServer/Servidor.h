@@ -42,7 +42,7 @@ public:
 	rMsg RemoveUser(sTchar_t username);
 	rMsg LancarChat(sTchar_t username, int& pos, ClienteDados* currentUser);
 	rMsg JoinChat(sTchar_t username, int& pos);
-	rMsg SendPrivateMessage(ClienteDados &partner);
+	rMsg SendPrivateMessage(ClienteDados& currentCliente, ClienteDados &partner, sTchar_t message);
 	rMsg SendPublicMessage(sTchar_t message, sTchar_t owner, ClienteDados* cliente);
 	rMsg SendUsers(ClienteDados* currentClient);
 	rMsg SendUsersOnline(ClienteDados* currentClient);
@@ -50,6 +50,7 @@ public:
 	rMsg SendUserGoOffline(ClienteDados* cliente);
 	rMsg CloseChat(ClienteDados* partner, ClienteDados* currentUser);
 	rMsg RetrieveInformation(ClienteDados* currentClient);
+	rMsg RetrieveInformation(ClienteDados* currentClient, ClienteDados* currentPartner);
 	void CancelarConversa(ClienteDados* currentClient, ClienteDados* currentPartner);
 	ClienteDados* getClientData(int& pos);
 

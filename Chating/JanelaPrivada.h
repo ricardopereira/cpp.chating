@@ -37,6 +37,7 @@ private:
 	AssyncThread* assyncThread;
 	HANDLE privateThread;
 	int flag;
+	HWND parentHWND;
 
 	JanelaPrivada() { controller = new Controller; /* Memory leak mas é privado :) */ };
 public:
@@ -52,6 +53,7 @@ public:
 	void sendCurrentMessage(HWND hWnd);
 	void reset(HWND hWnd);
 	void refresh(HWND hWnd);
+	void SetParentHWND(HWND parentHWND);
 
 	virtual int windowX() { return CW_USEDEFAULT; };
 	virtual int windowY() { return CW_USEDEFAULT; };

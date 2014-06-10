@@ -88,7 +88,7 @@ Servidor::rMsg Registry::LoadData(
 			tipo = REG_BINARY;
 			RegQueryValueEx(chave, TEXT("Messages"), NULL, &tipo, (LPBYTE)messages, &tamanho);
 
-			for (DWORD i = 0; i < nUsers; i++)
+			for (DWORD i = 0; i < nMessages; i++)
 			{
 				msgdata.push_back(new Mensagens(
 					messages[i].mensagem.instante,

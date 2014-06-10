@@ -100,7 +100,7 @@ void JanelaPrivada::onShow(HWND hWnd)
 	result = this->controller->cIniciarConversa(username.c_str(), this->flag);
 	if (this->flag == 0){
 		if (result == USER_BUSY){ //Utilizador ocupado, fechar janela e terminar thread
-			MessageBox(hWnd, TEXT("Utilizador Ocupado"), TEXT("Informação"), MB_OK | MB_ICONINFORMATION);
+			MessageBox(this->parentHWND, TEXT("Utilizador Ocupado"), TEXT("Informação"), MB_OK | MB_ICONINFORMATION);
 			SendMessage(hWnd, WM_DESTROY, 0, 0);
 			//TODO: Destroy allocated memory
 			ExitThread(1);
@@ -111,7 +111,7 @@ void JanelaPrivada::onShow(HWND hWnd)
 		msg.append(this->username.c_str());
 		msg.append(TEXT("?"));
 		DWORD result;
-		result = MessageBox(hWnd, msg.c_str(), TEXT("Informação"), MB_OKCANCEL | MB_ICONQUESTION | MB_APPLMODAL);
+		result = MessageBox(this->parentHWND, msg.c_str(), TEXT("Informação"), MB_OKCANCEL | MB_ICONQUESTION | MB_APPLMODAL);
 		if (result == IDCANCEL){
 			this->controller->cCancelarConversa();
 			SendMessage(hWnd, WM_DESTROY, 0, 0);
@@ -127,6 +127,7 @@ void JanelaPrivada::onShow(HWND hWnd)
 
 	SetWindowText(hWnd, titulo_p.c_str());
 	this->AreaMensagens->setUsername(this->controller->getLoginAutenticado().getUsername());
+	LerInformacaoInicial();
 }
 
 bool JanelaPrivada::onClose(HWND hWnd)
@@ -202,9 +203,10 @@ void JanelaPrivada::onCustomMessage(HWND hWnd, UINT message, WPARAM wParam, LPAR
 	switch (message){
 
 	case WM_USER: //Exclusivo para a janela privada
-		//MessageBox(hWnd, TEXT("O seu parceiro de conversação abandonou a conversa. Esta janela vai fechar"), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
+		
+		MessageBox(hWnd, TEXT("O seu parceiro de conversação abandonou a conversa. Esta janela vai fechar"), TEXT("Aviso"), MB_OK | MB_ICONINFORMATION);
 		////Desalocar objectos dinâmicos da janela privada.
-		//SendMessage(hWnd, WM_DESTROY, 0, 0); //Enviar uma mensagem a si própria para se destruir.
+		SendMessage(hWnd, WM_DESTROY, 0, 0); //Enviar uma mensagem a si própria para se destruir.
 		break;
 	case WM_USER + 2: //CANCELAR CHAT
 		this->controller->cCancelarConversa();
@@ -389,4 +391,8 @@ void JanelaPrivada::Redimensionar(HWND hWnd)
 
 	// Teste
 	//this->AreaMensagens->doResize();
+}
+
+void JanelaPrivada::SetParentHWND(HWND parentHWND){
+	this->parentHWND = parentHWND;
 }
