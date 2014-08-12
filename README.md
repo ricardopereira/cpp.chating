@@ -1,4 +1,4 @@
-# Chating v0
+# Chating
 #### Visual Studio 2012 C++ project
 
 ###### ChatingServer
@@ -42,6 +42,10 @@ Project properties -> Configuration properties -> Debugging -> Command -> Browse
 ###### Chating
 
 Client: use DLL
+
+![Image of Login](https://raw.githubusercontent.com/ricardopereira/cpp.chating/master/Screens/ScreenLogin.png)
+
+![Image of Public](https://raw.githubusercontent.com/ricardopereira/cpp.chating/master/Screens/ScreenPublic.png)
 
 Testing with server running and dll updated:
 ```
